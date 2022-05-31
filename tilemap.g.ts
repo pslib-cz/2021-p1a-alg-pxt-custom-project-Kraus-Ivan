@@ -68,18 +68,6 @@ namespace myTiles {
 . . . . . . . . . . . . . . . . 
 . . . . . . . . . . . . . . . . 
 `, [myTiles.transparency16], TileScale.Sixteen);
-            case "level1":
-            case "level1":return tiles.createTilemap(hex`0a000900020101011314010101030715171216161212120607121212121212121206071212121212120c0e0d091212121212110a1006071212121212120b0f0d071212121212121212060718121212121212120605080808080808080804`, img`
-2 2 2 2 2 2 2 2 2 2 
-2 . . . . . . . . 2 
-2 . . . . . . . . 2 
-2 . . . . . . . . 2 
-. . . . . . . . . 2 
-2 . . . . . . . . 2 
-2 . . . . . . . . 2 
-2 . . . . . . . . 2 
-2 2 2 2 2 2 2 2 2 2 
-`, [myTiles.transparency16,myTiles.tile2,myTiles.tile3,myTiles.tile6,myTiles.tile7,myTiles.tile8,myTiles.tile9,myTiles.tile10,myTiles.tile11,myTiles.tile13,myTiles.tile14,myTiles.tile15,myTiles.tile5,myTiles.tile1,myTiles.tile12,myTiles.tile4,myTiles.tile16,myTiles.tile17,myTiles.tile18,myTiles.tile19,myTiles.tile20,sprites.dungeon.chestClosed,myTiles.tile21,sprites.dungeon.chestOpen,myTiles.tile22], TileScale.Sixteen);
             case "level2":
             case "level2":return tiles.createTilemap(hex`1000100001010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101`, img`
 . . . . . . . . . . . . . . . . 
@@ -99,6 +87,18 @@ namespace myTiles {
 . . . . . . . . . . . . . . . . 
 . . . . . . . . . . . . . . . . 
 `, [myTiles.transparency16,sprites.castle.tileGrass2], TileScale.Sixteen);
+            case "level1":
+            case "level1":return tiles.createTilemap(hex`0a000900020101011314010101030715171216161212120607121212121212121206071212121212120c0e0d091212121212110a1006071212121212120b0f0d071212121212121212060718121212121212120605080808080808080804`, img`
+2 2 2 2 2 2 2 2 2 2 
+2 . . . . . . . . 2 
+2 . . . . . . . . 2 
+. . . . . . . . . 2 
+. . . . . . . . . 2 
+. . . . . . . . . 2 
+2 . . . . . . . . 2 
+2 . . . . . . . . 2 
+2 2 2 2 2 2 2 2 2 2 
+`, [myTiles.transparency16,myTiles.tile2,myTiles.tile3,myTiles.tile6,myTiles.tile7,myTiles.tile8,myTiles.tile9,myTiles.tile10,myTiles.tile11,myTiles.tile13,myTiles.tile14,myTiles.tile15,myTiles.tile5,myTiles.tile1,myTiles.tile12,myTiles.tile4,myTiles.tile16,myTiles.tile17,myTiles.tile18,myTiles.tile19,myTiles.tile20,sprites.dungeon.chestClosed,myTiles.tile21,sprites.dungeon.chestOpen,myTiles.tile22], TileScale.Sixteen);
         }
         return null;
     })
