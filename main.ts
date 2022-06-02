@@ -1,6 +1,8 @@
 namespace SpriteKind {
     export const King = SpriteKind.create()
     export const Zbrojir = SpriteKind.create()
+    export const House = SpriteKind.create()
+    export const Tree = SpriteKind.create()
 }
 namespace StrProp {
     export const Name = StrProp.create()
@@ -611,8 +613,11 @@ controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
     )
     zmena_pozice_zbrane(2)
 })
+function level3 () {
+    tiles.placeOnTile(mySprite, tiles.getTileLocation(14, 2))
+}
 function startNextLevel () {
-    currentLevel += 1
+    currentLevel += 0
     if (currentLevel == 1) {
         tiles.setCurrentTilemap(tilemap`level1`)
         level1()
@@ -620,6 +625,11 @@ function startNextLevel () {
         sprites.destroyAllSpritesOfKind(SpriteKind.King)
         tiles.setCurrentTilemap(tilemap`level2`)
         level2()
+    } else if (currentLevel == 3) {
+        sprites.destroyAllSpritesOfKind(SpriteKind.Zbrojir)
+        sprites.destroyAllSpritesOfKind(SpriteKind.House)
+        sprites.destroyAllSpritesOfKind(SpriteKind.Tree)
+        tiles.setCurrentTilemap(tilemap`level24`)
     } else {
         game.over(true)
     }
@@ -638,7 +648,93 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`hlina`, function (sprite, loc
 function level2 () {
     tiles.placeOnRandomTile(mySprite, assets.tile`dvere kral`)
     Zbrojar = sprites.create(assets.image`Lucistnik`, SpriteKind.Zbrojir)
-    tiles.placeOnTile(Zbrojar, tiles.getTileLocation(13, 11))
+    tiles.placeOnTile(Zbrojar, tiles.getTileLocation(13, 12))
+    House1 = sprites.create(img`
+        ....................e2e22e2e....................
+        .................222eee22e2e222.................
+        ..............222e22e2e22eee22e222..............
+        ...........e22e22eeee2e22e2eeee22e22e...........
+        ........eeee22e22e22e2e22e2e22e22e22eeee........
+        .....222e22e22eeee22e2e22e2e22eeee22e22e222.....
+        ...22eeee22e22e22e22eee22eee22e22e22e22eeee22...
+        4cc22e22e22eeee22e22e2e22e2e22e22eeee22e22e22cc4
+        bcbeee22e22e22e22e22e2e22e2e22e22e22e22e22eeebcb
+        4bb22e22eeee22e22eeee2e22e2eeee22e22eeee22e22bb4
+        4bb22e22e22e22eeee22e2e22e2e22eeee22e22e22e22bb4
+        4cc22eeee22e22e22e22eee22eee22e22e22e22eeee22cc4
+        bcb22e22e22eeee22e22e2e22e2e22e22eeee22e22e22bcb
+        4bbeee22e22e22e22e22e2e22e2e22e22e22e22e22eeebb4
+        4bb22e22eeee22e22e22e2e22e2e22e22e22eeee22e22bb4
+        4cc22e22e22e22e22eeee2e22e2eeee22e22e22e22e22cc4
+        bcb22eeee22e22eeee22eee22eee22eeee22e22eeee22bcb
+        4bb22e22e22eeee22e22e2e22e2e22e22eeee22e22e22bb4
+        4bbeee22e22e22e22e22e2e22e2e22e22e22e22e22eeebb4
+        4cc22e22eeee22e22e22e2e22e2e22e22e22eeee22e22cc4
+        bcb22e22e22e22e22e22eee22eee22e22e22e22e22e22bcb
+        4bb22eeee22e22e22eeeccbbbbcceee22e22e22eeee22bb4
+        4bb22e22e22e22eeeccbbbbbbbbbbcceee22e22e22e22bb4
+        4cceee22e22eeeccbbbbbccccccbbbbbcceee22e22eeecc4
+        bcb22e22eeeccbbbbbccb444444bccbbbbbcceee22e22bcb
+        4bb22e22ccbbbbbccb444444444444bccbbbbbcc22e22bb4
+        4bb22ccbbbbcccb444444444444444444bcccbbbbcc22bb4
+        4cccbbbbcccb444bccbbbbbbbbbbbbccb444bcccbbbbccc4
+        ccccccccbbbbbbbcb44444444444444bcbbbbbbbcccccccc
+        b444444444444bc444444444444444444cb444444444444b
+        bbcb444444444cb411111111111111114bc444444444bcbb
+        bbbcccccccccccd1bbbbbbbbbbbbbbbb1dcccccccccccbbb
+        bbbb444444444c11beeeeeeeeeeeeeeb11c444444444bbbb
+        bbbe2222222e4c1be4e44e44e44e44eeb1c4e2222222ebbb
+        bbbeeeeeeeee4c1be4e44e44e44e44eeb1c4eeeeeeeeebbb
+        bbbeddddddde4cbbf4e4effffffe44eebbc4edddddddebbb
+        bbbedffdffde4cbbf4effffffffff4eebbc4edffdffdebbb
+        bbbedccdccde4cbbf4effffffffffeeebbc4edccdccdebbb
+        bbbeddddddde4cbbf4eeeeeeeeeeeeeebbc4edddddddebbb
+        cbbedffdffde4cbbe4e44e44e44e44eebbc4edffdffdebbc
+        cbbedccdccde4cbbe4e44e44e44e44eebbc4edccdccdebbc
+        ccbbbbbbbbbb4cbbe4e44e44e44feeeebbc4bbbbbbbbbbcc
+        .cbb444444444cbbe4e44e44e44ffffebbc444444444bbc.
+        ..cb4eee4eee4cbbf4e44e44e44f44febbc4eee4eee4bc..
+        ...c4eee4eee4cbbf4e44e44e44effeebbc4eee4eee4c...
+        ....b44444444cbbf4e44e44e44e44eebbc44444444b....
+        .....b4eee444cbbf4e44e44e44e44eebbc444eee4b.....
+        ......bcccbbbcbbe4e44e44e44e44eebbcbbbcccb......
+        `, SpriteKind.House)
+    tiles.placeOnTile(House1, tiles.getTileLocation(11, 11))
+    Strom = sprites.create(img`
+        .............6666...............
+        ..........666667766.6666........
+        .........677777777767776........
+        ......66667775577757777666......
+        .....677666675557557776777666...
+        .....6776777775555577777766776..
+        ...66666777777775777777766666...
+        .66667767777755757555777776776..
+        6666777677775577557555777767766.
+        .6667767777777775577777777767666
+        .c6766777677777775777777677766..
+        cc77666667777777777777777666666c
+        cc76666677777777777777777766776c
+        c6666776777777777777766677666776
+        66667766667776777767767766766666
+        ccc76677677776677766767776776ccc
+        cc7766776777677677676667767766cc
+        .666c676667677766667766666666cc.
+        .ccc66676666776666677677666cccc.
+        ...ccc77c6767666676676677666ccc.
+        ...cc676c7766676677666666c666cc.
+        ....c6cc676c6677677c66c666ccc...
+        ....ccccc6c66667667cc6ccc6ccc...
+        ......ccccc66c66c66cccccccc.....
+        .......cc.cc6c6ccc6cccc.cc......
+        ...........cccccccccc...........
+        .............feeeeee............
+        ............feeeeeefe...........
+        .........eeeeefeeeffee..........
+        ............ffffeef..ee.........
+        ...............fee..............
+        ................e...............
+        `, SpriteKind.Tree)
+    tiles.placeOnTile(Strom, tiles.getTileLocation(17, 17))
 }
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
     animation.runImageAnimation(
@@ -831,6 +927,16 @@ controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
     )
     zmena_pozice_zbrane(1)
 })
+scene.onOverlapTile(SpriteKind.Player, assets.tile`active`, function (sprite, location) {
+    if (dialogSkoncen == true) {
+        startNextLevel()
+    } else {
+        game.splash("Na něco jsem zapomněl...")
+        if (controller.A.isPressed()) {
+            tiles.placeOnTile(mySprite, tiles.getTileLocation(14, 2))
+        }
+    }
+})
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, otherSprite) {
     otherSprite.destroy()
 })
@@ -846,16 +952,16 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`dvere kral`, function (sprite
         }
     }
 })
+let Strom: Sprite = null
+let House1: Sprite = null
 let Zbrojar: Sprite = null
 let projectile: Sprite = null
 let mec = false
 let Kral: Sprite = null
 let dialogSkoncen = false
+let currentLevel = 0
 let pozice_zbrane: number[] = []
 let mySprite: Sprite = null
-let currentLevel = 0
-currentLevel = 0
-startNextLevel()
 mySprite = sprites.create(img`
     . . . . . . f f f f . . . . . . 
     . . . . f f f 2 2 f f f . . . . 
@@ -882,3 +988,5 @@ pozice_zbrane = [
 0,
 0
 ]
+currentLevel = 1
+startNextLevel()
