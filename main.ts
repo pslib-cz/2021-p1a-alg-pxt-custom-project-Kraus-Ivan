@@ -617,7 +617,7 @@ function level3 () {
     tiles.placeOnTile(mySprite, tiles.getTileLocation(14, 2))
 }
 function startNextLevel () {
-    currentLevel += 0
+    currentLevel += 1
     if (currentLevel == 1) {
         tiles.setCurrentTilemap(tilemap`level1`)
         level1()
@@ -988,5 +988,5 @@ pozice_zbrane = [
 0,
 0
 ]
-currentLevel = 1
+currentLevel = 0
 startNextLevel()
