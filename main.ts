@@ -672,181 +672,6 @@ controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
     zmena_pozice_zbrane(2)
 })
 function level3 () {
-    for (let index = 0; index <= 44; index++) {
-        if (index == 0) {
-            borderTree = sprites.create(img`
-                ........................
-                ...........ff..........8
-                ..........f88f........86
-                .........ff88ff......886
-                .........f8888f......866
-                ........f888888f....8666
-                ......ff88888888ff886666
-                .....f888888888888666666
-                .....ff88888888888866666
-                .....f888888888888666666
-                ....f88ff88888ff86688666
-                ....ffff88fff88f88886688
-                .....f8f8ff8ff8f88686886
-                ....f88fff88ffff86688866
-                ....f8ffff8fffff86888868
-                ....fff88ffffff888866888
-                ....f888ffff8fff86668888
-                ...f888ff8f88f8866688686
-                ..f8888888888f8666666666
-                .f88f8888888886686666666
-                .fff88888888888866666666
-                .ff888888888888666666666
-                ..ff88f888f88f8866866686
-                ..f8ff88fff88f8688668886
-                .f88ff8ff8f8f86688688686
-                f88ff8ff88ff866886886688
-                ffff88f88fff888866866888
-                .ffffffffffff88888888888
-                .ff888ff88ff888666886688
-                .f888ff888ff886668866688
-                f888888888f8866666666686
-                fff888f88888888666866666
-                ..ffff88f888888888668666
-                .....f8ff88f888ff8688668
-                ......fff8fff88fff888688
-                .........ffeeff......88e
-                .........feeeef......fee
-                .........feeeef......fee
-                ........feeefeef....feee
-                ........fefeffef....fefe
-                `, SpriteKind.Tree)
-            borderTree2 = sprites.create(img`
-                ........................
-                ...........ff..........8
-                ..........f88f........86
-                .........ff88ff......886
-                .........f8888f......866
-                ........f888888f....8666
-                ......ff88888888ff886666
-                .....f888888888888666666
-                .....ff88888888888866666
-                .....f888888888888666666
-                ....f88ff88888ff86688666
-                ....ffff88fff88f88886688
-                .....f8f8ff8ff8f88686886
-                ....f88fff88ffff86688866
-                ....f8ffff8fffff86888868
-                ....fff88ffffff888866888
-                ....f888ffff8fff86668888
-                ...f888ff8f88f8866688686
-                ..f8888888888f8666666666
-                .f88f8888888886686666666
-                .fff88888888888866666666
-                .ff888888888888666666666
-                ..ff88f888f88f8866866686
-                ..f8ff88fff88f8688668886
-                .f88ff8ff8f8f86688688686
-                f88ff8ff88ff866886886688
-                ffff88f88fff888866866888
-                .ffffffffffff88888888888
-                .ff888ff88ff888666886688
-                .f888ff888ff886668866688
-                f888888888f8866666666686
-                fff888f88888888666866666
-                ..ffff88f888888888668666
-                .....f8ff88f888ff8688668
-                ......fff8fff88fff888688
-                .........ffeeff......88e
-                .........feeeef......fee
-                .........feeeef......fee
-                ........feeefeef....feee
-                ........fefeffef....fefe
-                `, SpriteKind.Tree)
-        } else {
-            borderTree = sprites.create(img`
-                ........................
-                8..........ff..........8
-                68........f88f........86
-                688......ff88ff......886
-                668......f8888f......866
-                6668....f888888f....8666
-                666688ff88888888ff886666
-                666666888888888888666666
-                666668888888888888866666
-                666666888888888888666666
-                66888668f88888ff86688666
-                8668688888fff88f88886688
-                8868668f8ff8ff8f88686886
-                8888868fff88ffff86688866
-                88888888ff8fffff86888868
-                888668888ffffff888866888
-                68886668ffff8fff86668888
-                6868866688f88f8866688686
-                6866666688888f8666666666
-                666666666888886686666666
-                666666668688888866666666
-                666666666888888666666666
-                6866668666888f8866866686
-                6886866886688f8688668886
-                866888688888f86688688686
-                8866888868ff866886886688
-                88868688668f888866866888
-                88888668868ff88888888888
-                68868868688f888666886688
-                668666666688886668866688
-                666666666668866666666686
-                666668666888888666866666
-                666666888888888888668666
-                6668868ff88f888ff8688668
-                8668888ff8fff88fff888688
-                e88......ffeeff......88e
-                eef......feeeef......fee
-                eef......feeeef......fee
-                feef....feeefeef....feee
-                ffef....fefeffef....fefe
-                `, SpriteKind.Tree)
-            borderTree2 = sprites.create(img`
-                ........................
-                8..........ff..........8
-                68........f88f........86
-                688......ff88ff......886
-                668......f8888f......866
-                6668....f888888f....8666
-                666688ff88888888ff886666
-                666666888888888888666666
-                666668888888888888866666
-                666666888888888888666666
-                66888668f88888ff86688666
-                8668688888fff88f88886688
-                8868668f8ff8ff8f88686886
-                8888868fff88ffff86688866
-                88888888ff8fffff86888868
-                888668888ffffff888866888
-                68886668ffff8fff86668888
-                6868866688f88f8866688686
-                6866666688888f8666666666
-                666666666888886686666666
-                666666668688888866666666
-                666666666888888666666666
-                6866668666888f8866866686
-                6886866886688f8688668886
-                866888688888f86688688686
-                8866888868ff866886886688
-                88868688668f888866866888
-                88888668868ff88888888888
-                68868868688f888666886688
-                668666666688886668866688
-                666666666668866666666686
-                666668666888888666866666
-                666666888888888888668666
-                6668868ff88f888ff8688668
-                8668888ff8fff88fff888688
-                e88......ffeeff......88e
-                eef......feeeef......fee
-                eef......feeeef......fee
-                feef....feeefeef....feee
-                ffef....fefeffef....fefe
-                `, SpriteKind.Tree)
-        }
-        tiles.placeOnTile(borderTree, tiles.getTileLocation(index + 20, 0))
-        tiles.placeOnTile(borderTree2, tiles.getTileLocation(index + 20, 18))
-    }
     randomTreeGenerator()
     scene.setBackgroundImage(img`
         6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
@@ -1450,7 +1275,6 @@ sprites.onOverlap(SpriteKind.Projectile, SpriteKind.enemyTree, function (sprite,
     tiles.setTileAt(otherSprite.tilemapLocation(), assets.tile`spawner`)
 })
 function level2 () {
-    tiles.placeOnTile(mySprite, tiles.getTileLocation(30, 22))
     Zbrojar = sprites.create(assets.image`Lucistnik`, SpriteKind.Zbrojir)
     tiles.placeOnTile(Zbrojar, tiles.getTileLocation(13, 12))
     House1 = sprites.create(img`
@@ -1541,6 +1365,7 @@ function level2 () {
     tiles.placeOnTile(Strom, tiles.getTileLocation(17, 17))
     rocks = sprites.create(assets.image`rock`, SpriteKind.checkpoint)
     tiles.placeOnTile(rocks, tiles.getTileLocation(13, 0))
+    tiles.placeOnTile(mySprite, tiles.getTileLocation(30, 22))
 }
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
     animation.runImageAnimation(
@@ -1841,8 +1666,6 @@ let House1: Sprite = null
 let Zbrojar: Sprite = null
 let spoustec: Sprite = null
 let Lucistnik: Sprite = null
-let borderTree2: Sprite = null
-let borderTree: Sprite = null
 let projectileRIGHT: Sprite = null
 let projectileLEFT: Sprite = null
 let projectileDOWN: Sprite = null
