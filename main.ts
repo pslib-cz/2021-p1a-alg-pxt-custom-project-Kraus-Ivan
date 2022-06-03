@@ -4,6 +4,7 @@ namespace SpriteKind {
     export const House = SpriteKind.create()
     export const Tree = SpriteKind.create()
     export const checkpoint = SpriteKind.create()
+    export const NPC = SpriteKind.create()
 }
 namespace StrProp {
     export const Name = StrProp.create()
@@ -615,6 +616,25 @@ controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
     zmena_pozice_zbrane(2)
 })
 function level3 () {
+    Lucistnik = sprites.create(img`
+        . . . . f f f f . . . . . 
+        . . f f f f f f f f . . . 
+        . f f f f f f c f f f . . 
+        f f f f f f c c f f f c . 
+        f f f c f f f f f f f c . 
+        c c c f f f e e f f c c . 
+        f f f f f e e f f c c f . 
+        f f f b f e e f b f f f . 
+        . f 4 1 f 4 4 f 1 4 f . . 
+        . f e 4 4 4 4 4 4 e f . . 
+        . f f f e e e e f f f . . 
+        f e f b 7 7 7 7 b f e f . 
+        e 4 f 7 7 7 7 7 7 f 4 e . 
+        e e f 6 6 6 6 6 6 f e e . 
+        . . . f f f f f f . . . . 
+        . . . f f . . f f . . . . 
+        `, SpriteKind.NPC)
+    tiles.placeOnTile(Lucistnik, tiles.getTileLocation(18, 14))
     tiles.placeOnTile(mySprite, tiles.getTileLocation(0, 12))
 }
 function startNextLevel () {
@@ -625,6 +645,7 @@ function startNextLevel () {
     } else if (currentLevel == 2) {
         sprites.destroyAllSpritesOfKind(SpriteKind.King)
         tiles.setCurrentTilemap(tilemap`level2`)
+        dialogSkoncen = false
         level2()
     } else if (currentLevel == 3) {
         sprites.destroyAllSpritesOfKind(SpriteKind.Zbrojir)
@@ -859,6 +880,13 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`koberec0`, function (sprite, 
 sprites.onOverlap(SpriteKind.Player, SpriteKind.checkpoint, function (sprite, otherSprite) {
     startNextLevel()
 })
+function pronasledovani (bool: boolean, Pronasledovatel: Sprite, Obet: Sprite) {
+    if (bool == true) {
+        Pronasledovatel.follow(Obet, 90)
+    } else {
+        Pronasledovatel.follow(Obet, 0)
+    }
+}
 controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
     animation.runImageAnimation(
     mySprite,
@@ -936,6 +964,12 @@ controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
     )
     zmena_pozice_zbrane(1)
 })
+sprites.onOverlap(SpriteKind.NPC, SpriteKind.Player, function (sprite, otherSprite) {
+    if (currentLevel == 3) {
+        dialogSkoncen = true
+        pronasledovani(false, Lucistnik, mySprite)
+    }
+})
 function move_lock (bool: boolean) {
     if (bool == true) {
         controller.moveSprite(mySprite, 0, 0)
@@ -944,12 +978,20 @@ function move_lock (bool: boolean) {
     }
 }
 scene.onOverlapTile(SpriteKind.Player, assets.tile`active`, function (sprite, location) {
-    if (dialogSkoncen == true) {
-        mySprite.follow(rocks)
+    if (currentLevel == 2) {
+        if (dialogSkoncen == true) {
+            pronasledovani(true, mySprite, rocks)
+        } else {
+            game.splash("Na něco jsem zapomněl...")
+            move_lock(true)
+            tiles.placeOnTile(mySprite, tiles.getTileLocation(14, 2))
+        }
+    } else if (currentLevel == 3) {
+        if (dialogSkoncen == false) {
+            pronasledovani(true, Lucistnik, mySprite)
+        }
     } else {
-        game.splash("Na něco jsem zapomněl...")
-        move_lock(true)
-        tiles.placeOnTile(mySprite, tiles.getTileLocation(14, 2))
+    	
     }
 })
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, otherSprite) {
@@ -971,6 +1013,7 @@ let rocks: Sprite = null
 let Strom: Sprite = null
 let House1: Sprite = null
 let Zbrojar: Sprite = null
+let Lucistnik: Sprite = null
 let projectile: Sprite = null
 let mec = false
 let Kral: Sprite = null
@@ -1004,5 +1047,5 @@ pozice_zbrane = [
 0,
 0
 ]
-currentLevel = 1
+currentLevel = 2
 startNextLevel()
