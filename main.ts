@@ -1882,5 +1882,5 @@ pozice_zbrane = [
 0,
 0
 ]
-currentLevel = 2
+currentLevel = 0
 startNextLevel()
