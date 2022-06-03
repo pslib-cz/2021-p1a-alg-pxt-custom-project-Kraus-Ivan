@@ -3,6 +3,7 @@ namespace SpriteKind {
     export const Zbrojir = SpriteKind.create()
     export const House = SpriteKind.create()
     export const Tree = SpriteKind.create()
+    export const checkpoint = SpriteKind.create()
 }
 namespace StrProp {
     export const Name = StrProp.create()
@@ -80,7 +81,7 @@ controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
         . . . 4 e e f f f f f f e . . . 
         . . . . . . . . . f f f . . . . 
         `],
-    500,
+    100,
     false
     )
     zmena_pozice_zbrane(0)
@@ -608,13 +609,13 @@ controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
         . . f f f f f f f f f f . . . . 
         . . . f f f . . . f f . . . . . 
         `],
-    500,
+    100,
     false
     )
     zmena_pozice_zbrane(2)
 })
 function level3 () {
-    tiles.placeOnTile(mySprite, tiles.getTileLocation(14, 2))
+    tiles.placeOnTile(mySprite, tiles.getTileLocation(0, 12))
 }
 function startNextLevel () {
     currentLevel += 1
@@ -629,7 +630,10 @@ function startNextLevel () {
         sprites.destroyAllSpritesOfKind(SpriteKind.Zbrojir)
         sprites.destroyAllSpritesOfKind(SpriteKind.House)
         sprites.destroyAllSpritesOfKind(SpriteKind.Tree)
-        tiles.setCurrentTilemap(tilemap`level24`)
+        sprites.destroyAllSpritesOfKind(SpriteKind.checkpoint)
+        tiles.setCurrentTilemap(tilemap`level0`)
+        move_lock(false)
+        level3()
     } else {
         game.over(true)
     }
@@ -646,7 +650,7 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`hlina`, function (sprite, loc
     }
 })
 function level2 () {
-    tiles.placeOnRandomTile(mySprite, assets.tile`dvere kral`)
+    tiles.placeOnTile(mySprite, tiles.getTileLocation(30, 22))
     Zbrojar = sprites.create(assets.image`Lucistnik`, SpriteKind.Zbrojir)
     tiles.placeOnTile(Zbrojar, tiles.getTileLocation(13, 12))
     House1 = sprites.create(img`
@@ -735,6 +739,8 @@ function level2 () {
         ................e...............
         `, SpriteKind.Tree)
     tiles.placeOnTile(Strom, tiles.getTileLocation(17, 17))
+    rocks = sprites.create(assets.image`rock`, SpriteKind.checkpoint)
+    tiles.placeOnTile(rocks, tiles.getTileLocation(13, 0))
 }
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
     animation.runImageAnimation(
@@ -808,7 +814,7 @@ controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
         . . . . f f f f f f f f f f . . 
         . . . . . f f . . . f f f . . . 
         `],
-    500,
+    100,
     false
     )
     zmena_pozice_zbrane(3)
@@ -849,6 +855,9 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`koberec0`, function (sprite, 
         game.showLongText("KRÁL: Přeji hodně štěstí a dávej na sebe pozor.", DialogLayout.Bottom)
         dialogSkoncen = true
     }
+})
+sprites.onOverlap(SpriteKind.Player, SpriteKind.checkpoint, function (sprite, otherSprite) {
+    startNextLevel()
 })
 controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
     animation.runImageAnimation(
@@ -922,19 +931,25 @@ controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
         . . . . . f f f f f f f . . . . 
         . . . . . . . . . f f f . . . . 
         `],
-    500,
+    100,
     false
     )
     zmena_pozice_zbrane(1)
 })
+function move_lock (bool: boolean) {
+    if (bool == true) {
+        controller.moveSprite(mySprite, 0, 0)
+    } else {
+        controller.moveSprite(mySprite, 90, 90)
+    }
+}
 scene.onOverlapTile(SpriteKind.Player, assets.tile`active`, function (sprite, location) {
     if (dialogSkoncen == true) {
-        startNextLevel()
+        mySprite.follow(rocks)
     } else {
         game.splash("Na něco jsem zapomněl...")
-        if (controller.A.isPressed()) {
-            tiles.placeOnTile(mySprite, tiles.getTileLocation(14, 2))
-        }
+        move_lock(true)
+        tiles.placeOnTile(mySprite, tiles.getTileLocation(14, 2))
     }
 })
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, otherSprite) {
@@ -952,6 +967,7 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`dvere kral`, function (sprite
         }
     }
 })
+let rocks: Sprite = null
 let Strom: Sprite = null
 let House1: Sprite = null
 let Zbrojar: Sprite = null
@@ -980,7 +996,7 @@ mySprite = sprites.create(img`
     . . . . . f f f f f f . . . . . 
     . . . . . f f . . f f . . . . . 
     `, SpriteKind.Player)
-controller.moveSprite(mySprite, 100, 100)
+controller.moveSprite(mySprite, 90, 90)
 scene.cameraFollowSprite(mySprite)
 pozice_zbrane = [
 0,
@@ -988,5 +1004,5 @@ pozice_zbrane = [
 0,
 0
 ]
-currentLevel = 0
+currentLevel = 1
 startNextLevel()

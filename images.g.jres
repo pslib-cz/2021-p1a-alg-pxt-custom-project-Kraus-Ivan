@@ -9,6 +9,11 @@
         "mimeType": "image/x-mkcd-f4",
         "displayName": "sword effect"
     },
+    "image3": {
+        "data": "hwQQABAAAAAAAADADLALAMALALvM27sAuwyw3cvbzQDdDLDdy7DNANsLsN27sMsAsADL27sAvAAAsN3MDAAAuwCw3csMALC9AMu7y7wL272wzLzMwAzbzbu9zAC7zNvL293LsL3Lu8zbvcuw3cu7vNu9y7Ddu8sLsLsMALsLuwAAAAAAsAAAAA==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "rock"
+    },
     "anim1": {
         "namespace": "myAnimations",
         "id": "anim1",
