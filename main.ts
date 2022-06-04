@@ -907,7 +907,7 @@ pozice_zbrane = [
 0,
 0
 ]
-currentLevel = 1
+currentLevel = 0
 sword = sprites.create(assets.image`swordUP`, SpriteKind.Projectile)
 startNextLevel()
 game.onUpdate(function () {
