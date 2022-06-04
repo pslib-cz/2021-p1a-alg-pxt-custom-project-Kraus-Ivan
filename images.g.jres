@@ -44,6 +44,16 @@
         "mimeType": "image/x-mkcd-f4",
         "displayName": "checkpoint"
     },
+    "image10": {
+        "data": "hwQQABAAAAAAAO4OAAAAAPDv7u7wAAAAAO7u7v4AAADg7rvr7gAAAOC727vrDu4A4N7d3evuvgDv7u7u7u7u/u/u7u7u7u4e7+7u7u7u7h7v7t3d7e7u/uC7u93r7r4A4O6+u+sO7gDg7u7u7gAAAADu7u7+AAAA8O/u7vAAAAAAAO4OAAAAAA==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "bobr"
+    },
+    "image11": {
+        "data": "hwQPAA8AAAAAAAAAAADgDgAAAAAAAB4AAAAAAADgEAAAAAAAAA4QAAAAAADgABAAAAAAAA4AEAAAAADgAAAQAAAAAOAAABAAAAAA4AAAEAAAAAAADgAQAAAAAADgABAAAAAAAAAOEAAAAAAAAOAQAAAAAAAAAB4AAAAAAAAA4A4=",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "bow"
+    },
     "anim1": {
         "namespace": "myAnimations",
         "id": "anim1",

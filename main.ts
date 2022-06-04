@@ -8,6 +8,9 @@ namespace SpriteKind {
     export const spoustec = SpriteKind.create()
     export const enemyTree = SpriteKind.create()
     export const point = SpriteKind.create()
+    export const drevo = SpriteKind.create()
+    export const bobr = SpriteKind.create()
+    export const item = SpriteKind.create()
 }
 namespace StrProp {
     export const Name = StrProp.create()
@@ -82,10 +85,77 @@ scene.onHitWall(SpriteKind.Player, function (sprite, location) {
     }
 })
 function level4 () {
-	
+    info.setLife(1)
+    tiles.placeOnTile(mySprite, tiles.getTileLocation(0, 7))
+    luk = true
+    zmena_sloupce()
+    cislo_sloupce = 0
 }
 controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
-	
+    if (luk == true) {
+        cas_zacatek = game.runtime()
+        if (swingingBow == false) {
+            swingingBow = true
+            if (pozice_zbrane[0] == true) {
+                BowImage.setImage(assets.image`bow`)
+            } else if (pozice_zbrane[1] == true) {
+                BowImage.setImage(img`
+                    e . . . . . . . . . . . . . e 
+                    e 1 1 1 1 1 1 1 1 1 1 1 1 1 e 
+                    . e . . . . . . . . . . . e . 
+                    . . e . . . . . . . . . e . . 
+                    . . . e . . . . . . . e . . . 
+                    . . . . e . . . . . e . . . . 
+                    . . . . . e . . . e . . . . . 
+                    . . . . . . e e e . . . . . . 
+                    . . . . . . . . . . . . . . . 
+                    . . . . . . . . . . . . . . . 
+                    . . . . . . . . . . . . . . . 
+                    . . . . . . . . . . . . . . . 
+                    . . . . . . . . . . . . . . . 
+                    . . . . . . . . . . . . . . . 
+                    . . . . . . . . . . . . . . . 
+                    `)
+            } else if (pozice_zbrane[2] == true) {
+                BowImage.setImage(img`
+                    . . . . . . . . . . . . . e e 
+                    . . . . . . . . . . . . e 1 . 
+                    . . . . . . . . . . . e . 1 . 
+                    . . . . . . . . . . e . . 1 . 
+                    . . . . . . . . . e . . . 1 . 
+                    . . . . . . . . e . . . . 1 . 
+                    . . . . . . . e . . . . . 1 . 
+                    . . . . . . . e . . . . . 1 . 
+                    . . . . . . . e . . . . . 1 . 
+                    . . . . . . . . e . . . . 1 . 
+                    . . . . . . . . . e . . . 1 . 
+                    . . . . . . . . . . e . . 1 . 
+                    . . . . . . . . . . . e . 1 . 
+                    . . . . . . . . . . . . e 1 . 
+                    . . . . . . . . . . . . . e e 
+                    `)
+            } else if (pozice_zbrane[3] == true) {
+                BowImage.setImage(img`
+                    e e . . . . . . . . . . . . . 
+                    . 1 e . . . . . . . . . . . . 
+                    . 1 . e . . . . . . . . . . . 
+                    . 1 . . e . . . . . . . . . . 
+                    . 1 . . . e . . . . . . . . . 
+                    . 1 . . . . e . . . . . . . . 
+                    . 1 . . . . . e . . . . . . . 
+                    . 1 . . . . . e . . . . . . . 
+                    . 1 . . . . . e . . . . . . . 
+                    . 1 . . . . e . . . . . . . . 
+                    . 1 . . . e . . . . . . . . . 
+                    . 1 . . e . . . . . . . . . . 
+                    . 1 . e . . . . . . . . . . . 
+                    . 1 e . . . . . . . . . . . . 
+                    e e . . . . . . . . . . . . . 
+                    `)
+            }
+        }
+        swingingBow = false
+    }
 })
 function level1 () {
     Kral = sprites.create(img`
@@ -118,7 +188,7 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     if (mec == true) {
         if (swingingSword == false) {
             swingingSword = true
-            if (pozice_zbrane[0] == 1) {
+            if (pozice_zbrane[0] == true) {
                 sword.setImage(img`
                     . . . . 1 . . . . . 1 . . . . 
                     . . . . . . . . . . . . . . . 
@@ -136,7 +206,7 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
                     . . . . . . . . . . . . c c c 
                     . . . . . . . 1 . . . . . c c 
                     `)
-            } else if (pozice_zbrane[1] == 1) {
+            } else if (pozice_zbrane[1] == true) {
                 sword.setImage(img`
                     1 . . . . . . . 1 . . . . . c c 
                     . . . . . . . . . . . . . c c c 
@@ -155,7 +225,7 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
                     . . . . . . . . . . . . . . . . 
                     1 . . . . . . 1 . . . . . . . . 
                     `)
-            } else if (pozice_zbrane[2] == 1) {
+            } else if (pozice_zbrane[2] == true) {
                 sword.setImage(img`
                     1 . . . . 1 . . . . . . . 1 . . 
                     . . . . . . . . . . . . . . . . 
@@ -174,7 +244,7 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
                     . . . . . . . . . . . . . c c c 
                     1 . . . . . . 1 . . . . . . c c 
                     `)
-            } else if (pozice_zbrane[3] == 1) {
+            } else if (pozice_zbrane[3] == true) {
                 sword.setImage(img`
                     . . . . . . . . . . 1 . . . . 1 
                     . . . . . . . . . . . . . . . . 
@@ -220,6 +290,11 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
 scene.onOverlapTile(SpriteKind.Player, assets.tile`wood`, function (sprite2, location2) {
     if (currentLevel == 2) {
         dialogSkoncen = false
+    }
+})
+scene.onOverlapTile(SpriteKind.Player, assets.tile`myTile12`, function (sprite, location) {
+    if (naBobrovi == false) {
+        info.changeLifeBy(-1)
     }
 })
 controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
@@ -282,6 +357,22 @@ controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
     false
     )
 })
+function zmena_sloupce () {
+    if (cislo_sloupce == 15) {
+        sprites.destroyAllSpritesOfKind(SpriteKind.bobr)
+    } else {
+        cislo_sloupce = cislo_sloupce + 1
+        vertical = randint(0, 1)
+        if (vertical == 0) {
+            speed = randint(150, 400)
+            row = 0
+        } else {
+            speed = randint(-150, -400)
+            row = 15
+        }
+        time = randint(2000, 5000)
+    }
+}
 function level3 () {
     sprites.destroyAllSpritesOfKind(SpriteKind.Enemy)
     dialogSkoncen = false
@@ -407,6 +498,7 @@ function startNextLevel () {
         }
         level3()
     } else if (currentLevel == 4) {
+        scene.setBackgroundColor(9)
         tiles.setCurrentTilemap(tilemap`level28`)
         level4()
     } else {
@@ -521,6 +613,15 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`dvere kral`, function (sprite
         }
     }
 })
+sprites.onOverlap(SpriteKind.Projectile, SpriteKind.bobr, function (sprite, otherSprite) {
+    otherSprite.destroy()
+    sprite.destroy()
+    tiles.setTileAt(otherSprite.tilemapLocation(), assets.tile`myTile11`)
+    if (otherSprite.tileKindAt(TileDirection.Left, assets.tile`myTile11`) || otherSprite.tileKindAt(TileDirection.Left, assets.tile`wood`)) {
+        sprites.destroyAllSpritesOfKind(SpriteKind.bobr)
+        zmena_sloupce()
+    }
+})
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
     zmena_pozice_zbrane(3)
     animation.runImageAnimation(
@@ -619,11 +720,11 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.checkpoint, function (sprite7, o
     }
 })
 function zmena_pozice_zbrane (num: number) {
-    pozice_zbrane[0] = 0
-    pozice_zbrane[1] = 0
-    pozice_zbrane[2] = 0
-    pozice_zbrane[3] = 0
-    pozice_zbrane[num] = 1
+    pozice_zbrane[0] = false
+    pozice_zbrane[1] = false
+    pozice_zbrane[2] = false
+    pozice_zbrane[3] = false
+    pozice_zbrane[num] = true
 }
 sprites.onOverlap(SpriteKind.NPC, SpriteKind.Player, function (sprite9, otherSprite4) {
     if (currentLevel == 3) {
@@ -633,6 +734,7 @@ sprites.onOverlap(SpriteKind.NPC, SpriteKind.Player, function (sprite9, otherSpr
             game.showLongText("JÁ:  To ano, ale co můj ztupený meč?", DialogLayout.Bottom)
             game.showLongText("LUČIŠTNÍK:  Nevadí, věnuji ti můj luk", DialogLayout.Bottom)
             game.splash("Získal jsi luk")
+            game.splash("Podržením B vystřelíš šíp")
             dialogSkoncen2 = true
         } else if (dialogSkoncen == false) {
             pronasledovani(false, Lucistnik, mySprite)
@@ -730,6 +832,7 @@ controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
     )
 })
 info.onLifeZero(function () {
+    game.over(false)
     if (currentLevel == 3) {
         fightScene = false
         Lucistnik.destroy()
@@ -738,6 +841,106 @@ info.onLifeZero(function () {
     currentLevel = currentLevel - 1
     sprites.destroyAllSpritesOfKind(SpriteKind.Enemy)
     startNextLevel()
+})
+controller.B.onEvent(ControllerButtonEvent.Released, function () {
+    cas_konec = game.runtime()
+    BowImage.setImage(img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `)
+    if (cas_konec - cas_zacatek > 1000) {
+        if (pozice_zbrane[0] == true) {
+            arrow = sprites.createProjectileFromSprite(img`
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . f . . . . . . . . 
+                . . . . . . f e f . . . . . . . 
+                . . . . . f . e . f . . . . . . 
+                . . . . . . . e . . . . . . . . 
+                . . . . . . . e . . . . . . . . 
+                . . . . . . . e . . . . . . . . 
+                . . . . . . . e . . . . . . . . 
+                . . . . . . . e . . . . . . . . 
+                . . . . . . . e . . . . . . . . 
+                . . . . . . . e . . . . . . . . 
+                . . . . . . . e . . . . . . . . 
+                . . . . . . . e . . . . . . . . 
+                . . . . . . . e . . . . . . . . 
+                . . . . . . 1 1 1 . . . . . . . 
+                . . . . . 1 . 1 . 1 . . . . . . 
+                `, mySprite, 0, -100)
+        } else if (pozice_zbrane[1] == true) {
+            projectile = sprites.createProjectileFromSprite(img`
+                . . . . . 1 . 1 . 1 . . . . . . 
+                . . . . . . 1 1 1 . . . . . . . 
+                . . . . . . . e . . . . . . . . 
+                . . . . . . . e . . . . . . . . 
+                . . . . . . . e . . . . . . . . 
+                . . . . . . . e . . . . . . . . 
+                . . . . . . . e . . . . . . . . 
+                . . . . . . . e . . . . . . . . 
+                . . . . . . . e . . . . . . . . 
+                . . . . . . . e . . . . . . . . 
+                . . . . . . . e . . . . . . . . 
+                . . . . . . . e . . . . . . . . 
+                . . . . . f . e . f . . . . . . 
+                . . . . . . f e f . . . . . . . 
+                . . . . . . . f . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                `, mySprite, 0, 100)
+        } else if (pozice_zbrane[2] == true) {
+            projectile2 = sprites.createProjectileFromSprite(img`
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . f . . . . . . . . . . . 1 
+                . . f . . . . . . . . . . . 1 . 
+                . f e e e e e e e e e e e e 1 1 
+                . . f . . . . . . . . . . . 1 . 
+                . . . f . . . . . . . . . . . 1 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                `, mySprite, -100, 0)
+        } else if (pozice_zbrane[3] == true) {
+            projectile3 = sprites.createProjectileFromSprite(img`
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                1 . . . . . . . . . . . f . . . 
+                . 1 . . . . . . . . . . . f . . 
+                1 1 e e e e e e e e e e e e f . 
+                . 1 . . . . . . . . . . . f . . 
+                1 . . . . . . . . . . . f . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                `, mySprite, 100, 0)
+        }
+    }
 })
 function move_lock (bool3: boolean) {
     if (bool3 == true) {
@@ -937,7 +1140,7 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`hlina`, function (sprite3, lo
     }
 })
 scene.onOverlapTile(SpriteKind.Player, assets.tile`active`, function (sprite10, location6) {
-    if (dialogSkoncen2 == true) {
+    if (dialogSkoncen2 == true || currentLevel == 4) {
         startNextLevel()
     } else {
         game.splash("Na něco jsem zapomněl...")
@@ -945,6 +1148,12 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`active`, function (sprite10, 
     }
 })
 let myEnemy: Sprite = null
+let bobr: Sprite = null
+let projectile3: Sprite = null
+let projectile2: Sprite = null
+let projectile: Sprite = null
+let arrow: Sprite = null
+let cas_konec = 0
 let fightScene = false
 let dialogSkoncen2 = false
 let afterFight = false
@@ -954,13 +1163,23 @@ let House1: Sprite = null
 let Zbrojar: Sprite = null
 let StromTmavy: Sprite = null
 let Lucistnik: Sprite = null
+let time = 0
+let row = 0
+let speed = 0
+let vertical = 0
+let naBobrovi = false
 let dialogSkoncen = false
 let swingingSword = false
 let mec = false
 let Kral: Sprite = null
+let swingingBow = false
+let cas_zacatek = 0
+let cislo_sloupce = 0
+let luk = false
+let BowImage: Sprite = null
 let sword: Sprite = null
 let currentLevel = 0
-let pozice_zbrane: number[] = []
+let pozice_zbrane: boolean[] = []
 let mySprite: Sprite = null
 mySprite = sprites.create(img`
     . . . . . . f f f f . . . . . . 
@@ -983,28 +1202,60 @@ mySprite = sprites.create(img`
 controller.moveSprite(mySprite, 80, 80)
 scene.cameraFollowSprite(mySprite)
 pozice_zbrane = [
-0,
-0,
-0,
-0
+false,
+false,
+false,
+false
 ]
 currentLevel = 3
 sword = sprites.create(assets.image`swordUP`, SpriteKind.Projectile)
+BowImage = sprites.create(assets.image`swordUP`, SpriteKind.item)
 startNextLevel()
 game.onUpdate(function () {
-    if (mySprite.vx < 0) {
-        sword.right = mySprite.left
-        sword.y = mySprite.y
-    } else if (mySprite.vx > 0) {
-        sword.left = mySprite.right
-        sword.y = mySprite.y
-    } else if (mySprite.vy > 0) {
-        sword.top = mySprite.bottom
-        sword.x = mySprite.x
-    } else if (mySprite.vy < 0) {
-        sword.bottom = mySprite.top
-        sword.x = mySprite.x
+    if (mec == true) {
+        if (mySprite.vx < 0) {
+            sword.right = mySprite.left
+            sword.y = mySprite.y
+        } else if (mySprite.vx > 0) {
+            sword.left = mySprite.right
+            sword.y = mySprite.y
+        } else if (mySprite.vy > 0) {
+            sword.top = mySprite.bottom
+            sword.x = mySprite.x
+        } else if (mySprite.vy < 0) {
+            sword.bottom = mySprite.top
+            sword.x = mySprite.x
+        }
+    } else if (luk == true) {
+        if (mySprite.vx < 0) {
+            BowImage.right = mySprite.left
+            BowImage.y = mySprite.y
+        } else if (mySprite.vx > 0) {
+            BowImage.left = mySprite.right
+            BowImage.y = mySprite.y
+        } else if (mySprite.vy > 0) {
+            BowImage.top = mySprite.bottom
+            BowImage.x = mySprite.x
+        } else if (mySprite.vy < 0) {
+            BowImage.bottom = mySprite.top
+            BowImage.x = mySprite.x
+        }
+    } else {
+    	
     }
+})
+game.onUpdate(function () {
+    if (tiles.tileAtLocationEquals(mySprite.tilemapLocation(), assets.tile`myTile11`) || tiles.tileAtLocationEquals(mySprite.tilemapLocation(), assets.tile`wood`)) {
+        naBobrovi = true
+    } else {
+        naBobrovi = false
+    }
+})
+game.onUpdateInterval(time, function () {
+    bobr = sprites.create(assets.image`bobr`, SpriteKind.bobr)
+    tiles.placeOnTile(bobr, tiles.getTileLocation(cislo_sloupce + 10, row))
+    bobr.ay = speed
+    bobr.setFlag(SpriteFlag.DestroyOnWall, true)
 })
 game.onUpdateInterval(3000, function () {
     if (fightScene == true) {

@@ -4,7 +4,8 @@
     "dependencies": {
         "device": "*",
         "arcade-block-objects": "github:microsoft/arcade-block-objects#f486ac1d4dcc096b9297174f97f8cdef1576c7ff",
-        "story": "github:riknoll/arcade-story#v1.3.1"
+        "story": "github:riknoll/arcade-story#v1.3.1",
+        "corgio": "*"
     },
     "files": [
         "main.blocks",
