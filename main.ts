@@ -295,12 +295,65 @@ function level3 () {
         . . . f f f f f f . . . . 
         . . . f f . . f f . . . . 
         `, SpriteKind.NPC)
+    animation.runImageAnimation(
+    Lucistnik,
+    [img`
+        . . . . . f f f f f . . . 
+        . . . f f f f f f f f f . 
+        . . f f f c f f f f f f . 
+        . . f f c f f f c f f f f 
+        f f c c f f f c c f f c f 
+        f f f f f e f f f f c c f 
+        . f f f e e f f f f f f f 
+        . . f f e e f b f e e f f 
+        . . . f 4 4 f 1 e 4 e f . 
+        . . . f 4 4 4 4 e f f f . 
+        . . . f f e e e e e f . . 
+        . . . f 7 7 7 e 4 4 e . . 
+        . . . f 7 7 7 e 4 4 e . . 
+        . . . f 6 6 6 f e e f . . 
+        . . . . f f f f f f . . . 
+        . . . . . . f f f . . . . 
+        `,img`
+        . . . . . . . . . . . . . 
+        . . . . f f f f f f . . . 
+        . . . f f f f f f f f f . 
+        . . f f f c f f f f f f . 
+        . f f f c f f f c f f f f 
+        f f c c f f f c c f f c f 
+        f f f f f e f f f f c c f 
+        . f f f e e f f f f f f f 
+        . . f f e e f b f e e f f 
+        . . f f 4 4 f 1 e 4 e f . 
+        . . . f 4 4 4 e e f f f . 
+        . . . f f e e 4 4 e f . . 
+        . . . f 7 7 e 4 4 e f . . 
+        . . f f 6 6 f e e f f f . 
+        . . f f f f f f f f f f . 
+        . . . f f f . . . f f . . 
+        `,img`
+        . . . . . . . . . . . . . 
+        . . . . f f f f f f . . . 
+        . . . f f f f f f f f f . 
+        . . f f f c f f f f f f . 
+        . f f f c f f f c f f f f 
+        f f c c f f f c c f f c f 
+        f f f f f e f f f f c c f 
+        . f f f e e f f f f f f f 
+        . f f f e e f b f e e f f 
+        . . f f 4 4 f 1 e 4 e f f 
+        . . . f 4 4 4 4 e f f f . 
+        . . . f f e e e e 4 4 4 . 
+        . . . f 7 7 7 7 e 4 4 e . 
+        . . f f 6 6 6 6 f e e f . 
+        . . f f f f f f f f f f . 
+        . . . f f f . . . f f . . 
+        `],
+    100,
+    false
+    )
     tiles.placeOnTile(Lucistnik, tiles.getTileLocation(18, 10))
     tiles.placeOnTile(mySprite, tiles.getTileLocation(0, 7))
-    for (let value of tiles.getTilesByType(assets.tile`myTile9`)) {
-        StromTmavy = sprites.create(assets.image`spoustec`, SpriteKind.enemyTree)
-        tiles.placeOnTile(StromTmavy, value)
-    }
 }
 function startNextLevel () {
     currentLevel += 1
@@ -338,7 +391,13 @@ function startNextLevel () {
             6666666666666666666666666666666666666666666666666666666
             `)
         move_lock(false)
+        for (let value of tiles.getTilesByType(assets.tile`myTile9`)) {
+            StromTmavy = sprites.create(assets.image`spoustec`, SpriteKind.enemyTree)
+            tiles.placeOnTile(StromTmavy, value)
+        }
         level3()
+    } else if (currentLevel == 4) {
+        tiles.setCurrentTilemap(tilemap`level28`)
     } else {
         game.over(true)
     }
@@ -733,6 +792,18 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.checkpoint, function (sprite, ot
         startNextLevel()
     }
 })
+scene.onOverlapTile(SpriteKind.Player, assets.tile`active2`, function (sprite, location) {
+    if (currentLevel == 2) {
+        if (dialogSkoncen == false) {
+            game.splash("Na něco jsem zapomněl...")
+            tiles.placeOnTile(mySprite, tiles.getTileLocation(15, 8))
+        }
+    } else if (currentLevel == 3) {
+        if (dialogSkoncen == false && fightScene == false) {
+            pronasledovani(true, Lucistnik, mySprite)
+        }
+    }
+})
 function pronasledovani (bool: boolean, Pronasledovatel: Sprite, Obet: Sprite) {
     if (bool == true) {
         Pronasledovatel.follow(Obet, 90)
@@ -801,21 +872,23 @@ controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
     )
 })
 info.onLifeZero(function () {
-    currentLevel = currentLevel - 1
     if (currentLevel == 3) {
         fightScene = false
         Lucistnik.destroy()
+        sprites.destroyAllSpritesOfKind(SpriteKind.Enemy)
     }
+    currentLevel = currentLevel - 1
     startNextLevel()
 })
 sprites.onOverlap(SpriteKind.NPC, SpriteKind.Player, function (sprite, otherSprite) {
     if (currentLevel == 3) {
-        if (afterFight == true) {
+        if (afterFight == true && dialogSkoncen2 == false) {
             pronasledovani(false, Lucistnik, mySprite)
             game.showLongText("LUČIŠTNÍK:  Zachránil si mě", DialogLayout.Bottom)
             game.showLongText("JÁ:  To ano, ale co můj ztupený meč?", DialogLayout.Bottom)
             game.showLongText("LUČIŠTNÍK:  Nevadí, věnuji ti můj luk", DialogLayout.Bottom)
             game.splash("Získal jsi luk")
+            dialogSkoncen2 = true
         } else if (dialogSkoncen == false) {
             pronasledovani(false, Lucistnik, mySprite)
             game.showLongText("LUČIŠTNÍK:  Bože zachraň mne!", DialogLayout.Bottom)
@@ -823,6 +896,7 @@ sprites.onOverlap(SpriteKind.NPC, SpriteKind.Player, function (sprite, otherSpri
             game.showLongText("LUČIŠTNÍK:  Vylétavají ze začarovaných stromů!", DialogLayout.Bottom)
             game.showLongText("JÁ:  Co?!", DialogLayout.Bottom)
             dialogSkoncen = true
+            dialogSkoncen2 = false
             fightScene = true
             mec = true
             info.setLife(3)
@@ -838,15 +912,11 @@ function move_lock (bool: boolean) {
     }
 }
 scene.onOverlapTile(SpriteKind.Player, assets.tile`active`, function (sprite, location) {
-    if (currentLevel == 2) {
-        if (dialogSkoncen == false) {
-            game.splash("Na něco jsem zapomněl...")
-            tiles.placeOnTile(mySprite, tiles.getTileLocation(15, 8))
-        }
-    } else if (currentLevel == 3) {
-        if (dialogSkoncen == false && fightScene == false) {
-            pronasledovani(true, Lucistnik, mySprite)
-        }
+    if (dialogSkoncen2 == true) {
+        startNextLevel()
+    } else {
+        game.splash("Na něco jsem zapomněl...")
+        tiles.placeOnTile(mySprite, tiles.getTileLocation(53, 9))
     }
 })
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, otherSprite) {
@@ -865,6 +935,7 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`dvere kral`, function (sprite
     }
 })
 let myEnemy: Sprite = null
+let dialogSkoncen2 = false
 let afterFight = false
 let fightScene = false
 let rocks: Sprite = null
@@ -907,7 +978,7 @@ pozice_zbrane = [
 0,
 0
 ]
-currentLevel = 0
+currentLevel = 2
 sword = sprites.create(assets.image`swordUP`, SpriteKind.Projectile)
 startNextLevel()
 game.onUpdate(function () {
@@ -1021,7 +1092,7 @@ game.onUpdateInterval(3000, function () {
             true
             )
             tiles.placeOnTile(myEnemy, tiles.getTilesByType(assets.tile`myTile9`)._pickRandom())
-            myEnemy.follow(mySprite, randint(15, 45))
+            myEnemy.follow(mySprite, randint(15, 60))
         } else {
             fightScene = false
             pronasledovani(true, Lucistnik, mySprite)
