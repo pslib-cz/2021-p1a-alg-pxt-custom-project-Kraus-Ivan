@@ -98,25 +98,6 @@ f f 4 d 4 d d d d f . .
 . f f f f f f f f f f . 
 . . f f . . . f f f . . 
 `;
-            case "image3":
-            case "rock":return img`
-. . b d b . . . . . b b b b . . 
-. c b d d b . . . b b d d d b . 
-. b c c b . . . b c d d d d b . 
-. . . . . . b b c c b d b b b . 
-. . . . . b d d b c c b b b c . 
-. . b b b c d d b b c c c c . . 
-. b d d d b c b b c . . . . . . 
-c b d d d d c c c c . b b b . . 
-c c b b b b c c c . b d d d b . 
-. c c c b b . . b c b b d d b b 
-. b b . . . . . b c c b b b b . 
-b d d b b . . . . . c c c b . . 
-b b d d b c . . b b b b b b b . 
-. b c c c b . b d d d b b c b . 
-. . . . . . b d d d b c c b . . 
-. . . . . . b b b c c c b . . . 
-`;
             case "image7":
             case "spoustec":return img`
 ........................
@@ -182,6 +163,25 @@ fff666f6688666666f666ff.
             case "image9":
             case "Spoustec":return img`
 6 
+`;
+            case "image3":
+            case "checkpoint":return img`
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . b . . . . . 
+. . . . . . . . . . . . . . . . 
 `;
         }
         return null;
