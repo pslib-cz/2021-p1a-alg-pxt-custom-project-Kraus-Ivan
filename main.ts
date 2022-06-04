@@ -13,6 +13,9 @@ namespace StrProp {
     export const Name = StrProp.create()
     export const Text = StrProp.create()
 }
+sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite11, otherSprite5) {
+    otherSprite5.destroy(effects.disintegrate, 1000)
+})
 controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
     zmena_pozice_zbrane(0)
     animation.runImageAnimation(
@@ -78,10 +81,11 @@ scene.onHitWall(SpriteKind.Player, function (sprite, location) {
         game.splash("Měl bych jít po cestě...")
     }
 })
-scene.onOverlapTile(SpriteKind.Player, assets.tile`wood`, function (sprite, location) {
-    if (currentLevel == 2) {
-        dialogSkoncen = false
-    }
+function level4 () {
+	
+}
+controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
+	
 })
 function level1 () {
     Kral = sprites.create(img`
@@ -213,6 +217,11 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
         swingingSword = false
     }
 })
+scene.onOverlapTile(SpriteKind.Player, assets.tile`wood`, function (sprite2, location2) {
+    if (currentLevel == 2) {
+        dialogSkoncen = false
+    }
+})
 controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
     zmena_pozice_zbrane(2)
     animation.runImageAnimation(
@@ -274,6 +283,7 @@ controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
     )
 })
 function level3 () {
+    sprites.destroyAllSpritesOfKind(SpriteKind.Enemy)
     dialogSkoncen = false
     mec = false
     scene.setBackgroundColor(6)
@@ -398,22 +408,349 @@ function startNextLevel () {
         level3()
     } else if (currentLevel == 4) {
         tiles.setCurrentTilemap(tilemap`level28`)
+        level4()
     } else {
         game.over(true)
     }
 }
-scene.onOverlapTile(SpriteKind.Player, assets.tile`hlina`, function (sprite, location) {
-    if (dialogSkoncen == false) {
-        game.showLongText("ZBROJÍŘ: Počkej, počkej.", DialogLayout.Bottom)
-        game.showLongText("ZBROJÍŘ: Povídal mi o tobě král.", DialogLayout.Bottom)
-        game.showLongText("ZBROJÍŘ: Jsem místní zbrojíř a mám ti dát todle.", DialogLayout.Bottom)
-        mec = true
-        game.splash("Získal jsi meč")
-        game.splash("Stiskem A mečem sekáš")
+function level2 () {
+    sprites.destroyAllSpritesOfKind(SpriteKind.King)
+    Zbrojar = sprites.create(assets.image`Lucistnik`, SpriteKind.Zbrojir)
+    tiles.placeOnTile(Zbrojar, tiles.getTileLocation(13, 12))
+    House1 = sprites.create(img`
+        ....................e2e22e2e....................
+        .................222eee22e2e222.................
+        ..............222e22e2e22eee22e222..............
+        ...........e22e22eeee2e22e2eeee22e22e...........
+        ........eeee22e22e22e2e22e2e22e22e22eeee........
+        .....222e22e22eeee22e2e22e2e22eeee22e22e222.....
+        ...22eeee22e22e22e22eee22eee22e22e22e22eeee22...
+        4cc22e22e22eeee22e22e2e22e2e22e22eeee22e22e22cc4
+        bcbeee22e22e22e22e22e2e22e2e22e22e22e22e22eeebcb
+        4bb22e22eeee22e22eeee2e22e2eeee22e22eeee22e22bb4
+        4bb22e22e22e22eeee22e2e22e2e22eeee22e22e22e22bb4
+        4cc22eeee22e22e22e22eee22eee22e22e22e22eeee22cc4
+        bcb22e22e22eeee22e22e2e22e2e22e22eeee22e22e22bcb
+        4bbeee22e22e22e22e22e2e22e2e22e22e22e22e22eeebb4
+        4bb22e22eeee22e22e22e2e22e2e22e22e22eeee22e22bb4
+        4cc22e22e22e22e22eeee2e22e2eeee22e22e22e22e22cc4
+        bcb22eeee22e22eeee22eee22eee22eeee22e22eeee22bcb
+        4bb22e22e22eeee22e22e2e22e2e22e22eeee22e22e22bb4
+        4bbeee22e22e22e22e22e2e22e2e22e22e22e22e22eeebb4
+        4cc22e22eeee22e22e22e2e22e2e22e22e22eeee22e22cc4
+        bcb22e22e22e22e22e22eee22eee22e22e22e22e22e22bcb
+        4bb22eeee22e22e22eeeccbbbbcceee22e22e22eeee22bb4
+        4bb22e22e22e22eeeccbbbbbbbbbbcceee22e22e22e22bb4
+        4cceee22e22eeeccbbbbbccccccbbbbbcceee22e22eeecc4
+        bcb22e22eeeccbbbbbccb444444bccbbbbbcceee22e22bcb
+        4bb22e22ccbbbbbccb444444444444bccbbbbbcc22e22bb4
+        4bb22ccbbbbcccb444444444444444444bcccbbbbcc22bb4
+        4cccbbbbcccb444bccbbbbbbbbbbbbccb444bcccbbbbccc4
+        ccccccccbbbbbbbcb44444444444444bcbbbbbbbcccccccc
+        b444444444444bc444444444444444444cb444444444444b
+        bbcb444444444cb411111111111111114bc444444444bcbb
+        bbbcccccccccccd1bbbbbbbbbbbbbbbb1dcccccccccccbbb
+        bbbb444444444c11beeeeeeeeeeeeeeb11c444444444bbbb
+        bbbe2222222e4c1be4e44e44e44e44eeb1c4e2222222ebbb
+        bbbeeeeeeeee4c1be4e44e44e44e44eeb1c4eeeeeeeeebbb
+        bbbeddddddde4cbbf4e4effffffe44eebbc4edddddddebbb
+        bbbedffdffde4cbbf4effffffffff4eebbc4edffdffdebbb
+        bbbedccdccde4cbbf4effffffffffeeebbc4edccdccdebbb
+        bbbeddddddde4cbbf4eeeeeeeeeeeeeebbc4edddddddebbb
+        cbbedffdffde4cbbe4e44e44e44e44eebbc4edffdffdebbc
+        cbbedccdccde4cbbe4e44e44e44e44eebbc4edccdccdebbc
+        ccbbbbbbbbbb4cbbe4e44e44e44feeeebbc4bbbbbbbbbbcc
+        .cbb444444444cbbe4e44e44e44ffffebbc444444444bbc.
+        ..cb4eee4eee4cbbf4e44e44e44f44febbc4eee4eee4bc..
+        ...c4eee4eee4cbbf4e44e44e44effeebbc4eee4eee4c...
+        ....b44444444cbbf4e44e44e44e44eebbc44444444b....
+        .....b4eee444cbbf4e44e44e44e44eebbc444eee4b.....
+        ......bcccbbbcbbe4e44e44e44e44eebbcbbbcccb......
+        `, SpriteKind.House)
+    tiles.placeOnTile(House1, tiles.getTileLocation(11, 11))
+    Strom = sprites.create(img`
+        .............6666...............
+        ..........666667766.6666........
+        .........677777777767776........
+        ......66667775577757777666......
+        .....677666675557557776777666...
+        .....6776777775555577777766776..
+        ...66666777777775777777766666...
+        .66667767777755757555777776776..
+        6666777677775577557555777767766.
+        .6667767777777775577777777767666
+        .c6766777677777775777777677766..
+        cc77666667777777777777777666666c
+        cc76666677777777777777777766776c
+        c6666776777777777777766677666776
+        66667766667776777767767766766666
+        ccc76677677776677766767776776ccc
+        cc7766776777677677676667767766cc
+        .666c676667677766667766666666cc.
+        .ccc66676666776666677677666cccc.
+        ...ccc77c6767666676676677666ccc.
+        ...cc676c7766676677666666c666cc.
+        ....c6cc676c6677677c66c666ccc...
+        ....ccccc6c66667667cc6ccc6ccc...
+        ......ccccc66c66c66cccccccc.....
+        .......cc.cc6c6ccc6cccc.cc......
+        ...........cccccccccc...........
+        .............feeeeee............
+        ............feeeeeefe...........
+        .........eeeeefeeeffee..........
+        ............ffffeef..ee.........
+        ...............fee..............
+        ................e...............
+        `, SpriteKind.Tree)
+    tiles.placeOnTile(Strom, tiles.getTileLocation(17, 17))
+    rocks = sprites.create(assets.image`checkpoint`, SpriteKind.checkpoint)
+    tiles.placeOnTile(rocks, tiles.getTileLocation(13, 0))
+    rocks = sprites.create(assets.image`checkpoint`, SpriteKind.checkpoint)
+    tiles.placeOnTile(rocks, tiles.getTileLocation(14, 0))
+    tiles.placeOnTile(mySprite, tiles.getTileLocation(30, 22))
+}
+scene.onOverlapTile(SpriteKind.Player, assets.tile`dvere kral`, function (sprite12, location7) {
+    if (currentLevel == 1) {
+        if (dialogSkoncen == true) {
+            startNextLevel()
+        } else {
+            game.splash("Král po tobě něco chce.")
+            if (controller.A.isPressed()) {
+                mySprite.setPosition(25, 70)
+            }
+        }
+    }
+})
+controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
+    zmena_pozice_zbrane(3)
+    animation.runImageAnimation(
+    mySprite,
+    [img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . f f f f f f . . . . 
+        . . . . f f e e e e f 2 f . . . 
+        . . . f f e e e e f 2 2 2 f . . 
+        . . . f e e e f f e e e e f . . 
+        . . . f f f f e e 2 2 2 2 e f . 
+        . . . f e 2 2 2 f f f f e 2 f . 
+        . . f f f f f f f e e e f f f . 
+        . . f f e 4 4 e b f 4 4 e e f . 
+        . . f e e 4 d 4 1 f d d e f . . 
+        . . . f e e e e e d d d f . . . 
+        . . . . . f 4 d d e 4 e f . . . 
+        . . . . . f e d d e 2 2 f . . . 
+        . . . . f f f e e f 5 5 f f . . 
+        . . . . f f f f f f f f f f . . 
+        . . . . . f f . . . f f f . . . 
+        `,img`
+        . . . . . . f f f f f f . . . . 
+        . . . . f f e e e e f 2 f . . . 
+        . . . f f e e e e f 2 2 2 f . . 
+        . . . f e e e f f e e e e f . . 
+        . . . f f f f e e 2 2 2 2 e f . 
+        . . . f e 2 2 2 f f f f e 2 f . 
+        . . f f f f f f f e e e f f f . 
+        . . f f e 4 4 e b f 4 4 e e f . 
+        . . f e e 4 d 4 1 f d d e f . . 
+        . . . f e e e 4 d d d d f . . . 
+        . . . . f f e e 4 4 4 e f . . . 
+        . . . . . 4 d d e 2 2 2 f . . . 
+        . . . . . e d d e 2 2 2 f . . . 
+        . . . . . f e e f 4 5 5 f . . . 
+        . . . . . . f f f f f f . . . . 
+        . . . . . . . f f f . . . . . . 
+        `,img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . f f f f f f . . . . 
+        . . . . f f e e e e f 2 f . . . 
+        . . . f f e e e e f 2 2 2 f . . 
+        . . . f e e e f f e e e e f . . 
+        . . . f f f f e e 2 2 2 2 e f . 
+        . . . f e 2 2 2 f f f f e 2 f . 
+        . . f f f f f f f e e e f f f . 
+        . . f f e 4 4 e b f 4 4 e e f . 
+        . . f e e 4 d 4 1 f d d e f . . 
+        . . . f e e e 4 d d d d f . . . 
+        . . . . 4 d d e 4 4 4 e f . . . 
+        . . . . e d d e 2 2 2 2 f . . . 
+        . . . . f e e f 4 4 5 5 f f . . 
+        . . . . f f f f f f f f f f . . 
+        . . . . . f f . . . f f f . . . 
+        `],
+    100,
+    false
+    )
+})
+scene.onOverlapTile(SpriteKind.Player, assets.tile`koberec0`, function (sprite6, location4) {
+    if (controller.A.isPressed() && dialogSkoncen == false) {
+        game.setDialogFrame(img`
+            d d d d d d d d d d d d d d d 
+            d d d d d d d d d d d d d d d 
+            d d d d d d d d d d d d d d d 
+            d d d d d d d d d d d d d d d 
+            d d d d d d d d d d d d d d d 
+            d d d d d d d d d d d d d d d 
+            d d d d d d d d d d d d d d d 
+            d d d d d d d d d d d d d d d 
+            d d d d d d d d d d d d d d d 
+            d d d d d d d d d d d d d d d 
+            d d d d d d d d d d d d d d d 
+            d d d d d d d d d d d d d d d 
+            d d d d d d d d d d d d d d d 
+            d d d d d d d d d d d d d d d 
+            d d d d d d d d d d d d d d d 
+            `)
+        game.showLongText("KRÁL: Zdravím, jsem rád, že si přišel.", DialogLayout.Bottom)
+        game.showLongText("KRÁL: Mám pro tebe důležitý úkol.", DialogLayout.Bottom)
+        game.showLongText("KRÁL: Má dcera byla unesena a nyní je na dalekém zámku.", DialogLayout.Bottom)
+        game.showLongText("KRÁL: Onen zámek se nachází za černým lesem a řekou.", DialogLayout.Bottom)
+        game.showLongText("KRÁL: Vězní ji tam obávaný černokněžník.", DialogLayout.Bottom)
+        game.showLongText("KRÁL: Pokud ji osvobodíš, dostaneš ji za ženu", DialogLayout.Bottom)
+        game.showLongText("JÁ: Dobrá, pokusím se ji najít a přivést.", DialogLayout.Bottom)
+        game.showLongText("KRÁL: Přeji hodně štěstí a dávej na sebe pozor.", DialogLayout.Bottom)
         dialogSkoncen = true
     }
 })
-sprites.onOverlap(SpriteKind.Projectile, SpriteKind.enemyTree, function (sprite, otherSprite) {
+sprites.onOverlap(SpriteKind.Player, SpriteKind.checkpoint, function (sprite7, otherSprite3) {
+    if (currentLevel == 3 && dialogSkoncen == true) {
+        startNextLevel()
+    } else {
+        startNextLevel()
+    }
+})
+function zmena_pozice_zbrane (num: number) {
+    pozice_zbrane[0] = 0
+    pozice_zbrane[1] = 0
+    pozice_zbrane[2] = 0
+    pozice_zbrane[3] = 0
+    pozice_zbrane[num] = 1
+}
+sprites.onOverlap(SpriteKind.NPC, SpriteKind.Player, function (sprite9, otherSprite4) {
+    if (currentLevel == 3) {
+        if (afterFight == true && dialogSkoncen2 == false) {
+            pronasledovani(false, Lucistnik, mySprite)
+            game.showLongText("LUČIŠTNÍK:  Zachránil si mě", DialogLayout.Bottom)
+            game.showLongText("JÁ:  To ano, ale co můj ztupený meč?", DialogLayout.Bottom)
+            game.showLongText("LUČIŠTNÍK:  Nevadí, věnuji ti můj luk", DialogLayout.Bottom)
+            game.splash("Získal jsi luk")
+            dialogSkoncen2 = true
+        } else if (dialogSkoncen == false) {
+            pronasledovani(false, Lucistnik, mySprite)
+            game.showLongText("LUČIŠTNÍK:  Bože zachraň mne!", DialogLayout.Bottom)
+            game.showLongText("LUČIŠTNÍK:  Šel jsem lesem a napadli mě obří netopýři", DialogLayout.Bottom)
+            game.showLongText("LUČIŠTNÍK:  Vylétavají ze začarovaných stromů kolem cesty", DialogLayout.Bottom)
+            game.showLongText("LUČIŠTNÍK:  Pokus se zničit ty modré stromy, jinak zhynem!!", DialogLayout.Bottom)
+            game.showLongText("JÁ:  Co?!", DialogLayout.Bottom)
+            dialogSkoncen = true
+            dialogSkoncen2 = false
+            fightScene = true
+            mec = true
+            info.setLife(3)
+            pronasledovani(false, Lucistnik, mySprite)
+        }
+    }
+})
+scene.onOverlapTile(SpriteKind.Player, assets.tile`active2`, function (sprite8, location5) {
+    if (currentLevel == 2) {
+        if (dialogSkoncen == false) {
+            game.splash("Na něco jsem zapomněl...")
+            tiles.placeOnTile(mySprite, tiles.getTileLocation(15, 8))
+        }
+    } else if (currentLevel == 3) {
+        if (dialogSkoncen == false && fightScene == false) {
+            pronasledovani(true, Lucistnik, mySprite)
+        }
+    }
+})
+function pronasledovani (bool2: boolean, Pronasledovatel: Sprite, Obet: Sprite) {
+    if (bool2 == true) {
+        Pronasledovatel.follow(Obet, 90)
+    } else {
+        Pronasledovatel.follow(Obet, 0)
+    }
+}
+controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
+    zmena_pozice_zbrane(1)
+    animation.runImageAnimation(
+    mySprite,
+    [img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . f f f f . . . . . . 
+        . . . . f f f 2 2 f f f . . . . 
+        . . . f f f 2 2 2 2 f f f . . . 
+        . . f f f e e e e e e f f f . . 
+        . . f f e 2 2 2 2 2 2 e e f . . 
+        . f f e 2 f f f f f f 2 e f f . 
+        . f f f f f e e e e f f f f f . 
+        . . f e f b f 4 4 f b f e f . . 
+        . . f e 4 1 f d d f 1 4 e f . . 
+        . . . f e 4 d d d d 4 e f e . . 
+        . . f e f 2 2 2 2 e d d 4 e . . 
+        . . e 4 f 2 2 2 2 e d d e . . . 
+        . . . . f 4 4 5 5 f e e . . . . 
+        . . . . f f f f f f f . . . . . 
+        . . . . f f f . . . . . . . . . 
+        `,img`
+        . . . . . . f f f f . . . . . . 
+        . . . . f f f 2 2 f f f . . . . 
+        . . . f f f 2 2 2 2 f f f . . . 
+        . . f f f e e e e e e f f f . . 
+        . . f f e 2 2 2 2 2 2 e e f . . 
+        . . f e 2 f f f f f f 2 e f . . 
+        . . f f f f e e e e f f f f . . 
+        . f f e f b f 4 4 f b f e f f . 
+        . f e e 4 1 f d d f 1 4 e e f . 
+        . . f e e d d d d d d e e f . . 
+        . . . f e e 4 4 4 4 e e f . . . 
+        . . e 4 f 2 2 2 2 2 2 f 4 e . . 
+        . . 4 d f 2 2 2 2 2 2 f d 4 . . 
+        . . 4 4 f 4 4 5 5 4 4 f 4 4 . . 
+        . . . . . f f f f f f . . . . . 
+        . . . . . f f . . f f . . . . . 
+        `,img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . f f f f . . . . . . 
+        . . . . f f f 2 2 f f f . . . . 
+        . . . f f f 2 2 2 2 f f f . . . 
+        . . f f f e e e e e e f f f . . 
+        . . f e e 2 2 2 2 2 2 e f f . . 
+        . f f e 2 f f f f f f 2 e f f . 
+        . f f f f f e e e e f f f f f . 
+        . . f e f b f 4 4 f b f e f . . 
+        . . f e 4 1 f d d f 1 4 e f . . 
+        . . e f e 4 d d d d 4 e f . . . 
+        . . e 4 d d e 2 2 2 2 f e f . . 
+        . . . e d d e 2 2 2 2 f 4 e . . 
+        . . . . e e f 5 5 4 4 f . . . . 
+        . . . . . f f f f f f f . . . . 
+        . . . . . . . . . f f f . . . . 
+        `],
+    100,
+    false
+    )
+})
+info.onLifeZero(function () {
+    if (currentLevel == 3) {
+        fightScene = false
+        Lucistnik.destroy()
+        sprites.destroyAllSpritesOfKind(SpriteKind.Enemy)
+    }
+    currentLevel = currentLevel - 1
+    sprites.destroyAllSpritesOfKind(SpriteKind.Enemy)
+    startNextLevel()
+})
+function move_lock (bool3: boolean) {
+    if (bool3 == true) {
+        controller.moveSprite(mySprite, 0, 0)
+    } else {
+        controller.moveSprite(mySprite, 80, 80)
+    }
+}
+sprites.onOverlap(SpriteKind.Enemy, SpriteKind.Player, function (sprite5, otherSprite2) {
+    sprite5.destroy(effects.disintegrate, 1000)
+    info.changeLifeBy(-1)
+})
+sprites.onOverlap(SpriteKind.Projectile, SpriteKind.enemyTree, function (sprite4, otherSprite) {
     animation.runImageAnimation(
     otherSprite,
     [img`
@@ -588,330 +925,18 @@ sprites.onOverlap(SpriteKind.Projectile, SpriteKind.enemyTree, function (sprite,
     otherSprite.setKind(SpriteKind.Tree)
     tiles.setTileAt(otherSprite.tilemapLocation(), assets.tile`spawner`)
 })
-function level2 () {
-    sprites.destroyAllSpritesOfKind(SpriteKind.King)
-    Zbrojar = sprites.create(assets.image`Lucistnik`, SpriteKind.Zbrojir)
-    tiles.placeOnTile(Zbrojar, tiles.getTileLocation(13, 12))
-    House1 = sprites.create(img`
-        ....................e2e22e2e....................
-        .................222eee22e2e222.................
-        ..............222e22e2e22eee22e222..............
-        ...........e22e22eeee2e22e2eeee22e22e...........
-        ........eeee22e22e22e2e22e2e22e22e22eeee........
-        .....222e22e22eeee22e2e22e2e22eeee22e22e222.....
-        ...22eeee22e22e22e22eee22eee22e22e22e22eeee22...
-        4cc22e22e22eeee22e22e2e22e2e22e22eeee22e22e22cc4
-        bcbeee22e22e22e22e22e2e22e2e22e22e22e22e22eeebcb
-        4bb22e22eeee22e22eeee2e22e2eeee22e22eeee22e22bb4
-        4bb22e22e22e22eeee22e2e22e2e22eeee22e22e22e22bb4
-        4cc22eeee22e22e22e22eee22eee22e22e22e22eeee22cc4
-        bcb22e22e22eeee22e22e2e22e2e22e22eeee22e22e22bcb
-        4bbeee22e22e22e22e22e2e22e2e22e22e22e22e22eeebb4
-        4bb22e22eeee22e22e22e2e22e2e22e22e22eeee22e22bb4
-        4cc22e22e22e22e22eeee2e22e2eeee22e22e22e22e22cc4
-        bcb22eeee22e22eeee22eee22eee22eeee22e22eeee22bcb
-        4bb22e22e22eeee22e22e2e22e2e22e22eeee22e22e22bb4
-        4bbeee22e22e22e22e22e2e22e2e22e22e22e22e22eeebb4
-        4cc22e22eeee22e22e22e2e22e2e22e22e22eeee22e22cc4
-        bcb22e22e22e22e22e22eee22eee22e22e22e22e22e22bcb
-        4bb22eeee22e22e22eeeccbbbbcceee22e22e22eeee22bb4
-        4bb22e22e22e22eeeccbbbbbbbbbbcceee22e22e22e22bb4
-        4cceee22e22eeeccbbbbbccccccbbbbbcceee22e22eeecc4
-        bcb22e22eeeccbbbbbccb444444bccbbbbbcceee22e22bcb
-        4bb22e22ccbbbbbccb444444444444bccbbbbbcc22e22bb4
-        4bb22ccbbbbcccb444444444444444444bcccbbbbcc22bb4
-        4cccbbbbcccb444bccbbbbbbbbbbbbccb444bcccbbbbccc4
-        ccccccccbbbbbbbcb44444444444444bcbbbbbbbcccccccc
-        b444444444444bc444444444444444444cb444444444444b
-        bbcb444444444cb411111111111111114bc444444444bcbb
-        bbbcccccccccccd1bbbbbbbbbbbbbbbb1dcccccccccccbbb
-        bbbb444444444c11beeeeeeeeeeeeeeb11c444444444bbbb
-        bbbe2222222e4c1be4e44e44e44e44eeb1c4e2222222ebbb
-        bbbeeeeeeeee4c1be4e44e44e44e44eeb1c4eeeeeeeeebbb
-        bbbeddddddde4cbbf4e4effffffe44eebbc4edddddddebbb
-        bbbedffdffde4cbbf4effffffffff4eebbc4edffdffdebbb
-        bbbedccdccde4cbbf4effffffffffeeebbc4edccdccdebbb
-        bbbeddddddde4cbbf4eeeeeeeeeeeeeebbc4edddddddebbb
-        cbbedffdffde4cbbe4e44e44e44e44eebbc4edffdffdebbc
-        cbbedccdccde4cbbe4e44e44e44e44eebbc4edccdccdebbc
-        ccbbbbbbbbbb4cbbe4e44e44e44feeeebbc4bbbbbbbbbbcc
-        .cbb444444444cbbe4e44e44e44ffffebbc444444444bbc.
-        ..cb4eee4eee4cbbf4e44e44e44f44febbc4eee4eee4bc..
-        ...c4eee4eee4cbbf4e44e44e44effeebbc4eee4eee4c...
-        ....b44444444cbbf4e44e44e44e44eebbc44444444b....
-        .....b4eee444cbbf4e44e44e44e44eebbc444eee4b.....
-        ......bcccbbbcbbe4e44e44e44e44eebbcbbbcccb......
-        `, SpriteKind.House)
-    tiles.placeOnTile(House1, tiles.getTileLocation(11, 11))
-    Strom = sprites.create(img`
-        .............6666...............
-        ..........666667766.6666........
-        .........677777777767776........
-        ......66667775577757777666......
-        .....677666675557557776777666...
-        .....6776777775555577777766776..
-        ...66666777777775777777766666...
-        .66667767777755757555777776776..
-        6666777677775577557555777767766.
-        .6667767777777775577777777767666
-        .c6766777677777775777777677766..
-        cc77666667777777777777777666666c
-        cc76666677777777777777777766776c
-        c6666776777777777777766677666776
-        66667766667776777767767766766666
-        ccc76677677776677766767776776ccc
-        cc7766776777677677676667767766cc
-        .666c676667677766667766666666cc.
-        .ccc66676666776666677677666cccc.
-        ...ccc77c6767666676676677666ccc.
-        ...cc676c7766676677666666c666cc.
-        ....c6cc676c6677677c66c666ccc...
-        ....ccccc6c66667667cc6ccc6ccc...
-        ......ccccc66c66c66cccccccc.....
-        .......cc.cc6c6ccc6cccc.cc......
-        ...........cccccccccc...........
-        .............feeeeee............
-        ............feeeeeefe...........
-        .........eeeeefeeeffee..........
-        ............ffffeef..ee.........
-        ...............fee..............
-        ................e...............
-        `, SpriteKind.Tree)
-    tiles.placeOnTile(Strom, tiles.getTileLocation(17, 17))
-    rocks = sprites.create(assets.image`checkpoint`, SpriteKind.checkpoint)
-    tiles.placeOnTile(rocks, tiles.getTileLocation(13, 0))
-    rocks = sprites.create(assets.image`checkpoint`, SpriteKind.checkpoint)
-    tiles.placeOnTile(rocks, tiles.getTileLocation(14, 0))
-    tiles.placeOnTile(mySprite, tiles.getTileLocation(30, 22))
-}
-controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
-    zmena_pozice_zbrane(3)
-    animation.runImageAnimation(
-    mySprite,
-    [img`
-        . . . . . . . . . . . . . . . . 
-        . . . . . . f f f f f f . . . . 
-        . . . . f f e e e e f 2 f . . . 
-        . . . f f e e e e f 2 2 2 f . . 
-        . . . f e e e f f e e e e f . . 
-        . . . f f f f e e 2 2 2 2 e f . 
-        . . . f e 2 2 2 f f f f e 2 f . 
-        . . f f f f f f f e e e f f f . 
-        . . f f e 4 4 e b f 4 4 e e f . 
-        . . f e e 4 d 4 1 f d d e f . . 
-        . . . f e e e e e d d d f . . . 
-        . . . . . f 4 d d e 4 e f . . . 
-        . . . . . f e d d e 2 2 f . . . 
-        . . . . f f f e e f 5 5 f f . . 
-        . . . . f f f f f f f f f f . . 
-        . . . . . f f . . . f f f . . . 
-        `,img`
-        . . . . . . f f f f f f . . . . 
-        . . . . f f e e e e f 2 f . . . 
-        . . . f f e e e e f 2 2 2 f . . 
-        . . . f e e e f f e e e e f . . 
-        . . . f f f f e e 2 2 2 2 e f . 
-        . . . f e 2 2 2 f f f f e 2 f . 
-        . . f f f f f f f e e e f f f . 
-        . . f f e 4 4 e b f 4 4 e e f . 
-        . . f e e 4 d 4 1 f d d e f . . 
-        . . . f e e e 4 d d d d f . . . 
-        . . . . f f e e 4 4 4 e f . . . 
-        . . . . . 4 d d e 2 2 2 f . . . 
-        . . . . . e d d e 2 2 2 f . . . 
-        . . . . . f e e f 4 5 5 f . . . 
-        . . . . . . f f f f f f . . . . 
-        . . . . . . . f f f . . . . . . 
-        `,img`
-        . . . . . . . . . . . . . . . . 
-        . . . . . . f f f f f f . . . . 
-        . . . . f f e e e e f 2 f . . . 
-        . . . f f e e e e f 2 2 2 f . . 
-        . . . f e e e f f e e e e f . . 
-        . . . f f f f e e 2 2 2 2 e f . 
-        . . . f e 2 2 2 f f f f e 2 f . 
-        . . f f f f f f f e e e f f f . 
-        . . f f e 4 4 e b f 4 4 e e f . 
-        . . f e e 4 d 4 1 f d d e f . . 
-        . . . f e e e 4 d d d d f . . . 
-        . . . . 4 d d e 4 4 4 e f . . . 
-        . . . . e d d e 2 2 2 2 f . . . 
-        . . . . f e e f 4 4 5 5 f f . . 
-        . . . . f f f f f f f f f f . . 
-        . . . . . f f . . . f f f . . . 
-        `],
-    100,
-    false
-    )
-})
-function zmena_pozice_zbrane (num: number) {
-    pozice_zbrane[0] = 0
-    pozice_zbrane[1] = 0
-    pozice_zbrane[2] = 0
-    pozice_zbrane[3] = 0
-    pozice_zbrane[num] = 1
-}
-sprites.onOverlap(SpriteKind.Enemy, SpriteKind.Player, function (sprite, otherSprite) {
-    sprite.destroy(effects.disintegrate, 100)
-    info.changeLifeBy(-1)
-})
-scene.onOverlapTile(SpriteKind.Player, assets.tile`koberec0`, function (sprite, location) {
-    if (controller.A.isPressed() && dialogSkoncen == false) {
-        game.setDialogFrame(img`
-            d d d d d d d d d d d d d d d 
-            d d d d d d d d d d d d d d d 
-            d d d d d d d d d d d d d d d 
-            d d d d d d d d d d d d d d d 
-            d d d d d d d d d d d d d d d 
-            d d d d d d d d d d d d d d d 
-            d d d d d d d d d d d d d d d 
-            d d d d d d d d d d d d d d d 
-            d d d d d d d d d d d d d d d 
-            d d d d d d d d d d d d d d d 
-            d d d d d d d d d d d d d d d 
-            d d d d d d d d d d d d d d d 
-            d d d d d d d d d d d d d d d 
-            d d d d d d d d d d d d d d d 
-            d d d d d d d d d d d d d d d 
-            `)
-        game.showLongText("KRÁL: Zdravím, jsem rád, že si přišel.", DialogLayout.Bottom)
-        game.showLongText("KRÁL: Mám pro tebe důležitý úkol.", DialogLayout.Bottom)
-        game.showLongText("KRÁL: Má dcera byla unesena a nyní je na dalekém zámku.", DialogLayout.Bottom)
-        game.showLongText("KRÁL: Onen zámek se nachází za černým lesem a řekou.", DialogLayout.Bottom)
-        game.showLongText("KRÁL: Vězní ji tam obávaný černokněžník.", DialogLayout.Bottom)
-        game.showLongText("KRÁL: Pokud ji osvobodíš, dostaneš ji za ženu", DialogLayout.Bottom)
-        game.showLongText("JÁ: Dobrá, pokusím se ji najít a přivést.", DialogLayout.Bottom)
-        game.showLongText("KRÁL: Přeji hodně štěstí a dávej na sebe pozor.", DialogLayout.Bottom)
+scene.onOverlapTile(SpriteKind.Player, assets.tile`hlina`, function (sprite3, location3) {
+    if (dialogSkoncen == false) {
+        game.showLongText("ZBROJÍŘ: Počkej, počkej.", DialogLayout.Bottom)
+        game.showLongText("ZBROJÍŘ: Povídal mi o tobě král.", DialogLayout.Bottom)
+        game.showLongText("ZBROJÍŘ: Jsem místní zbrojíř a mám ti dát todle.", DialogLayout.Bottom)
+        mec = true
+        game.splash("Získal jsi meč")
+        game.splash("Stiskem A mečem sekáš")
         dialogSkoncen = true
     }
 })
-sprites.onOverlap(SpriteKind.Player, SpriteKind.checkpoint, function (sprite, otherSprite) {
-    if (currentLevel == 3 && dialogSkoncen == true) {
-        startNextLevel()
-    } else {
-        startNextLevel()
-    }
-})
-scene.onOverlapTile(SpriteKind.Player, assets.tile`active2`, function (sprite, location) {
-    if (currentLevel == 2) {
-        if (dialogSkoncen == false) {
-            game.splash("Na něco jsem zapomněl...")
-            tiles.placeOnTile(mySprite, tiles.getTileLocation(15, 8))
-        }
-    } else if (currentLevel == 3) {
-        if (dialogSkoncen == false && fightScene == false) {
-            pronasledovani(true, Lucistnik, mySprite)
-        }
-    }
-})
-function pronasledovani (bool: boolean, Pronasledovatel: Sprite, Obet: Sprite) {
-    if (bool == true) {
-        Pronasledovatel.follow(Obet, 90)
-    } else {
-        Pronasledovatel.follow(Obet, 0)
-    }
-}
-controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
-    zmena_pozice_zbrane(1)
-    animation.runImageAnimation(
-    mySprite,
-    [img`
-        . . . . . . . . . . . . . . . . 
-        . . . . . . f f f f . . . . . . 
-        . . . . f f f 2 2 f f f . . . . 
-        . . . f f f 2 2 2 2 f f f . . . 
-        . . f f f e e e e e e f f f . . 
-        . . f f e 2 2 2 2 2 2 e e f . . 
-        . f f e 2 f f f f f f 2 e f f . 
-        . f f f f f e e e e f f f f f . 
-        . . f e f b f 4 4 f b f e f . . 
-        . . f e 4 1 f d d f 1 4 e f . . 
-        . . . f e 4 d d d d 4 e f e . . 
-        . . f e f 2 2 2 2 e d d 4 e . . 
-        . . e 4 f 2 2 2 2 e d d e . . . 
-        . . . . f 4 4 5 5 f e e . . . . 
-        . . . . f f f f f f f . . . . . 
-        . . . . f f f . . . . . . . . . 
-        `,img`
-        . . . . . . f f f f . . . . . . 
-        . . . . f f f 2 2 f f f . . . . 
-        . . . f f f 2 2 2 2 f f f . . . 
-        . . f f f e e e e e e f f f . . 
-        . . f f e 2 2 2 2 2 2 e e f . . 
-        . . f e 2 f f f f f f 2 e f . . 
-        . . f f f f e e e e f f f f . . 
-        . f f e f b f 4 4 f b f e f f . 
-        . f e e 4 1 f d d f 1 4 e e f . 
-        . . f e e d d d d d d e e f . . 
-        . . . f e e 4 4 4 4 e e f . . . 
-        . . e 4 f 2 2 2 2 2 2 f 4 e . . 
-        . . 4 d f 2 2 2 2 2 2 f d 4 . . 
-        . . 4 4 f 4 4 5 5 4 4 f 4 4 . . 
-        . . . . . f f f f f f . . . . . 
-        . . . . . f f . . f f . . . . . 
-        `,img`
-        . . . . . . . . . . . . . . . . 
-        . . . . . . f f f f . . . . . . 
-        . . . . f f f 2 2 f f f . . . . 
-        . . . f f f 2 2 2 2 f f f . . . 
-        . . f f f e e e e e e f f f . . 
-        . . f e e 2 2 2 2 2 2 e f f . . 
-        . f f e 2 f f f f f f 2 e f f . 
-        . f f f f f e e e e f f f f f . 
-        . . f e f b f 4 4 f b f e f . . 
-        . . f e 4 1 f d d f 1 4 e f . . 
-        . . e f e 4 d d d d 4 e f . . . 
-        . . e 4 d d e 2 2 2 2 f e f . . 
-        . . . e d d e 2 2 2 2 f 4 e . . 
-        . . . . e e f 5 5 4 4 f . . . . 
-        . . . . . f f f f f f f . . . . 
-        . . . . . . . . . f f f . . . . 
-        `],
-    100,
-    false
-    )
-})
-info.onLifeZero(function () {
-    if (currentLevel == 3) {
-        fightScene = false
-        Lucistnik.destroy()
-        sprites.destroyAllSpritesOfKind(SpriteKind.Enemy)
-    }
-    currentLevel = currentLevel - 1
-    startNextLevel()
-})
-sprites.onOverlap(SpriteKind.NPC, SpriteKind.Player, function (sprite, otherSprite) {
-    if (currentLevel == 3) {
-        if (afterFight == true && dialogSkoncen2 == false) {
-            pronasledovani(false, Lucistnik, mySprite)
-            game.showLongText("LUČIŠTNÍK:  Zachránil si mě", DialogLayout.Bottom)
-            game.showLongText("JÁ:  To ano, ale co můj ztupený meč?", DialogLayout.Bottom)
-            game.showLongText("LUČIŠTNÍK:  Nevadí, věnuji ti můj luk", DialogLayout.Bottom)
-            game.splash("Získal jsi luk")
-            dialogSkoncen2 = true
-        } else if (dialogSkoncen == false) {
-            pronasledovani(false, Lucistnik, mySprite)
-            game.showLongText("LUČIŠTNÍK:  Bože zachraň mne!", DialogLayout.Bottom)
-            game.showLongText("LUČIŠTNÍK:  Šel jsem lesem a napadli mě obří netopýři", DialogLayout.Bottom)
-            game.showLongText("LUČIŠTNÍK:  Vylétavají ze začarovaných stromů!", DialogLayout.Bottom)
-            game.showLongText("JÁ:  Co?!", DialogLayout.Bottom)
-            dialogSkoncen = true
-            dialogSkoncen2 = false
-            fightScene = true
-            mec = true
-            info.setLife(3)
-            pronasledovani(false, Lucistnik, mySprite)
-        }
-    }
-})
-function move_lock (bool: boolean) {
-    if (bool == true) {
-        controller.moveSprite(mySprite, 0, 0)
-    } else {
-        controller.moveSprite(mySprite, 80, 80)
-    }
-}
-scene.onOverlapTile(SpriteKind.Player, assets.tile`active`, function (sprite, location) {
+scene.onOverlapTile(SpriteKind.Player, assets.tile`active`, function (sprite10, location6) {
     if (dialogSkoncen2 == true) {
         startNextLevel()
     } else {
@@ -919,35 +944,20 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`active`, function (sprite, lo
         tiles.placeOnTile(mySprite, tiles.getTileLocation(53, 9))
     }
 })
-sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, otherSprite) {
-    otherSprite.destroy(effects.disintegrate, 1000)
-})
-scene.onOverlapTile(SpriteKind.Player, assets.tile`dvere kral`, function (sprite, location) {
-    if (currentLevel == 1) {
-        if (dialogSkoncen == true) {
-            startNextLevel()
-        } else {
-            game.splash("Král po tobě něco chce.")
-            if (controller.A.isPressed()) {
-                mySprite.setPosition(25, 70)
-            }
-        }
-    }
-})
 let myEnemy: Sprite = null
+let fightScene = false
 let dialogSkoncen2 = false
 let afterFight = false
-let fightScene = false
 let rocks: Sprite = null
 let Strom: Sprite = null
 let House1: Sprite = null
 let Zbrojar: Sprite = null
 let StromTmavy: Sprite = null
 let Lucistnik: Sprite = null
+let dialogSkoncen = false
 let swingingSword = false
 let mec = false
 let Kral: Sprite = null
-let dialogSkoncen = false
 let sword: Sprite = null
 let currentLevel = 0
 let pozice_zbrane: number[] = []
@@ -978,7 +988,7 @@ pozice_zbrane = [
 0,
 0
 ]
-currentLevel = 2
+currentLevel = 3
 sword = sprites.create(assets.image`swordUP`, SpriteKind.Projectile)
 startNextLevel()
 game.onUpdate(function () {
@@ -1092,7 +1102,7 @@ game.onUpdateInterval(3000, function () {
             true
             )
             tiles.placeOnTile(myEnemy, tiles.getTilesByType(assets.tile`myTile9`)._pickRandom())
-            myEnemy.follow(mySprite, randint(15, 60))
+            myEnemy.follow(mySprite, randint(20, 40))
         } else {
             fightScene = false
             pronasledovani(true, Lucistnik, mySprite)
