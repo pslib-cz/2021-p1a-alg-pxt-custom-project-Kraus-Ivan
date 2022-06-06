@@ -79,6 +79,10 @@ b . . . . . . . . . . . . . . b
 . . . . . . . b b . . . . . . . 
 . . . . . . . . . . . . . . . . 
 `;
+            case "image9":
+            case "Spoustec":return img`
+6 
+`;
             case "image1":
             case "Lucistnik":return img`
 . . . . . . . . . . . . 
@@ -159,10 +163,6 @@ fff666f6688666666f666ff.
 . . . . . . . . . . . . . . . . 
 . . . . . . . . . . . . . . . . 
 . . . . . . . . . . . . . . . . 
-`;
-            case "image9":
-            case "Spoustec":return img`
-6 
 `;
             case "image3":
             case "checkpoint":return img`
