@@ -189,10 +189,10 @@ function zmena_bobra () {
     time = randint(2500, 5000)
     vertical = randint(0, 1)
     if (vertical == 0) {
-        speed = randint(200, 500)
+        speed = randint(150, 400)
         row = 0
     } else {
-        speed = randint(-200, -500)
+        speed = randint(-150, -400)
         row = 15
     }
 }
@@ -1723,6 +1723,9 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`active_black`, function (spri
         info.setLife(0)
     }
 })
+scene.onOverlapTile(SpriteKind.Player, assets.tile`transparency16`, function (sprite, location) {
+	
+})
 sprites.onOverlap(SpriteKind.Enemy, SpriteKind.Player, function (sprite5, otherSprite2) {
     sprite5.destroy(effects.disintegrate, 200)
     info.changeLifeBy(-1)
@@ -2084,6 +2087,7 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`myTile26`, function (sprite, 
             ........................
             `, SpriteKind.Enemy)
         tiles.placeOnTile(netopyr, tiles.getTilesByType(assets.tile`spawner_black`)._pickRandom())
+        netopyr.follow(mySprite, 50)
     }
 })
 let myEnemy: Sprite = null
@@ -2155,7 +2159,7 @@ false,
 false,
 false
 ]
-currentLevel = -1
+currentLevel = 4
 sword = sprites.create(assets.image`swordUP`, SpriteKind.Projectile)
 BowImage = sprites.create(assets.image`swordUP`, SpriteKind.item)
 startNextLevel()
