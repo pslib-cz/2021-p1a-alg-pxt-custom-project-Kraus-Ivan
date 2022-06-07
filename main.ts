@@ -96,16 +96,23 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`wood`, function (sprite, loca
     if (currentLevel == 4 && dialogSkoncen == false) {
         dialogSkoncen = true
         game.showLongText("Sakra, neumím plavat. Musím nějak přebrodit řeku", DialogLayout.Bottom)
-        game.showLongText("Proč tu sviští bobři?!", DialogLayout.Bottom)
+    }
+    if (currentLevel == 4 && (bobr.tileKindAt(TileDirection.Left, assets.tile`wood`) || bobr.tileKindAt(TileDirection.Right, assets.tile`wood`))) {
+        if (dialogSkoncen2 == false) {
+            game.showLongText("Proč tu sviští bobři?!", DialogLayout.Bottom)
+            dialogSkoncen2 = true
+        }
     }
 })
 function level4 () {
     info.setLife(1)
+    dialogSkoncen = false
+    dialogSkoncen2 = false
     tiles.placeOnTile(mySprite, tiles.getTileLocation(0, 7))
     luk = true
+    mec = false
+    cislo_sloupce = -1
     zmena_sloupce()
-    cislo_sloupce = 0
-    dialogSkoncen = false
 }
 controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
     if (luk == true) {
@@ -173,6 +180,16 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
         swingingBow = false
     }
 })
+function zmena_bobra () {
+    vertical = randint(0, 1)
+    if (vertical == 0) {
+        speed = randint(200, 400)
+        row = 0
+    } else {
+        speed = randint(-200, -400)
+        row = 15
+    }
+}
 function level1 () {
     Kral = sprites.create(img`
         ................
@@ -376,19 +393,11 @@ controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
     }
 })
 function zmena_sloupce () {
-    if (cislo_sloupce == 15) {
+    time = randint(2500, 5000)
+    if (cislo_sloupce == 10) {
         sprites.destroyAllSpritesOfKind(SpriteKind.bobr)
     } else {
         cislo_sloupce = cislo_sloupce + 1
-        vertical = randint(0, 1)
-        if (vertical == 0) {
-            speed = randint(150, 400)
-            row = 0
-        } else {
-            speed = randint(-150, -400)
-            row = 15
-        }
-        time = randint(2000, 5000)
     }
 }
 function level3 () {
@@ -737,6 +746,35 @@ sprites.onOverlap(SpriteKind.cursor, SpriteKind.button, function (sprite, otherS
 })
 function startNextLevel () {
     currentLevel += 1
+    if (!(currentLevel == 0)) {
+        mySprite.setImage(img`
+            . . . . . . f f f f . . . . . . 
+            . . . . f f f 2 2 f f f . . . . 
+            . . . f f f 2 2 2 2 f f f . . . 
+            . . f f f e e e e e e f f f . . 
+            . . f f e 2 2 2 2 2 2 e e f . . 
+            . . f e 2 f f f f f f 2 e f . . 
+            . . f f f f e e e e f f f f . . 
+            . f f e f b f 4 4 f b f e f f . 
+            . f e e 4 1 f d d f 1 4 e e f . 
+            . . f e e d d d d d d e e f . . 
+            . . . f e e 4 4 4 4 e e f . . . 
+            . . e 4 f 2 2 2 2 2 2 f 4 e . . 
+            . . 4 d f 2 2 2 2 2 2 f d 4 . . 
+            . . 4 4 f 4 4 5 5 4 4 f 4 4 . . 
+            . . . . . f f f f f f . . . . . 
+            . . . . . f f . . f f . . . . . 
+            `)
+        controller.moveSprite(mySprite, 80, 80)
+        sprites.destroyAllSpritesOfKind(SpriteKind.cursor)
+        sprites.destroyAllSpritesOfKind(SpriteKind.button)
+        sprites.destroyAllSpritesOfKind(SpriteKind.Zbrojir)
+        sprites.destroyAllSpritesOfKind(SpriteKind.House)
+        sprites.destroyAllSpritesOfKind(SpriteKind.Tree)
+        sprites.destroyAllSpritesOfKind(SpriteKind.checkpoint)
+        sprites.destroyAllSpritesOfKind(SpriteKind.King)
+        sprites.destroyAllSpritesOfKind(SpriteKind.NPC)
+    }
     if (currentLevel == 0) {
         scene.setBackgroundImage(img`
             6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
@@ -918,22 +956,12 @@ function startNextLevel () {
         button_2.setPosition(120, 65)
         controller.moveSprite(cursor, 80, 80)
     } else if (currentLevel == 1) {
-        sprites.destroyAllSpritesOfKind(SpriteKind.cursor)
-        sprites.destroyAllSpritesOfKind(SpriteKind.button)
         tiles.setCurrentTilemap(tilemap`level1`)
         level1()
     } else if (currentLevel == 2) {
-        sprites.destroyAllSpritesOfKind(SpriteKind.cursor)
-        sprites.destroyAllSpritesOfKind(SpriteKind.button)
         tiles.setCurrentTilemap(tilemap`level2`)
         level2()
     } else if (currentLevel == 3) {
-        sprites.destroyAllSpritesOfKind(SpriteKind.cursor)
-        sprites.destroyAllSpritesOfKind(SpriteKind.button)
-        sprites.destroyAllSpritesOfKind(SpriteKind.Zbrojir)
-        sprites.destroyAllSpritesOfKind(SpriteKind.House)
-        sprites.destroyAllSpritesOfKind(SpriteKind.Tree)
-        sprites.destroyAllSpritesOfKind(SpriteKind.checkpoint)
         tiles.setCurrentTilemap(tilemap`level0`)
         scene.setBackgroundImage(img`
             6666666666666666666666666666666666666666666666666666666
@@ -963,8 +991,6 @@ function startNextLevel () {
         }
         level3()
     } else if (currentLevel == 4) {
-        sprites.destroyAllSpritesOfKind(SpriteKind.cursor)
-        sprites.destroyAllSpritesOfKind(SpriteKind.button)
         scene.setBackgroundImage(img`
             9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999
             9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999
@@ -1092,27 +1118,6 @@ function startNextLevel () {
     } else {
         game.over(true)
     }
-    if (!(currentLevel == 0)) {
-        mySprite.setImage(img`
-            . . . . . . f f f f . . . . . . 
-            . . . . f f f 2 2 f f f . . . . 
-            . . . f f f 2 2 2 2 f f f . . . 
-            . . f f f e e e e e e f f f . . 
-            . . f f e 2 2 2 2 2 2 e e f . . 
-            . . f e 2 f f f f f f 2 e f . . 
-            . . f f f f e e e e f f f f . . 
-            . f f e f b f 4 4 f b f e f f . 
-            . f e e 4 1 f d d f 1 4 e e f . 
-            . . f e e d d d d d d e e f . . 
-            . . . f e e 4 4 4 4 e e f . . . 
-            . . e 4 f 2 2 2 2 2 2 f 4 e . . 
-            . . 4 d f 2 2 2 2 2 2 f d 4 . . 
-            . . 4 4 f 4 4 5 5 4 4 f 4 4 . . 
-            . . . . . f f f f f f . . . . . 
-            . . . . . f f . . f f . . . . . 
-            `)
-        controller.moveSprite(mySprite, 80, 80)
-    }
 }
 function level2 () {
     sprites.destroyAllSpritesOfKind(SpriteKind.King)
@@ -1223,7 +1228,7 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`dvere kral`, function (sprite
     }
 })
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.bobr, function (sprite, otherSprite) {
-    otherSprite.destroy()
+    otherSprite.destroy(effects.coolRadial, 1)
     sprite.destroy()
     tiles.setTileAt(otherSprite.tilemapLocation(), assets.tile`myTile11`)
     if (otherSprite.tileKindAt(TileDirection.Left, assets.tile`myTile11`) || otherSprite.tileKindAt(TileDirection.Left, assets.tile`wood`)) {
@@ -1342,10 +1347,10 @@ sprites.onOverlap(SpriteKind.NPC, SpriteKind.Player, function (sprite9, otherSpr
         if (afterFight == true && dialogSkoncen2 == false) {
             pronasledovani(false, Lucistnik, mySprite)
             game.showLongText("LUČIŠTNÍK:  Zachránil si mě", DialogLayout.Bottom)
-            game.showLongText("JÁ:  To ano, ale co můj ztupený meč?", DialogLayout.Bottom)
-            game.showLongText("LUČIŠTNÍK:  Nevadí, věnuji ti můj luk", DialogLayout.Bottom)
+            game.showLongText("LUČIŠTNÍK:  Za to ti věnuji můj luk", DialogLayout.Bottom)
             game.splash("Získal jsi luk")
             game.splash("Podržením B vystřelíš šíp")
+            luk = true
             dialogSkoncen2 = true
         } else if (dialogSkoncen == false) {
             pronasledovani(false, Lucistnik, mySprite)
@@ -1445,7 +1450,7 @@ controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
     }
 })
 info.onLifeZero(function () {
-    game.over(false)
+    game.splash("Zemřel jsi.")
     if (currentLevel == 3) {
         fightScene = false
         Lucistnik.destroy()
@@ -1761,14 +1766,12 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`active`, function (sprite10, 
     }
 })
 let myEnemy: Sprite = null
-let bobr: Sprite = null
 let projectile3: Sprite = null
 let projectile2: Sprite = null
 let projectile: Sprite = null
 let arrow: Sprite = null
 let cas_konec = 0
 let fightScene = false
-let dialogSkoncen2 = false
 let afterFight = false
 let rocks: Sprite = null
 let Strom: Sprite = null
@@ -1785,17 +1788,19 @@ let button_2: Sprite = null
 let button_1: Sprite = null
 let Lucistnik: Sprite = null
 let time = 0
+let naBobrovi = false
+let swingingSword = false
+let Kral: Sprite = null
 let row = 0
 let speed = 0
 let vertical = 0
-let naBobrovi = false
-let swingingSword = false
-let mec = false
-let Kral: Sprite = null
 let swingingBow = false
 let cas_zacatek = 0
 let cislo_sloupce = 0
+let mec = false
 let luk = false
+let dialogSkoncen2 = false
+let bobr: Sprite = null
 let dialogSkoncen = false
 let BowImage: Sprite = null
 let sword: Sprite = null
@@ -1865,121 +1870,131 @@ game.onUpdate(function () {
     }
 })
 game.onUpdate(function () {
-    if (tiles.tileAtLocationEquals(mySprite.tilemapLocation(), assets.tile`myTile11`) || tiles.tileAtLocationEquals(mySprite.tilemapLocation(), assets.tile`wood`)) {
-        naBobrovi = true
-    } else {
-        naBobrovi = false
+    if (currentLevel == 4) {
+        if (tiles.tileAtLocationEquals(mySprite.tilemapLocation(), assets.tile`myTile11`) || tiles.tileAtLocationEquals(mySprite.tilemapLocation(), assets.tile`wood`)) {
+            naBobrovi = true
+        } else if (tiles.tileAtLocationEquals(mySprite.tilemapLocation(), sprites.castle.tileGrass1) || tiles.tileAtLocationEquals(mySprite.tilemapLocation(), sprites.castle.tilePath4)) {
+            naBobrovi = true
+        } else {
+            naBobrovi = false
+        }
     }
 })
 game.onUpdateInterval(time, function () {
     if (currentLevel == 4) {
+        zmena_bobra()
         bobr = sprites.create(assets.image`bobr`, SpriteKind.bobr)
         tiles.placeOnTile(bobr, tiles.getTileLocation(cislo_sloupce + 10, row))
         bobr.ay = speed
         bobr.setFlag(SpriteFlag.DestroyOnWall, true)
     }
 })
+forever(function () {
+    console.log(time)
+})
 game.onUpdateInterval(3000, function () {
-    if (fightScene == true) {
-        if (tiles.getTilesByType(assets.tile`myTile9`).length > 0) {
-            myEnemy = sprites.create(img`
-                . . f f f . . . . . . . . . . . 
-                f f f c c . . . . . . . . f f f 
-                f f c c . . c c . . . f c b b c 
-                f f c 3 c c 3 c c f f b b b c . 
-                f f b 3 b c 3 b c f b b c c c . 
-                . c b b b b b b c f b c b c c . 
-                . c b b b b b b c b b c b b c . 
-                c b 1 b b b 1 b b b c c c b c . 
-                c b b b b b b b b c c c c c . . 
-                f b c b b b c b b b b f c . . . 
-                f b 1 f f f 1 b b b b f c c . . 
-                . f b b b b b b b b c f . . . . 
-                . . f b b b b b b c f . . . . . 
-                . . . f f f f f f f . . . . . . 
-                . . . . . . . . . . . . . . . . 
-                . . . . . . . . . . . . . . . . 
-                `, SpriteKind.Enemy)
-            animation.runImageAnimation(
-            myEnemy,
-            [img`
-                . . f f f . . . . . . . . f f f 
-                . f f c c . . . . . . f c b b c 
-                f f c c . . . . . . f c b b c . 
-                f c f c . . . . . . f b c c c . 
-                f f f c c . c c . f c b b c c . 
-                f f c 3 c c 3 c c f b c b b c . 
-                f f b 3 b c 3 b c f b c c b c . 
-                . c 1 b b b 1 b c b b c c c . . 
-                . c 1 b b b 1 b b c c c c . . . 
-                c b b b b b b b b b c c . . . . 
-                c b 1 f f 1 c b b b b f . . . . 
-                f f 1 f f 1 f b b b b f c . . . 
-                f f 2 2 2 2 f b b b b f c c . . 
-                . f 2 2 2 2 b b b b c f . . . . 
-                . . f b b b b b b c f . . . . . 
-                . . . f f f f f f f . . . . . . 
-                `,img`
-                . . f f f . . . . . . . . . . . 
-                f f f c c . . . . . . . . f f f 
-                f f c c c . c c . . . f c b b c 
-                f f c 3 c c 3 c c f f b b b c . 
-                f f c 3 b c 3 b c f b b c c c . 
-                f c b b b b b b c f b c b c c . 
-                c c 1 b b b 1 b c b b c b b c . 
-                c b b b b b b b b b c c c b c . 
-                c b 1 f f 1 c b b c c c c c . . 
-                c f 1 f f 1 f b b b b f c . . . 
-                f f f f f f f b b b b f c . . . 
-                f f 2 2 2 2 f b b b b f c c . . 
-                . f 2 2 2 2 2 b b b c f . . . . 
-                . . f 2 2 2 b b b c f . . . . . 
-                . . . f f f f f f f . . . . . . 
-                . . . . . . . . . . . . . . . . 
-                `,img`
-                . . . . . . . . . . . . . . . . 
-                . . . . . . . . . . . . . . . . 
-                . . . c c . c c . . . . . . . . 
-                . . f 3 c c 3 c c c . . . . . . 
-                . f c 3 b c 3 b c c c . . . . . 
-                f c b b b b b b b b f f . . . . 
-                c c 1 b b b 1 b b b f f . . . . 
-                c b b b b b b b b c f f f . . . 
-                c b 1 f f 1 c b b f f f f . . . 
-                f f 1 f f 1 f b c c b b b . . . 
-                f f f f f f f b f c c c c . . . 
-                f f 2 2 2 2 f b f b b c c c . . 
-                . f 2 2 2 2 2 b c c b b c . . . 
-                . . f 2 2 2 b f f c c b b c . . 
-                . . . f f f f f f f c c c c c . 
-                . . . . . . . . . . . . c c c c 
-                `,img`
-                . f f f . . . . . . . . f f f . 
-                f f c . . . . . . . f c b b c . 
-                f c c . . . . . . f c b b c . . 
-                c f . . . . . . . f b c c c . . 
-                c f f . . . . . f f b b c c . . 
-                f f f c c . c c f b c b b c . . 
-                f f f c c c c c f b c c b c . . 
-                . f c 3 c c 3 b c b c c c . . . 
-                . c b 3 b c 3 b b c c c c . . . 
-                c c b b b b b b b b c c . . . . 
-                c 1 1 b b b 1 1 b b b f c . . . 
-                f b b b b b b b b b b f c c . . 
-                f b c b b b c b b b b f . . . . 
-                . f 1 f f f 1 b b b c f . . . . 
-                . . f b b b b b b c f . . . . . 
-                . . . f f f f f f f . . . . . . 
-                `],
-            250,
-            true
-            )
-            tiles.placeOnTile(myEnemy, tiles.getTilesByType(assets.tile`myTile9`)._pickRandom())
-            myEnemy.follow(mySprite, randint(20, 40))
-        } else {
-            fightScene = false
-            pronasledovani(true, Lucistnik, mySprite)
-            afterFight = true
+    if (currentLevel == 3) {
+        if (fightScene == true) {
+            if (tiles.getTilesByType(assets.tile`myTile9`).length > 0) {
+                myEnemy = sprites.create(img`
+                    . . f f f . . . . . . . . . . . 
+                    f f f c c . . . . . . . . f f f 
+                    f f c c . . c c . . . f c b b c 
+                    f f c 3 c c 3 c c f f b b b c . 
+                    f f b 3 b c 3 b c f b b c c c . 
+                    . c b b b b b b c f b c b c c . 
+                    . c b b b b b b c b b c b b c . 
+                    c b 1 b b b 1 b b b c c c b c . 
+                    c b b b b b b b b c c c c c . . 
+                    f b c b b b c b b b b f c . . . 
+                    f b 1 f f f 1 b b b b f c c . . 
+                    . f b b b b b b b b c f . . . . 
+                    . . f b b b b b b c f . . . . . 
+                    . . . f f f f f f f . . . . . . 
+                    . . . . . . . . . . . . . . . . 
+                    . . . . . . . . . . . . . . . . 
+                    `, SpriteKind.Enemy)
+                animation.runImageAnimation(
+                myEnemy,
+                [img`
+                    . . f f f . . . . . . . . f f f 
+                    . f f c c . . . . . . f c b b c 
+                    f f c c . . . . . . f c b b c . 
+                    f c f c . . . . . . f b c c c . 
+                    f f f c c . c c . f c b b c c . 
+                    f f c 3 c c 3 c c f b c b b c . 
+                    f f b 3 b c 3 b c f b c c b c . 
+                    . c 1 b b b 1 b c b b c c c . . 
+                    . c 1 b b b 1 b b c c c c . . . 
+                    c b b b b b b b b b c c . . . . 
+                    c b 1 f f 1 c b b b b f . . . . 
+                    f f 1 f f 1 f b b b b f c . . . 
+                    f f 2 2 2 2 f b b b b f c c . . 
+                    . f 2 2 2 2 b b b b c f . . . . 
+                    . . f b b b b b b c f . . . . . 
+                    . . . f f f f f f f . . . . . . 
+                    `,img`
+                    . . f f f . . . . . . . . . . . 
+                    f f f c c . . . . . . . . f f f 
+                    f f c c c . c c . . . f c b b c 
+                    f f c 3 c c 3 c c f f b b b c . 
+                    f f c 3 b c 3 b c f b b c c c . 
+                    f c b b b b b b c f b c b c c . 
+                    c c 1 b b b 1 b c b b c b b c . 
+                    c b b b b b b b b b c c c b c . 
+                    c b 1 f f 1 c b b c c c c c . . 
+                    c f 1 f f 1 f b b b b f c . . . 
+                    f f f f f f f b b b b f c . . . 
+                    f f 2 2 2 2 f b b b b f c c . . 
+                    . f 2 2 2 2 2 b b b c f . . . . 
+                    . . f 2 2 2 b b b c f . . . . . 
+                    . . . f f f f f f f . . . . . . 
+                    . . . . . . . . . . . . . . . . 
+                    `,img`
+                    . . . . . . . . . . . . . . . . 
+                    . . . . . . . . . . . . . . . . 
+                    . . . c c . c c . . . . . . . . 
+                    . . f 3 c c 3 c c c . . . . . . 
+                    . f c 3 b c 3 b c c c . . . . . 
+                    f c b b b b b b b b f f . . . . 
+                    c c 1 b b b 1 b b b f f . . . . 
+                    c b b b b b b b b c f f f . . . 
+                    c b 1 f f 1 c b b f f f f . . . 
+                    f f 1 f f 1 f b c c b b b . . . 
+                    f f f f f f f b f c c c c . . . 
+                    f f 2 2 2 2 f b f b b c c c . . 
+                    . f 2 2 2 2 2 b c c b b c . . . 
+                    . . f 2 2 2 b f f c c b b c . . 
+                    . . . f f f f f f f c c c c c . 
+                    . . . . . . . . . . . . c c c c 
+                    `,img`
+                    . f f f . . . . . . . . f f f . 
+                    f f c . . . . . . . f c b b c . 
+                    f c c . . . . . . f c b b c . . 
+                    c f . . . . . . . f b c c c . . 
+                    c f f . . . . . f f b b c c . . 
+                    f f f c c . c c f b c b b c . . 
+                    f f f c c c c c f b c c b c . . 
+                    . f c 3 c c 3 b c b c c c . . . 
+                    . c b 3 b c 3 b b c c c c . . . 
+                    c c b b b b b b b b c c . . . . 
+                    c 1 1 b b b 1 1 b b b f c . . . 
+                    f b b b b b b b b b b f c c . . 
+                    f b c b b b c b b b b f . . . . 
+                    . f 1 f f f 1 b b b c f . . . . 
+                    . . f b b b b b b c f . . . . . 
+                    . . . f f f f f f f . . . . . . 
+                    `],
+                250,
+                true
+                )
+                tiles.placeOnTile(myEnemy, tiles.getTilesByType(assets.tile`myTile9`)._pickRandom())
+                myEnemy.follow(mySprite, randint(20, 40))
+            } else {
+                fightScene = false
+                pronasledovani(true, Lucistnik, mySprite)
+                afterFight = true
+            }
         }
     }
 })
