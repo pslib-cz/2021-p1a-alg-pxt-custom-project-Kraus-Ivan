@@ -21,7 +21,6 @@ namespace StrProp {
     export const Text = StrProp.create()
 }
 
-let currentLevel = -1
 let myEnemy : Sprite = null
 let button_lvl_5 : Sprite = null
 let button_lvl_4 : Sprite = null
@@ -63,7 +62,7 @@ let dialogSkoncen2 = false
 let dialogSkoncen = false
 let BowImage : Sprite = null
 let sword : Sprite = null
-currentLevel = 0
+let currentLevel = 0
 let pozice_zbrane : boolean[] = []
 let mySprite : Sprite = null
 mySprite = sprites.create(img`
@@ -92,6 +91,7 @@ sword = sprites.create(assets.image`
 BowImage = sprites.create(assets.image`
     swordUP
 `, SpriteKind.item)
+currentLevel = -1
 startNextLevel()
 // ovladani/
 controller.up.onEvent(ControllerButtonEvent.Pressed, function on_up_pressed() {
@@ -444,40 +444,40 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function on_a_pressed() {
             } else if (pozice_zbrane[2] == true) {
                 sword.setImage(img`
                     1 . . . . 1 . . . . . . . 1 . .
-                                        . . . . . . . . . . . . . . . .
-                                        . . . . . . . . . . . 1 . . . .
-                                        . . . c c c . . . . . . . . . .
-                                        . . . c d d c . . . . . . . . .
-                                        . . . c d b d c . . . . . . . .
-                                        . . . . c d b d c . . . . . . .
-                                        1 . . . . c d b d c . . . . . .
-                                        . . . . . . c d b d c . . . . .
-                                        . . . . . . . c d b d c . . . .
-                                        . . . . . . . . c d b d c . . .
-                                        . . . . . . . . . c d b d c . .
-                                        . . . 1 . . . . . . c d d c . .
-                                        . . . . . . . . . . . c c a c .
-                                        . . . . . . . . . . . . . c c c
-                                        1 . . . . . . 1 . . . . . . c c
+                    . . . . . . . . . . . . . . . .
+                    . . . . . . . . . . . 1 . . . .
+                    . . . c c c . . . . . . . . . .
+                    . . . c d d c . . . . . . . . .
+                    . . . c d b d c . . . . . . . .
+                    . . . . c d b d c . . . . . . .
+                    1 . . . . c d b d c . . . . . .
+                    . . . . . . c d b d c . . . . .
+                    . . . . . . . c d b d c . . . .
+                    . . . . . . . . c d b d c . . .
+                    . . . . . . . . . c d b d c . .
+                    . . . 1 . . . . . . c d d c . .
+                    . . . . . . . . . . . c c a c .
+                    . . . . . . . . . . . . . c c c
+                    1 . . . . . . 1 . . . . . . c c
                 `)
             } else if (pozice_zbrane[3] == true) {
                 sword.setImage(img`
-                    1 . . . . 1 . . . . . . . . . .
-                                        . . . . . . . . . . . . . . . .
-                                        . . . . . . . . . . . . 1 . . .
-                                        . . . c c c . . . . . . . . . .
-                                        . . . c d d c . . . . . . . . .
-                                        . . . c d b d c . . . . . . . .
-                                        1 . . . c d b d c . . . . . . .
-                                        . . . . . c d b d c . . . . . .
-                                        . . . . . . c d b d c . . . . 1
-                                        . . . . . . . c d b d c . . . .
-                                        . . . . . . . . c d b d c . . .
-                                        1 . . . . . . . . c d b d c . .
-                                        . . . . . . . . . . c d d c . .
-                                        . . . . . . . . . . . c c a c .
-                                        . . . . . . . . . . . . . c c c
-                                        . . . . . . . 1 . . . . . . c c
+                    . . . . . . . . . . 1 . . . . 1
+                    . . . . . . . . . . . . . . . .
+                    . . . 1 . . . . . . . . . . . .
+                    . . . . . . . . . . c c c . . .
+                    . . . . . . . . . c d d c . . .
+                    . . . . . . . . c d b d c . . .
+                    . . . . . . . c d b d c . . . 1
+                    . . . . . . c d b d c . . . . .
+                    1 . . . . c d b d c . . . . . .
+                    . . . . c d b d c . . . . . . .
+                    . . . c d b d c . . . . . . . .
+                    . . c d b d c . . . . . . . . 1
+                    . . c d d c . . . . . . . . . .
+                    . c a c c . . . . . . . . . . .
+                    c c c . . . . . . . . . . . . .
+                    c c . . . . . . 1 . . . . . . .
                 `)
             }
             

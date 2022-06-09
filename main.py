@@ -20,7 +20,6 @@ class StrProp:
     Name = StrProp.create()
     Text = StrProp.create()
 
-currentLevel = -1
 
 myEnemy: Sprite = None
 button_lvl_5: Sprite = None
@@ -97,6 +96,7 @@ sword = sprites.create(assets.image("""
 BowImage = sprites.create(assets.image("""
     swordUP
 """), SpriteKind.item)
+currentLevel = -1
 startNextLevel()
 
 
@@ -461,40 +461,40 @@ def on_a_pressed():
             elif pozice_zbrane[2] == True:
                 sword.set_image(img("""
                     1 . . . . 1 . . . . . . . 1 . .
-                                        . . . . . . . . . . . . . . . .
-                                        . . . . . . . . . . . 1 . . . .
-                                        . . . c c c . . . . . . . . . .
-                                        . . . c d d c . . . . . . . . .
-                                        . . . c d b d c . . . . . . . .
-                                        . . . . c d b d c . . . . . . .
-                                        1 . . . . c d b d c . . . . . .
-                                        . . . . . . c d b d c . . . . .
-                                        . . . . . . . c d b d c . . . .
-                                        . . . . . . . . c d b d c . . .
-                                        . . . . . . . . . c d b d c . .
-                                        . . . 1 . . . . . . c d d c . .
-                                        . . . . . . . . . . . c c a c .
-                                        . . . . . . . . . . . . . c c c
-                                        1 . . . . . . 1 . . . . . . c c
+                    . . . . . . . . . . . . . . . .
+                    . . . . . . . . . . . 1 . . . .
+                    . . . c c c . . . . . . . . . .
+                    . . . c d d c . . . . . . . . .
+                    . . . c d b d c . . . . . . . .
+                    . . . . c d b d c . . . . . . .
+                    1 . . . . c d b d c . . . . . .
+                    . . . . . . c d b d c . . . . .
+                    . . . . . . . c d b d c . . . .
+                    . . . . . . . . c d b d c . . .
+                    . . . . . . . . . c d b d c . .
+                    . . . 1 . . . . . . c d d c . .
+                    . . . . . . . . . . . c c a c .
+                    . . . . . . . . . . . . . c c c
+                    1 . . . . . . 1 . . . . . . c c
                 """))
             elif pozice_zbrane[3] == True:
                 sword.set_image(img("""
-                    1 . . . . 1 . . . . . . . . . .
-                                        . . . . . . . . . . . . . . . .
-                                        . . . . . . . . . . . . 1 . . .
-                                        . . . c c c . . . . . . . . . .
-                                        . . . c d d c . . . . . . . . .
-                                        . . . c d b d c . . . . . . . .
-                                        1 . . . c d b d c . . . . . . .
-                                        . . . . . c d b d c . . . . . .
-                                        . . . . . . c d b d c . . . . 1
-                                        . . . . . . . c d b d c . . . .
-                                        . . . . . . . . c d b d c . . .
-                                        1 . . . . . . . . c d b d c . .
-                                        . . . . . . . . . . c d d c . .
-                                        . . . . . . . . . . . c c a c .
-                                        . . . . . . . . . . . . . c c c
-                                        . . . . . . . 1 . . . . . . c c
+                    . . . . . . . . . . 1 . . . . 1
+                    . . . . . . . . . . . . . . . .
+                    . . . 1 . . . . . . . . . . . .
+                    . . . . . . . . . . c c c . . .
+                    . . . . . . . . . c d d c . . .
+                    . . . . . . . . c d b d c . . .
+                    . . . . . . . c d b d c . . . 1
+                    . . . . . . c d b d c . . . . .
+                    1 . . . . c d b d c . . . . . .
+                    . . . . c d b d c . . . . . . .
+                    . . . c d b d c . . . . . . . .
+                    . . c d b d c . . . . . . . . 1
+                    . . c d d c . . . . . . . . . .
+                    . c a c c . . . . . . . . . . .
+                    c c c . . . . . . . . . . . . .
+                    c c . . . . . . 1 . . . . . . .
                 """))
         pause(200)
         sword.set_image(img("""
