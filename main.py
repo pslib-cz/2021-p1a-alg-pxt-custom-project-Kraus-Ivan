@@ -15,6 +15,7 @@ class SpriteKind:
     cursor = SpriteKind.create()
     button = SpriteKind.create()
     Kostlivec = SpriteKind.create()
+    button_small = SpriteKind.create()
 @namespace
 class StrProp:
     Name = StrProp.create()
@@ -38,7 +39,7 @@ Strom: Sprite = None
 House1: Sprite = None
 Zbrojar: Sprite = None
 StromTmavy: Sprite = None
-cursor2: Sprite = None
+kursor: Sprite = None
 button_2: Sprite = None
 button_1: Sprite = None
 Lucistnik: Sprite = None
@@ -659,13 +660,17 @@ def on_on_update(): #pozice zbrani
             BowImage.bottom = mySprite.top
             BowImage.x = mySprite.x
 game.on_update(on_on_update)
+
+def on_on_overlap70(sprite4, otherSprite2):
+    otherSprite2.set_scale(2, ScaleAnchor.MIDDLE)
+sprites.on_overlap(SpriteKind.cursor, SpriteKind.button, on_on_overlap70)
 #ovladani\
 
 
 
 #obecne funkce/
 def startNextLevel(): #zmena levelu
-    global currentLevel, button_1, button_2, cursor2, StromTmavy
+    global currentLevel, button_1, button_2, kursor, StromTmavy
     currentLevel += 1
     if not (currentLevel == 0):
         mySprite.set_image(img("""
@@ -687,6 +692,7 @@ def startNextLevel(): #zmena levelu
                         . . . . . f f . . f f . . . . .
         """))
         controller.move_sprite(mySprite, 80, 80)
+        sprites.destroy_all_sprites_of_kind(SpriteKind.button_small)
         sprites.destroy_all_sprites_of_kind(SpriteKind.cursor)
         sprites.destroy_all_sprites_of_kind(SpriteKind.button)
         sprites.destroy_all_sprites_of_kind(SpriteKind.Zbrojir)
@@ -837,6 +843,7 @@ def startNextLevel(): #zmena levelu
                             .cccccccccccccccccccccccccccc...
             """),
             SpriteKind.button)
+        button_1.set_scale(1.75, ScaleAnchor.MIDDLE)
         button_2 = sprites.create(img("""
                 .cccccccccccccccccccccccccccc...
                             .cddbbbbbbbbbbbbbbbbbbbbbbddc...
@@ -856,7 +863,8 @@ def startNextLevel(): #zmena levelu
                             .cccccccccccccccccccccccccccc...
             """),
             SpriteKind.button)
-        cursor2 = sprites.create(img("""
+        button_2.set_scale(1.75, ScaleAnchor.MIDDLE)
+        kursor = sprites.create(img("""
                 . . . . . . . . . . . . . . . .
                             . . . . . . . . . . . . . . . .
                             . . . . . . . f . . . . . . . .
@@ -875,9 +883,10 @@ def startNextLevel(): #zmena levelu
                             . . . . . . . . . . . . . . . .
             """),
             SpriteKind.cursor)
+        kursor.set_stay_in_screen(True)
         button_1.set_position(35, 65)
         button_2.set_position(120, 65)
-        controller.move_sprite(cursor2, 80, 80)
+        controller.move_sprite(kursor, 80, 80)
     elif currentLevel == 1:
         tiles.set_current_tilemap(tilemap("""
             level1
@@ -1191,7 +1200,7 @@ def on_on_overlap7(sprite52, otherSprite22): #odecteni zivota
 sprites.on_overlap(SpriteKind.enemy, SpriteKind.player, on_on_overlap7)
 
 def on_on_overlap6(sprite4, otherSprite): #menu
-    global button_lvl_1, button_lvl_2, button_lvl_3, button_lvl_4, button_lvl_5, cursor2, currentLevel
+    global button_lvl_1, button_lvl_2, button_lvl_3, button_lvl_4, button_lvl_5, kursor, currentLevel
     if otherSprite == button_1 and controller.A.is_pressed():
         startNextLevel()
     elif otherSprite == button_2 and controller.A.is_pressed():
@@ -1337,7 +1346,7 @@ def on_on_overlap6(sprite4, otherSprite): #menu
                             .cddbbbbbbbbbbbbbbbbbbbbbbddc...
                             .cccccccccccccccccccccccccccc...
             """),
-            SpriteKind.button)
+            SpriteKind.button_small)
         button_lvl_1.set_position(35, 40)
         button_lvl_2 = sprites.create(img("""
                 .cccccccccccccccccccccccccccc...
@@ -1357,7 +1366,7 @@ def on_on_overlap6(sprite4, otherSprite): #menu
                             .cddbbbbbbbbbbbbbbbbbbbbbbddc...
                             .cccccccccccccccccccccccccccc...
             """),
-            SpriteKind.button)
+            SpriteKind.button_small)
         button_lvl_2.set_position(35, 55)
         button_lvl_3 = sprites.create(img("""
                 .cccccccccccccccccccccccccccc...
@@ -1377,7 +1386,7 @@ def on_on_overlap6(sprite4, otherSprite): #menu
                             .cddbbbbbbbbbbbbbbbbbbbbbbddc...
                             .cccccccccccccccccccccccccccc...
             """),
-            SpriteKind.button)
+            SpriteKind.button_small)
         button_lvl_3.set_position(35, 70)
         button_lvl_4 = sprites.create(img("""
                 .cccccccccccccccccccccccccccc...
@@ -1397,7 +1406,7 @@ def on_on_overlap6(sprite4, otherSprite): #menu
                             .cddbbbbbbbbbbbbbbbbbbbbbbddc...
                             .cccccccccccccccccccccccccccc...
             """),
-            SpriteKind.button)
+            SpriteKind.button_small)
         button_lvl_4.set_position(35, 85)
         button_lvl_5 = sprites.create(img("""
                 .cccccccccccccccccccccccccccc...
@@ -1417,9 +1426,9 @@ def on_on_overlap6(sprite4, otherSprite): #menu
                             .cddbbbbbbbbbbbbbbbbbbbbbbddc...
                             .cccccccccccccccccccccccccccc...
             """),
-            SpriteKind.button)
+            SpriteKind.button_small)
         button_lvl_5.set_position(35, 100)
-        cursor2 = sprites.create(img("""
+        kursor = sprites.create(img("""
                 . . . . . . . . . . . . . . . .
                             . . . . . . . . . . . . . . . .
                             . . . . . . . f . . . . . . . .
@@ -1438,8 +1447,13 @@ def on_on_overlap6(sprite4, otherSprite): #menu
                             . . . . . . . . . . . . . . . .
             """),
             SpriteKind.cursor)
-        controller.move_sprite(cursor2, 80, 80)
-    elif otherSprite == button_lvl_1 and controller.A.is_pressed():
+        kursor.set_stay_in_screen(True)
+        controller.move_sprite(kursor, 80, 80)
+sprites.on_overlap(SpriteKind.cursor, SpriteKind.button, on_on_overlap6)
+
+def on_overlap(sprite, otherSprite):
+    global currentLevel
+    if otherSprite == button_lvl_1 and controller.A.is_pressed():
         currentLevel = 0
         startNextLevel()
     elif otherSprite == button_lvl_2 and controller.A.is_pressed():
@@ -1454,7 +1468,9 @@ def on_on_overlap6(sprite4, otherSprite): #menu
     elif otherSprite == button_lvl_5 and controller.A.is_pressed():
         currentLevel = 4
         startNextLevel()
-sprites.on_overlap(SpriteKind.cursor, SpriteKind.button, on_on_overlap6)
+    else:
+        pass
+sprites.on_overlap(SpriteKind.cursor, SpriteKind.button_small, on_overlap)
 
 def on_on_overlap(sprite11, otherSprite5): #zniceni enemy
     otherSprite5.destroy(effects.disintegrate, 200)
@@ -1463,6 +1479,8 @@ sprites.on_overlap(SpriteKind.projectile, SpriteKind.enemy, on_on_overlap)
 def on_hit_wall(sprite, location): #narazeni na zed
     if currentLevel == 2:
         game.splash("Měl bych jít po cestě...")
+    if currentLevel == 4:
+        game.splash("Měl bych se vrátit...")
 scene.on_hit_wall(SpriteKind.player, on_hit_wall)
 
 def on_on_overlap3(sprite7, otherSprite3): #checkpoint
@@ -1830,6 +1848,8 @@ scene.on_overlap_tile(SpriteKind.player,
     """),
     on_overlap_tile5)
 
+
+
 def on_on_overlap4(sprite9, otherSprite4):
     global luk, dialogSkoncen2, dialogSkoncen, fightScene, mec
     if currentLevel == 3:
@@ -2029,7 +2049,7 @@ def on_on_overlap5(sprite42, otherSprite6):
                         ........feeefeef........
                         ........fefeffef........
             """)],
-        50, False)
+        100, False)
     scene.camera_shake(4, 500)
     otherSprite6.set_kind(SpriteKind.Tree)
     tiles.set_tile_at(otherSprite6.tilemap_location(),
@@ -2206,6 +2226,10 @@ def on_forever():
         bobr2.ay = speed
         bobr2.set_flag(SpriteFlag.DESTROY_ON_WALL, True)
         pause(time)
+    if currentLevel == 0 and not (kursor.overlaps_with(button_1)):
+        if not (kursor.overlaps_with(button_2)):
+            button_1.set_scale(1.75, ScaleAnchor.MIDDLE)
+            button_2.set_scale(1.75, ScaleAnchor.MIDDLE)
 forever(on_forever)
 
 def zmena_bobra():

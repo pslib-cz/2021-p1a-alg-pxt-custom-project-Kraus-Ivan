@@ -14,6 +14,7 @@ namespace SpriteKind {
     export const cursor = SpriteKind.create()
     export const button = SpriteKind.create()
     export const Kostlivec = SpriteKind.create()
+    export const button_small = SpriteKind.create()
 }
 
 namespace StrProp {
@@ -38,7 +39,7 @@ let Strom : Sprite = null
 let House1 : Sprite = null
 let Zbrojar : Sprite = null
 let StromTmavy : Sprite = null
-let cursor2 : Sprite = null
+let kursor : Sprite = null
 let button_2 : Sprite = null
 let button_1 : Sprite = null
 let Lucistnik : Sprite = null
@@ -650,6 +651,9 @@ game.onUpdate(function on_on_update() {
     }
     
 })
+sprites.onOverlap(SpriteKind.cursor, SpriteKind.button, function on_on_overlap70(sprite4: Sprite, otherSprite2: Sprite) {
+    otherSprite2.setScale(2, ScaleAnchor.Middle)
+})
 // ovladani\
 // obecne funkce/
 function startNextLevel() {
@@ -676,6 +680,7 @@ function startNextLevel() {
                         . . . . . f f . . f f . . . . .
         `)
         controller.moveSprite(mySprite, 80, 80)
+        sprites.destroyAllSpritesOfKind(SpriteKind.button_small)
         sprites.destroyAllSpritesOfKind(SpriteKind.cursor)
         sprites.destroyAllSpritesOfKind(SpriteKind.button)
         sprites.destroyAllSpritesOfKind(SpriteKind.Zbrojir)
@@ -827,6 +832,7 @@ function startNextLevel() {
                             .cddbbbbbbbbbbbbbbbbbbbbbbddc...
                             .cccccccccccccccccccccccccccc...
             `, SpriteKind.button)
+        button_1.setScale(1.75, ScaleAnchor.Middle)
         button_2 = sprites.create(img`
                 .cccccccccccccccccccccccccccc...
                             .cddbbbbbbbbbbbbbbbbbbbbbbddc...
@@ -845,7 +851,8 @@ function startNextLevel() {
                             .cddbbbbbbbbbbbbbbbbbbbbbbddc...
                             .cccccccccccccccccccccccccccc...
             `, SpriteKind.button)
-        cursor2 = sprites.create(img`
+        button_2.setScale(1.75, ScaleAnchor.Middle)
+        kursor = sprites.create(img`
                 . . . . . . . . . . . . . . . .
                             . . . . . . . . . . . . . . . .
                             . . . . . . . f . . . . . . . .
@@ -863,9 +870,10 @@ function startNextLevel() {
                             . . . . . . . . . . . . . . . .
                             . . . . . . . . . . . . . . . .
             `, SpriteKind.cursor)
+        kursor.setStayInScreen(true)
         button_1.setPosition(35, 65)
         button_2.setPosition(120, 65)
-        controller.moveSprite(cursor2, 80, 80)
+        controller.moveSprite(kursor, 80, 80)
     } else if (currentLevel == 1) {
         tiles.setCurrentTilemap(tilemap`
             level1
@@ -1333,7 +1341,7 @@ sprites.onOverlap(SpriteKind.cursor, SpriteKind.button, function on_on_overlap6(
                             .cdbbbbbbbbbbbbbbbbbbbbbbbbdc...
                             .cddbbbbbbbbbbbbbbbbbbbbbbddc...
                             .cccccccccccccccccccccccccccc...
-            `, SpriteKind.button)
+            `, SpriteKind.button_small)
         button_lvl_1.setPosition(35, 40)
         button_lvl_2 = sprites.create(img`
                 .cccccccccccccccccccccccccccc...
@@ -1352,7 +1360,7 @@ sprites.onOverlap(SpriteKind.cursor, SpriteKind.button, function on_on_overlap6(
                             .cdbbbbbbbbbbbbbbbbbbbbbbbbdc...
                             .cddbbbbbbbbbbbbbbbbbbbbbbddc...
                             .cccccccccccccccccccccccccccc...
-            `, SpriteKind.button)
+            `, SpriteKind.button_small)
         button_lvl_2.setPosition(35, 55)
         button_lvl_3 = sprites.create(img`
                 .cccccccccccccccccccccccccccc...
@@ -1371,7 +1379,7 @@ sprites.onOverlap(SpriteKind.cursor, SpriteKind.button, function on_on_overlap6(
                             .cdbbbbbbbbbbbbbbbbbbbbbbbbdc...
                             .cddbbbbbbbbbbbbbbbbbbbbbbddc...
                             .cccccccccccccccccccccccccccc...
-            `, SpriteKind.button)
+            `, SpriteKind.button_small)
         button_lvl_3.setPosition(35, 70)
         button_lvl_4 = sprites.create(img`
                 .cccccccccccccccccccccccccccc...
@@ -1390,7 +1398,7 @@ sprites.onOverlap(SpriteKind.cursor, SpriteKind.button, function on_on_overlap6(
                             .cdbbbbbbbbbbbbbbbbbbbbbbbbdc...
                             .cddbbbbbbbbbbbbbbbbbbbbbbddc...
                             .cccccccccccccccccccccccccccc...
-            `, SpriteKind.button)
+            `, SpriteKind.button_small)
         button_lvl_4.setPosition(35, 85)
         button_lvl_5 = sprites.create(img`
                 .cccccccccccccccccccccccccccc...
@@ -1409,9 +1417,9 @@ sprites.onOverlap(SpriteKind.cursor, SpriteKind.button, function on_on_overlap6(
                             .cdbbbbbbbbbbbbbbbbbbbbbbbbdc...
                             .cddbbbbbbbbbbbbbbbbbbbbbbddc...
                             .cccccccccccccccccccccccccccc...
-            `, SpriteKind.button)
+            `, SpriteKind.button_small)
         button_lvl_5.setPosition(35, 100)
-        cursor2 = sprites.create(img`
+        kursor = sprites.create(img`
                 . . . . . . . . . . . . . . . .
                             . . . . . . . . . . . . . . . .
                             . . . . . . . f . . . . . . . .
@@ -1429,8 +1437,14 @@ sprites.onOverlap(SpriteKind.cursor, SpriteKind.button, function on_on_overlap6(
                             . . . . . . . . . . . . . . . .
                             . . . . . . . . . . . . . . . .
             `, SpriteKind.cursor)
-        controller.moveSprite(cursor2, 80, 80)
-    } else if (otherSprite == button_lvl_1 && controller.A.isPressed()) {
+        kursor.setStayInScreen(true)
+        controller.moveSprite(kursor, 80, 80)
+    }
+    
+})
+sprites.onOverlap(SpriteKind.cursor, SpriteKind.button_small, function on_overlap(sprite: Sprite, otherSprite: Sprite) {
+    
+    if (otherSprite == button_lvl_1 && controller.A.isPressed()) {
         currentLevel = 0
         startNextLevel()
     } else if (otherSprite == button_lvl_2 && controller.A.isPressed()) {
@@ -1445,6 +1459,8 @@ sprites.onOverlap(SpriteKind.cursor, SpriteKind.button, function on_on_overlap6(
     } else if (otherSprite == button_lvl_5 && controller.A.isPressed()) {
         currentLevel = 4
         startNextLevel()
+    } else {
+        
     }
     
 })
@@ -1456,6 +1472,10 @@ scene.onHitWall(SpriteKind.Player, function on_hit_wall(sprite: Sprite, location
     // narazeni na zed
     if (currentLevel == 2) {
         game.splash("Měl bych jít po cestě...")
+    }
+    
+    if (currentLevel == 4) {
+        game.splash("Měl bych se vrátit...")
     }
     
 })
@@ -2011,7 +2031,7 @@ sprites.onOverlap(SpriteKind.Projectile, SpriteKind.enemyTree, function on_on_ov
                         .........feeeef.........
                         ........feeefeef........
                         ........fefeffef........
-            `], 50, false)
+            `], 100, false)
     scene.cameraShake(4, 500)
     otherSprite6.setKind(SpriteKind.Tree)
     tiles.setTileAt(otherSprite6.tilemapLocation(), assets.tile`
@@ -2183,6 +2203,14 @@ forever(function on_forever() {
         bobr2.ay = speed
         bobr2.setFlag(SpriteFlag.DestroyOnWall, true)
         pause(time)
+    }
+    
+    if (currentLevel == 0 && !kursor.overlapsWith(button_1)) {
+        if (!kursor.overlapsWith(button_2)) {
+            button_1.setScale(1.75, ScaleAnchor.Middle)
+            button_2.setScale(1.75, ScaleAnchor.Middle)
+        }
+        
     }
     
 })
