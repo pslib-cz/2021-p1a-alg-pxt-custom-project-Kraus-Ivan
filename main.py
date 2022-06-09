@@ -20,10 +20,88 @@ class StrProp:
     Name = StrProp.create()
     Text = StrProp.create()
 
-def on_on_overlap(sprite11, otherSprite5):
-    otherSprite5.destroy(effects.disintegrate, 200)
-sprites.on_overlap(SpriteKind.projectile, SpriteKind.enemy, on_on_overlap)
+currentLevel = -1
 
+myEnemy: Sprite = None
+button_lvl_5: Sprite = None
+button_lvl_4: Sprite = None
+button_lvl_3: Sprite = None
+button_lvl_2: Sprite = None
+button_lvl_1: Sprite = None
+projectile3: Sprite = None
+projectile2: Sprite = None
+projectile: Sprite = None
+arrow: Sprite = None
+cas_konec = 0
+afterFight = False
+rocks: Sprite = None
+Strom: Sprite = None
+House1: Sprite = None
+Zbrojar: Sprite = None
+StromTmavy: Sprite = None
+cursor2: Sprite = None
+button_2: Sprite = None
+button_1: Sprite = None
+Lucistnik: Sprite = None
+swingingSword = False
+netopyr: Sprite = None
+fightScene = False
+Kral: Sprite = None
+row = 0
+speed = 0
+vertical = 0
+swingingBow = False
+cas_zacatek = 0
+naBobrovi = False
+bobr2: Sprite = None
+time = 0
+spawn_bobri = False
+cislo_sloupce = 0
+mec = False
+luk = False
+dialogSkoncen2 = False
+dialogSkoncen = False
+BowImage: Sprite = None
+sword: Sprite = None
+currentLevel = 0
+pozice_zbrane: List[bool] = []
+mySprite: Sprite = None
+
+mySprite = sprites.create(img("""
+    . . . . . . . . . . . . . . . .
+    . . . . . . . . . . . . . . . .
+    . . . . . . . . . . . . . . . .
+    . . . . . . . . . . . . . . . .
+    . . . . . . . . . . . . . . . .
+    . . . . . . . . . . . . . . . .
+    . . . . . . . . . . . . . . . .
+    . . . . . . . . . . . . . . . .
+    . . . . . . . . . . . . . . . .
+    . . . . . . . . . . . . . . . .
+    . . . . . . . . . . . . . . . .
+    . . . . . . . . . . . . . . . .
+    . . . . . . . . . . . . . . . .
+    . . . . . . . . . . . . . . . .
+    . . . . . . . . . . . . . . . .
+    . . . . . . . . . . . . . . . .
+"""),
+    SpriteKind.player)
+
+scene.camera_follow_sprite(mySprite)
+pozice_zbrane = [False, False, False, False]
+
+sword = sprites.create(assets.image("""
+    swordUP
+"""), SpriteKind.projectile)
+
+BowImage = sprites.create(assets.image("""
+    swordUP
+"""), SpriteKind.item)
+startNextLevel()
+
+
+
+#ovladani/
 def on_up_pressed():
     if not (currentLevel == 0):
         zmena_pozice_zbrane(0)
@@ -81,58 +159,197 @@ def on_up_pressed():
                                 . . 4 d d e 2 2 2 2 2 f 4 . . . 
                                 . . . 4 e e f f f f f f e . . . 
                                 . . . . . . . . . f f f . . . .
+                """)], 100, False)
+controller.up.on_event(ControllerButtonEvent.PRESSED, on_up_pressed)
+
+def on_down_pressed():
+    if not (currentLevel == 0):
+        zmena_pozice_zbrane(1)
+        animation.run_image_animation(mySprite,
+            [img("""
+                    . . . . . . . . . . . . . . . .
+                                . . . . . . f f f f . . . . . .
+                                . . . . f f f 2 2 f f f . . . .
+                                . . . f f f 2 2 2 2 f f f . . .
+                                . . f f f e e e e e e f f f . .
+                                . . f f e 2 2 2 2 2 2 e e f . .
+                                . f f e 2 f f f f f f 2 e f f .
+                                . f f f f f e e e e f f f f f .
+                                . . f e f b f 4 4 f b f e f . .
+                                . . f e 4 1 f d d f 1 4 e f . .
+                                . . . f e 4 d d d d 4 e f e . .
+                                . . f e f 2 2 2 2 e d d 4 e . .
+                                . . e 4 f 2 2 2 2 e d d e . . .
+                                . . . . f 4 4 5 5 f e e . . . .
+                                . . . . f f f f f f f . . . . .
+                                . . . . f f f . . . . . . . . .
+                """),
+                img("""
+                    . . . . . . f f f f . . . . . .
+                                . . . . f f f 2 2 f f f . . . .
+                                . . . f f f 2 2 2 2 f f f . . .
+                                . . f f f e e e e e e f f f . .
+                                . . f f e 2 2 2 2 2 2 e e f . .
+                                . . f e 2 f f f f f f 2 e f . .
+                                . . f f f f e e e e f f f f . .
+                                . f f e f b f 4 4 f b f e f f .
+                                . f e e 4 1 f d d f 1 4 e e f .
+                                . . f e e d d d d d d e e f . .
+                                . . . f e e 4 4 4 4 e e f . . .
+                                . . e 4 f 2 2 2 2 2 2 f 4 e . .
+                                . . 4 d f 2 2 2 2 2 2 f d 4 . .
+                                . . 4 4 f 4 4 5 5 4 4 f 4 4 . .
+                                . . . . . f f f f f f . . . . .
+                                . . . . . f f . . f f . . . . .
+                """),
+                img("""
+                    . . . . . . . . . . . . . . . .
+                                . . . . . . f f f f . . . . . .
+                                . . . . f f f 2 2 f f f . . . .
+                                . . . f f f 2 2 2 2 f f f . . .
+                                . . f f f e e e e e e f f f . .
+                                . . f e e 2 2 2 2 2 2 e f f . .
+                                . f f e 2 f f f f f f 2 e f f .
+                                . f f f f f e e e e f f f f f .
+                                . . f e f b f 4 4 f b f e f . .
+                                . . f e 4 1 f d d f 1 4 e f . .
+                                . . e f e 4 d d d d 4 e f . . .
+                                . . e 4 d d e 2 2 2 2 f e f . .
+                                . . . e d d e 2 2 2 2 f 4 e . .
+                                . . . . e e f 5 5 4 4 f . . . .
+                                . . . . . f f f f f f f . . . .
+                                . . . . . . . . . f f f . . . .
                 """)],
             100,
             False)
-controller.up.on_event(ControllerButtonEvent.PRESSED, on_up_pressed)
+controller.down.on_event(ControllerButtonEvent.PRESSED, on_down_pressed)
 
-def on_hit_wall(sprite, location):
-    if currentLevel == 2:
-        game.splash("Měl bych jít po cestě...")
-    elif currentLevel == 3:
-        game.splash("Teď nemohu utéct...")
-    else:
-        pass
-scene.on_hit_wall(SpriteKind.player, on_hit_wall)
+def on_right_pressed():
+    if not (currentLevel == 0):
+        zmena_pozice_zbrane(3)
+        animation.run_image_animation(mySprite,
+            [img("""
+                    . . . . . . . . . . . . . . . .
+                                . . . . . . f f f f f f . . . .
+                                . . . . f f e e e e f 2 f . . .
+                                . . . f f e e e e f 2 2 2 f . .
+                                . . . f e e e f f e e e e f . .
+                                . . . f f f f e e 2 2 2 2 e f .
+                                . . . f e 2 2 2 f f f f e 2 f .
+                                . . f f f f f f f e e e f f f .
+                                . . f f e 4 4 e b f 4 4 e e f .
+                                . . f e e 4 d 4 1 f d d e f . .
+                                . . . f e e e e e d d d f . . .
+                                . . . . . f 4 d d e 4 e f . . .
+                                . . . . . f e d d e 2 2 f . . .
+                                . . . . f f f e e f 5 5 f f . .
+                                . . . . f f f f f f f f f f . .
+                                . . . . . f f . . . f f f . . .
+                """),
+                img("""
+                    . . . . . . f f f f f f . . . .
+                                . . . . f f e e e e f 2 f . . .
+                                . . . f f e e e e f 2 2 2 f . .
+                                . . . f e e e f f e e e e f . .
+                                . . . f f f f e e 2 2 2 2 e f .
+                                . . . f e 2 2 2 f f f f e 2 f .
+                                . . f f f f f f f e e e f f f .
+                                . . f f e 4 4 e b f 4 4 e e f .
+                                . . f e e 4 d 4 1 f d d e f . .
+                                . . . f e e e 4 d d d d f . . .
+                                . . . . f f e e 4 4 4 e f . . .
+                                . . . . . 4 d d e 2 2 2 f . . .
+                                . . . . . e d d e 2 2 2 f . . .
+                                . . . . . f e e f 4 5 5 f . . .
+                                . . . . . . f f f f f f . . . .
+                                . . . . . . . f f f . . . . . .
+                """),
+                img("""
+                    . . . . . . . . . . . . . . . .
+                                . . . . . . f f f f f f . . . .
+                                . . . . f f e e e e f 2 f . . .
+                                . . . f f e e e e f 2 2 2 f . .
+                                . . . f e e e f f e e e e f . .
+                                . . . f f f f e e 2 2 2 2 e f .
+                                . . . f e 2 2 2 f f f f e 2 f .
+                                . . f f f f f f f e e e f f f .
+                                . . f f e 4 4 e b f 4 4 e e f .
+                                . . f e e 4 d 4 1 f d d e f . .
+                                . . . f e e e 4 d d d d f . . .
+                                . . . . 4 d d e 4 4 4 e f . . .
+                                . . . . e d d e 2 2 2 2 f . . .
+                                . . . . f e e f 4 4 5 5 f f . .
+                                . . . . f f f f f f f f f f . .
+                                . . . . . f f . . . f f f . . .
+                """)],
+            100,
+            False)
+controller.right.on_event(ControllerButtonEvent.PRESSED, on_right_pressed)
 
-def on_overlap_tile(sprite2, location2):
-    global dialogSkoncen, spawn_bobri, dialogSkoncen2
-    if currentLevel == 4 and dialogSkoncen == False:
-        dialogSkoncen = True
-        game.show_long_text("Sakra, neumím plavat. Musím nějak přebrodit řeku",
-            DialogLayout.BOTTOM)
-        spawn_bobri = True
-        zmena_sloupce()
-    if currentLevel == 4 and (bobr2.tile_kind_at(TileDirection.LEFT, assets.tile("""
-        wood
-    """)) or bobr2.tile_kind_at(TileDirection.RIGHT, assets.tile("""
-        wood
-    """))):
-        if dialogSkoncen2 == False:
-            game.show_long_text("Proč tu sviští bobři?!", DialogLayout.BOTTOM)
-            dialogSkoncen2 = True
-scene.on_overlap_tile(SpriteKind.player,
-    assets.tile("""
-        wood
-    """),
-    on_overlap_tile)
+def on_left_pressed():
+    if not (currentLevel == 0):
+        zmena_pozice_zbrane(2)
+        animation.run_image_animation(mySprite,
+            [img("""
+                    . . . . . . . . . . . . . . . .
+                                . . . . f f f f f f . . . . . .
+                                . . . f 2 f e e e e f f . . . .
+                                . . f 2 2 2 f e e e e f f . . .
+                                . . f e e e e f f e e e f . . .
+                                . f e 2 2 2 2 e e f f f f . . .
+                                . f 2 e f f f f 2 2 2 e f . . .
+                                . f f f e e e f f f f f f f . .
+                                . f e e 4 4 f b e 4 4 e f f . .
+                                . . f e d d f 1 4 d 4 e e f . .
+                                . . . f d d d e e e e e f . . .
+                                . . . f e 4 e d d 4 f . . . . .
+                                . . . f 2 2 e d d e f . . . . .
+                                . . f f 5 5 f e e f f f . . . .
+                                . . f f f f f f f f f f . . . .
+                                . . . f f f . . . f f . . . . .
+                """),
+                img("""
+                    . . . . f f f f f f . . . . . .
+                                . . . f 2 f e e e e f f . . . .
+                                . . f 2 2 2 f e e e e f f . . .
+                                . . f e e e e f f e e e f . . .
+                                . f e 2 2 2 2 e e f f f f . . .
+                                . f 2 e f f f f 2 2 2 e f . . .
+                                . f f f e e e f f f f f f f . .
+                                . f e e 4 4 f b e 4 4 e f f . .
+                                . . f e d d f 1 4 d 4 e e f . .
+                                . . . f d d d d 4 e e e f . . .
+                                . . . f e 4 4 4 e e f f . . . .
+                                . . . f 2 2 2 e d d 4 . . . . .
+                                . . . f 2 2 2 e d d e . . . . .
+                                . . . f 5 5 4 f e e f . . . . .
+                                . . . . f f f f f f . . . . . .
+                                . . . . . . f f f . . . . . . .
+                """),
+                img("""
+                    . . . . . . . . . . . . . . . .
+                                . . . . f f f f f f . . . . . .
+                                . . . f 2 f e e e e f f . . . .
+                                . . f 2 2 2 f e e e e f f . . .
+                                . . f e e e e f f e e e f . . .
+                                . f e 2 2 2 2 e e f f f f . . .
+                                . f 2 e f f f f 2 2 2 e f . . .
+                                . f f f e e e f f f f f f f . .
+                                . f e e 4 4 f b e 4 4 e f f . .
+                                . . f e d d f 1 4 d 4 e e f . .
+                                . . . f d d d d 4 e e e f . . .
+                                . . . f e 4 4 4 e d d 4 . . . .
+                                . . . f 2 2 2 2 e d d e . . . .
+                                . . f f 5 5 4 4 f e e f . . . .
+                                . . f f f f f f f f f f . . . .
+                                . . . f f f . . . f f . . . . .
+                """)],
+            100,
+            False)
+controller.left.on_event(ControllerButtonEvent.PRESSED, on_left_pressed)
 
-def level4():
-    global dialogSkoncen, dialogSkoncen2, luk, mec, cislo_sloupce, spawn_bobri, time, bobr2
-    info.set_life(3)
-    dialogSkoncen = False
-    dialogSkoncen2 = False
-    tiles.place_on_tile(mySprite, tiles.get_tile_location(0, 7))
-    luk = True
-    mec = False
-    cislo_sloupce = -1
-    spawn_bobri = False
-    time = 3000
-    bobr2 = sprites.create(assets.image("""
-        bobr
-    """), SpriteKind.bobr)
 
-def on_b_pressed():
+def on_b_pressed(): #mereni casu natazeni luku
     global cas_zacatek, swingingBow
     if luk == True:
         cas_zacatek = game.runtime()
@@ -144,101 +361,60 @@ def on_b_pressed():
                 """))
             elif pozice_zbrane[1] == True:
                 BowImage.set_image(img("""
-                    e . . . . . . . . . . . . . e 
-                                        e 1 1 1 1 1 1 1 1 1 1 1 1 1 e 
-                                        . e . . . . . . . . . . . e . 
-                                        . . e . . . . . . . . . e . . 
-                                        . . . e . . . . . . . e . . . 
-                                        . . . . e . . . . . e . . . . 
-                                        . . . . . e . . . e . . . . . 
-                                        . . . . . . e e e . . . . . . 
-                                        . . . . . . . . . . . . . . . 
-                                        . . . . . . . . . . . . . . . 
-                                        . . . . . . . . . . . . . . . 
-                                        . . . . . . . . . . . . . . . 
-                                        . . . . . . . . . . . . . . . 
-                                        . . . . . . . . . . . . . . . 
+                    e . . . . . . . . . . . . . e
+                                        e 1 1 1 1 1 1 1 1 1 1 1 1 1 e
+                                        . e . . . . . . . . . . . e .
+                                        . . e . . . . . . . . . e . .
+                                        . . . e . . . . . . . e . . .
+                                        . . . . e . . . . . e . . . .
+                                        . . . . . e . . . e . . . . .
+                                        . . . . . . e e e . . . . . .
+                                        . . . . . . . . . . . . . . .
+                                        . . . . . . . . . . . . . . .
+                                        . . . . . . . . . . . . . . .
+                                        . . . . . . . . . . . . . . .
+                                        . . . . . . . . . . . . . . .
+                                        . . . . . . . . . . . . . . .
                                         . . . . . . . . . . . . . . .
                 """))
             elif pozice_zbrane[2] == True:
                 BowImage.set_image(img("""
-                    . . . . . . . . . . . . . e e 
-                                        . . . . . . . . . . . . e 1 . 
-                                        . . . . . . . . . . . e . 1 . 
-                                        . . . . . . . . . . e . . 1 . 
-                                        . . . . . . . . . e . . . 1 . 
-                                        . . . . . . . . e . . . . 1 . 
-                                        . . . . . . . e . . . . . 1 . 
-                                        . . . . . . . e . . . . . 1 . 
-                                        . . . . . . . e . . . . . 1 . 
-                                        . . . . . . . . e . . . . 1 . 
-                                        . . . . . . . . . e . . . 1 . 
-                                        . . . . . . . . . . e . . 1 . 
-                                        . . . . . . . . . . . e . 1 . 
-                                        . . . . . . . . . . . . e 1 . 
+                    . . . . . . . . . . . . . e e
+                                        . . . . . . . . . . . . e 1 .
+                                        . . . . . . . . . . . e . 1 .
+                                        . . . . . . . . . . e . . 1 .
+                                        . . . . . . . . . e . . . 1 .
+                                        . . . . . . . . e . . . . 1 .
+                                        . . . . . . . e . . . . . 1 .
+                                        . . . . . . . e . . . . . 1 .
+                                        . . . . . . . e . . . . . 1 .
+                                        . . . . . . . . e . . . . 1 .
+                                        . . . . . . . . . e . . . 1 .
+                                        . . . . . . . . . . e . . 1 .
+                                        . . . . . . . . . . . e . 1 .
+                                        . . . . . . . . . . . . e 1 .
                                         . . . . . . . . . . . . . e e
                 """))
             elif pozice_zbrane[3] == True:
                 BowImage.set_image(img("""
-                    e e . . . . . . . . . . . . . 
-                                        . 1 e . . . . . . . . . . . . 
-                                        . 1 . e . . . . . . . . . . . 
-                                        . 1 . . e . . . . . . . . . . 
-                                        . 1 . . . e . . . . . . . . . 
-                                        . 1 . . . . e . . . . . . . . 
-                                        . 1 . . . . . e . . . . . . . 
-                                        . 1 . . . . . e . . . . . . . 
-                                        . 1 . . . . . e . . . . . . . 
-                                        . 1 . . . . e . . . . . . . . 
-                                        . 1 . . . e . . . . . . . . . 
-                                        . 1 . . e . . . . . . . . . . 
-                                        . 1 . e . . . . . . . . . . . 
-                                        . 1 e . . . . . . . . . . . . 
+                    e e . . . . . . . . . . . . .
+                                        . 1 e . . . . . . . . . . . .
+                                        . 1 . e . . . . . . . . . . .
+                                        . 1 . . e . . . . . . . . . .
+                                        . 1 . . . e . . . . . . . . .
+                                        . 1 . . . . e . . . . . . . .
+                                        . 1 . . . . . e . . . . . . .
+                                        . 1 . . . . . e . . . . . . .
+                                        . 1 . . . . . e . . . . . . .
+                                        . 1 . . . . e . . . . . . . .
+                                        . 1 . . . e . . . . . . . . .
+                                        . 1 . . e . . . . . . . . . .
+                                        . 1 . e . . . . . . . . . . .
+                                        . 1 e . . . . . . . . . . . .
                                         e e . . . . . . . . . . . . .
                 """))
         swingingBow = False
 controller.B.on_event(ControllerButtonEvent.PRESSED, on_b_pressed)
-
-def zmena_bobra():
-    global time, vertical, speed, row
-    time = randint(2500, 5000)
-    vertical = randint(0, 1)
-    if vertical == 0:
-        speed = randint(150, 400)
-        row = 0
-    else:
-        speed = randint(-150, -400)
-        row = 15
-def level1():
-    global Kral
-    Kral = sprites.create(img("""
-            ................
-                    ................
-                    ................
-                    ................
-                    ................
-                    ...5.5.555.5.5..
-                    ...5f5f555f5f5..
-                    ...55555555555..
-                    ....55555555ff..
-                    ....fdddfbddff..
-                    ....fdbbf1bfff..
-                    ....1bbbbddff...
-                    ....111111bdf...
-                    ....111111bd....
-                    ....11111ddf....
-                    .....111fff.....
-                    .....8ffff8.....
-                    .....666666.....
-                    ................
-                    ................
-        """),
-        SpriteKind.King)
-    tiles.place_on_random_tile(Kral, assets.tile("""
-        myTile0
-    """))
-    game.splash("Přišel jsi za králem pro jeho nabídku.")
-    game.splash("Stiskem A s ním promluvíš.")
 
 def on_a_pressed():
     global swingingSword
@@ -247,569 +423,267 @@ def on_a_pressed():
             swingingSword = True
             if pozice_zbrane[0] == True:
                 sword.set_image(img("""
-                    . . . . 1 . . . . . 1 . . . . 
-                                        . . . . . . . . . . . . . . . 
-                                        . . . . . . . . . . . . . . . 
-                                        . . . c c c . . . . 1 . . . . 
-                                        . . . c d d c . . . . . . . . 
-                                        1 . . c d b d c . . . . . . . 
-                                        . . . . c d b d c . . . . . . 
-                                        . . . . . c d b d c . . . . . 
-                                        . . . . . . c d b d c . . . . 
-                                        . . . . . . . c d b d c . . . 
-                                        1 . . . 1 . . . c d b d c . . 
-                                        . . . . . . . . . c d d c . . 
-                                        . . . . . . . . . . c c a c . 
-                                        . . . . . . . . . . . . c c c 
+                    . . . . 1 . . . . . 1 . . . .
+                                        . . . . . . . . . . . . . . .
+                                        . . . . . . . . . . . . . . .
+                                        . . . c c c . . . . 1 . . . .
+                                        . . . c d d c . . . . . . . .
+                                        1 . . c d b d c . . . . . . .
+                                        . . . . c d b d c . . . . . .
+                                        . . . . . c d b d c . . . . .
+                                        . . . . . . c d b d c . . . .
+                                        . . . . . . . c d b d c . . .
+                                        1 . . . 1 . . . c d b d c . .
+                                        . . . . . . . . . c d d c . .
+                                        . . . . . . . . . . c c a c .
+                                        . . . . . . . . . . . . c c c
                                         . . . . . . . 1 . . . . . c c
                 """))
             elif pozice_zbrane[1] == True:
                 sword.set_image(img("""
-                    c c . . . . . 1 . . . . . . . 1 
-                                        c c c . . . . . . . . . . . . . 
-                                        . c a c c . . . . . . . . . . . 
-                                        . . c d d c . . . . . . . . . . 
-                                        . . c d b d c . . . . . . . . 1 
-                                        . . . c d b d c . . . . . . . . 
-                                        1 . . . c d b d c . . . . . . . 
-                                        . . . . . c d b d c . . . . . 1 
-                                        . . . . . . c d b d c . . . . . 
-                                        . . . . . . . c d b d c . . . . 
-                                        . . . . . . . . c d b d c . . . 
-                                        . . . 1 . . . . . c d d c . . . 
-                                        . . . . . . . . . . c c c . . . 
-                                        . . . . . . . . . . . . . . . . 
-                                        . . . . . . . . . . . . . . . . 
+                    c c . . . . . 1 . . . . . . . 1
+                                        c c c . . . . . . . . . . . . .
+                                        . c a c c . . . . . . . . . . .
+                                        . . c d d c . . . . . . . . . .
+                                        . . c d b d c . . . . . . . . 1
+                                        . . . c d b d c . . . . . . . .
+                                        1 . . . c d b d c . . . . . . .
+                                        . . . . . c d b d c . . . . . 1
+                                        . . . . . . c d b d c . . . . .
+                                        . . . . . . . c d b d c . . . .
+                                        . . . . . . . . c d b d c . . .
+                                        . . . 1 . . . . . c d d c . . .
+                                        . . . . . . . . . . c c c . . .
+                                        . . . . . . . . . . . . . . . .
+                                        . . . . . . . . . . . . . . . .
                                         . . . . . . . . 1 . . . . . . 1
                 """))
             elif pozice_zbrane[2] == True:
                 sword.set_image(img("""
-                    1 . . . . 1 . . . . . . . 1 . . 
-                                        . . . . . . . . . . . . . . . . 
-                                        . . . . . . . . . . . 1 . . . . 
-                                        . . . c c c . . . . . . . . . . 
-                                        . . . c d d c . . . . . . . . . 
-                                        . . . c d b d c . . . . . . . . 
-                                        . . . . c d b d c . . . . . . . 
-                                        1 . . . . c d b d c . . . . . . 
-                                        . . . . . . c d b d c . . . . . 
-                                        . . . . . . . c d b d c . . . . 
-                                        . . . . . . . . c d b d c . . . 
-                                        . . . . . . . . . c d b d c . . 
-                                        . . . 1 . . . . . . c d d c . . 
-                                        . . . . . . . . . . . c c a c . 
-                                        . . . . . . . . . . . . . c c c 
+                    1 . . . . 1 . . . . . . . 1 . .
+                                        . . . . . . . . . . . . . . . .
+                                        . . . . . . . . . . . 1 . . . .
+                                        . . . c c c . . . . . . . . . .
+                                        . . . c d d c . . . . . . . . .
+                                        . . . c d b d c . . . . . . . .
+                                        . . . . c d b d c . . . . . . .
+                                        1 . . . . c d b d c . . . . . .
+                                        . . . . . . c d b d c . . . . .
+                                        . . . . . . . c d b d c . . . .
+                                        . . . . . . . . c d b d c . . .
+                                        . . . . . . . . . c d b d c . .
+                                        . . . 1 . . . . . . c d d c . .
+                                        . . . . . . . . . . . c c a c .
+                                        . . . . . . . . . . . . . c c c
                                         1 . . . . . . 1 . . . . . . c c
                 """))
             elif pozice_zbrane[3] == True:
                 sword.set_image(img("""
-                    1 . . . . 1 . . . . . . . . . . 
-                                        . . . . . . . . . . . . . . . . 
-                                        . . . . . . . . . . . . 1 . . . 
-                                        . . . c c c . . . . . . . . . . 
-                                        . . . c d d c . . . . . . . . . 
-                                        . . . c d b d c . . . . . . . . 
-                                        1 . . . c d b d c . . . . . . . 
-                                        . . . . . c d b d c . . . . . . 
-                                        . . . . . . c d b d c . . . . 1 
-                                        . . . . . . . c d b d c . . . . 
-                                        . . . . . . . . c d b d c . . . 
-                                        1 . . . . . . . . c d b d c . . 
-                                        . . . . . . . . . . c d d c . . 
-                                        . . . . . . . . . . . c c a c . 
-                                        . . . . . . . . . . . . . c c c 
+                    1 . . . . 1 . . . . . . . . . .
+                                        . . . . . . . . . . . . . . . .
+                                        . . . . . . . . . . . . 1 . . .
+                                        . . . c c c . . . . . . . . . .
+                                        . . . c d d c . . . . . . . . .
+                                        . . . c d b d c . . . . . . . .
+                                        1 . . . c d b d c . . . . . . .
+                                        . . . . . c d b d c . . . . . .
+                                        . . . . . . c d b d c . . . . 1
+                                        . . . . . . . c d b d c . . . .
+                                        . . . . . . . . c d b d c . . .
+                                        1 . . . . . . . . c d b d c . .
+                                        . . . . . . . . . . c d d c . .
+                                        . . . . . . . . . . . c c a c .
+                                        . . . . . . . . . . . . . c c c
                                         . . . . . . . 1 . . . . . . c c
                 """))
         pause(200)
         sword.set_image(img("""
-            . . . . . . . . . . . . . . . . 
-                        . . . . . . . . . . . . . . . . 
-                        . . . . . . . . . . . . . . . . 
-                        . . . . . . . . . . . . . . . . 
-                        . . . . . . . . . . . . . . . . 
-                        . . . . . . . . . . . . . . . . 
-                        . . . . . . . . . . . . . . . . 
-                        . . . . . . . . . . . . . . . . 
-                        . . . . . . . . . . . . . . . . 
-                        . . . . . . . . . . . . . . . . 
-                        . . . . . . . . . . . . . . . . 
-                        . . . . . . . . . . . . . . . . 
-                        . . . . . . . . . . . . . . . . 
-                        . . . . . . . . . . . . . . . . 
-                        . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . .
+                        . . . . . . . . . . . . . . . .
+                        . . . . . . . . . . . . . . . .
+                        . . . . . . . . . . . . . . . .
+                        . . . . . . . . . . . . . . . .
+                        . . . . . . . . . . . . . . . .
+                        . . . . . . . . . . . . . . . .
+                        . . . . . . . . . . . . . . . .
+                        . . . . . . . . . . . . . . . .
+                        . . . . . . . . . . . . . . . .
+                        . . . . . . . . . . . . . . . .
+                        . . . . . . . . . . . . . . . .
+                        . . . . . . . . . . . . . . . .
+                        . . . . . . . . . . . . . . . .
+                        . . . . . . . . . . . . . . . .
                         . . . . . . . . . . . . . . . .
         """))
         swingingSword = False
 controller.A.on_event(ControllerButtonEvent.PRESSED, on_a_pressed)
 
-def level5():
-    global dialogSkoncen, dialogSkoncen2, fightScene
-    dialogSkoncen = False
-    dialogSkoncen2 = False
-    tiles.place_on_tile(mySprite, tiles.get_tile_location(0, 7))
-    fightScene = False
-
-def on_overlap_tile2(sprite22, location22):
-    global dialogSkoncen
-    if currentLevel == 2:
-        dialogSkoncen = False
-scene.on_overlap_tile(SpriteKind.player,
-    assets.tile("""
-        wood
-    """),
-    on_overlap_tile2)
-
-def on_overlap_tile3(sprite3, location3):
-    if naBobrovi == False:
-        game.splash("Utopil jsi se.")
-        info.set_life(0)
-scene.on_overlap_tile(SpriteKind.player,
-    assets.tile("""
-        myTile12
-    """),
-    on_overlap_tile3)
-
-def on_left_pressed():
-    if not (currentLevel == 0):
-        zmena_pozice_zbrane(2)
-        animation.run_image_animation(mySprite,
-            [img("""
-                    . . . . . . . . . . . . . . . . 
-                                . . . . f f f f f f . . . . . . 
-                                . . . f 2 f e e e e f f . . . . 
-                                . . f 2 2 2 f e e e e f f . . . 
-                                . . f e e e e f f e e e f . . . 
-                                . f e 2 2 2 2 e e f f f f . . . 
-                                . f 2 e f f f f 2 2 2 e f . . . 
-                                . f f f e e e f f f f f f f . . 
-                                . f e e 4 4 f b e 4 4 e f f . . 
-                                . . f e d d f 1 4 d 4 e e f . . 
-                                . . . f d d d e e e e e f . . . 
-                                . . . f e 4 e d d 4 f . . . . . 
-                                . . . f 2 2 e d d e f . . . . . 
-                                . . f f 5 5 f e e f f f . . . . 
-                                . . f f f f f f f f f f . . . . 
-                                . . . f f f . . . f f . . . . .
-                """),
-                img("""
-                    . . . . f f f f f f . . . . . . 
-                                . . . f 2 f e e e e f f . . . . 
-                                . . f 2 2 2 f e e e e f f . . . 
-                                . . f e e e e f f e e e f . . . 
-                                . f e 2 2 2 2 e e f f f f . . . 
-                                . f 2 e f f f f 2 2 2 e f . . . 
-                                . f f f e e e f f f f f f f . . 
-                                . f e e 4 4 f b e 4 4 e f f . . 
-                                . . f e d d f 1 4 d 4 e e f . . 
-                                . . . f d d d d 4 e e e f . . . 
-                                . . . f e 4 4 4 e e f f . . . . 
-                                . . . f 2 2 2 e d d 4 . . . . . 
-                                . . . f 2 2 2 e d d e . . . . . 
-                                . . . f 5 5 4 f e e f . . . . . 
-                                . . . . f f f f f f . . . . . . 
-                                . . . . . . f f f . . . . . . .
-                """),
-                img("""
-                    . . . . . . . . . . . . . . . . 
-                                . . . . f f f f f f . . . . . . 
-                                . . . f 2 f e e e e f f . . . . 
-                                . . f 2 2 2 f e e e e f f . . . 
-                                . . f e e e e f f e e e f . . . 
-                                . f e 2 2 2 2 e e f f f f . . . 
-                                . f 2 e f f f f 2 2 2 e f . . . 
-                                . f f f e e e f f f f f f f . . 
-                                . f e e 4 4 f b e 4 4 e f f . . 
-                                . . f e d d f 1 4 d 4 e e f . . 
-                                . . . f d d d d 4 e e e f . . . 
-                                . . . f e 4 4 4 e d d 4 . . . . 
-                                . . . f 2 2 2 2 e d d e . . . . 
-                                . . f f 5 5 4 4 f e e f . . . . 
-                                . . f f f f f f f f f f . . . . 
-                                . . . f f f . . . f f . . . . .
-                """)],
-            100,
-            False)
-controller.left.on_event(ControllerButtonEvent.PRESSED, on_left_pressed)
-
-def zmena_sloupce():
-    global cislo_sloupce
-    if cislo_sloupce == 10:
-        sprites.destroy_all_sprites_of_kind(SpriteKind.bobr)
-    else:
-        cislo_sloupce = cislo_sloupce + 1
-def level3():
-    global dialogSkoncen, mec, Lucistnik
-    sprites.destroy_all_sprites_of_kind(SpriteKind.enemy)
-    dialogSkoncen = False
-    mec = False
-    scene.set_background_color(6)
-    Lucistnik = sprites.create(img("""
-            . . . . f f f f . . . . . 
-                    . . f f f f f f f f . . . 
-                    . f f f f f f c f f f . . 
-                    f f f f f f c c f f f c . 
-                    f f f c f f f f f f f c . 
-                    c c c f f f e e f f c c . 
-                    f f f f f e e f f c c f . 
-                    f f f b f e e f b f f f . 
-                    . f 4 1 f 4 4 f 1 4 f . . 
-                    . f e 4 4 4 4 4 4 e f . . 
-                    . f f f e e e e f f f . . 
-                    f e f b 7 7 7 7 b f e f . 
-                    e 4 f 7 7 7 7 7 7 f 4 e . 
-                    e e f 6 6 6 6 6 6 f e e . 
-                    . . . f f f f f f . . . . 
-                    . . . f f . . f f . . . .
-        """),
-        SpriteKind.NPC)
-    animation.run_image_animation(Lucistnik,
-        [img("""
-                . . . . . f f f f f . . . 
-                        . . . f f f f f f f f f . 
-                        . . f f f c f f f f f f . 
-                        . . f f c f f f c f f f f 
-                        f f c c f f f c c f f c f 
-                        f f f f f e f f f f c c f 
-                        . f f f e e f f f f f f f 
-                        . . f f e e f b f e e f f 
-                        . . . f 4 4 f 1 e 4 e f . 
-                        . . . f 4 4 4 4 e f f f . 
-                        . . . f f e e e e e f . . 
-                        . . . f 7 7 7 e 4 4 e . . 
-                        . . . f 7 7 7 e 4 4 e . . 
-                        . . . f 6 6 6 f e e f . . 
-                        . . . . f f f f f f . . . 
-                        . . . . . . f f f . . . .
-            """),
-            img("""
-                . . . . . . . . . . . . . 
-                        . . . . f f f f f f . . . 
-                        . . . f f f f f f f f f . 
-                        . . f f f c f f f f f f . 
-                        . f f f c f f f c f f f f 
-                        f f c c f f f c c f f c f 
-                        f f f f f e f f f f c c f 
-                        . f f f e e f f f f f f f 
-                        . . f f e e f b f e e f f 
-                        . . f f 4 4 f 1 e 4 e f . 
-                        . . . f 4 4 4 e e f f f . 
-                        . . . f f e e 4 4 e f . . 
-                        . . . f 7 7 e 4 4 e f . . 
-                        . . f f 6 6 f e e f f f . 
-                        . . f f f f f f f f f f . 
-                        . . . f f f . . . f f . .
-            """),
-            img("""
-                . . . . . . . . . . . . . 
-                        . . . . f f f f f f . . . 
-                        . . . f f f f f f f f f . 
-                        . . f f f c f f f f f f . 
-                        . f f f c f f f c f f f f 
-                        f f c c f f f c c f f c f 
-                        f f f f f e f f f f c c f 
-                        . f f f e e f f f f f f f 
-                        . f f f e e f b f e e f f 
-                        . . f f 4 4 f 1 e 4 e f f 
-                        . . . f 4 4 4 4 e f f f . 
-                        . . . f f e e e e 4 4 4 . 
-                        . . . f 7 7 7 7 e 4 4 e . 
-                        . . f f 6 6 6 6 f e e f . 
-                        . . f f f f f f f f f f . 
-                        . . . f f f . . . f f . .
-            """)],
-        100,
-        False)
-    tiles.place_on_tile(Lucistnik, tiles.get_tile_location(18, 10))
-    tiles.place_on_tile(mySprite, tiles.get_tile_location(0, 7))
-
-def on_on_overlap2(sprite4, otherSprite):
-    global button_lvl_1, button_lvl_2, button_lvl_3, button_lvl_4, button_lvl_5, cursor2, currentLevel
-    if otherSprite == button_1 and controller.A.is_pressed():
-        startNextLevel()
-    elif otherSprite == button_2 and controller.A.is_pressed():
-        scene.set_background_image(img("""
-            6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        66666666666666666666666666666666fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff666666666666666666666666666666666666666
-                        66666666666666666666666666666666fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff666666666666666666666666666666666666666
-                        66666666666666666666666666666666fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff666666666666666666666666666666666666666
-                        66666666666666666666666666666666fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff666666666666666666666666666666666666666
-                        66666666666666666666666666666666ffff111fffffff1111111ff111fffffff111ff111111ff111ffffff111ffffff111ffffff111fffffffffffff666666666666666666666666666666666666666
-                        66666666666666666666666666666666ffff111fffffff1111111ff111ffffff1111ff111111ff111ffffff1111ffff1111fffff11111ffffffffffff666666666666666666666666666666666666666
-                        66666666666666666666666666666666ffff111fffffff1111111ff111ffffff1111ff111111ff111ffffff1111fff11111fffff11111ffffffffffff666666666666666666666666666666666666666
-                        66666666666666666666666666666666ffff111fffffff111ffffffff111fff1111fff111fffff111ffffff11111f111111fffff11111ffffffffffff666666666666666666666666666666666666666
-                        66666666666666666666666666666666ffff111fffffff111ffffffff111fff111ffff111fffff111fffffff1111111111fffffff111fffffffffffff666666666666666666666666666666666666666
-                        66666666666666666666666666666666ffff111fffffff1111111ffff111fff111ffff111111ff111fffffff111111111ffffffffffffffffffffffff666666666666666666666666666666666666666
-                        66666666666666666666666666666666ffff111fffffff1111111fffff111f111fffff111111ff111ffffffff1111111fffffffffffffffffffffffff666666666666666666666666666666666666666
-                        66666666666666666666666666666666ffff111fffffff1111111fffff111f111fffff111111ff111fffffffff1111fffffffffff111fffffffffffff666666666666666666666666666666666666666
-                        66666666666666666666666666666666ffff111fffffff111fffffffff1111111fffff111fffff111ffffffffff111ffffffffff11111ffffffffffff666666666666666666666666666666666666666
-                        66666666666666666666666666666666ffff111fffffff111ffffffffff111111fffff111fffff1111111ffffff111ffffffffff11111ffffffffffff666666666666666666666666666666666666666
-                        66666666666666666666666666666666ffff111fffffff1111111ffffff111111fffff111111ff1111111ffffff111ffffffffff11111ffffffffffff666666666666666666666666666666666666666
-                        66666666666666666666666666666666ffff11111111ff1111111fffffff111fffffff111111ff1111111ffffff111fffffffffff1111ffffffffffff666666666666666666666666666666666666666
-                        66666666666666666666666666666666ffff11111111ff1111111fffffff111fffffff111111fffffffffffffff111fffffffffff111fffffffffffff666666666666666666666666666666666666666
-                        66666666666666666666666666666666ffff11111111fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff666666666666666666666666666666666666666
-                        66666666666666666666666666666666fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff666666666666666666666666666666666666666
-                        66666666666666666666666666666666fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff666666666666666666666666666666666666666
-                        66666666666666666666666666666666fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff666666666666666666666666666666666666666
-                        66666666666666666666666666666666fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
-                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+def on_b_released(): #odecteni casu natazeni luku
+    global cas_konec, arrow, projectile, projectile2, projectile3
+    if luk == True:
+        cas_konec = game.runtime()
+        BowImage.set_image(img("""
+            . . . . . . . . . . . . . . . .
+                        . . . . . . . . . . . . . . . .
+                        . . . . . . . . . . . . . . . .
+                        . . . . . . . . . . . . . . . .
+                        . . . . . . . . . . . . . . . .
+                        . . . . . . . . . . . . . . . .
+                        . . . . . . . . . . . . . . . .
+                        . . . . . . . . . . . . . . . .
+                        . . . . . . . . . . . . . . . .
+                        . . . . . . . . . . . . . . . .
+                        . . . . . . . . . . . . . . . .
+                        . . . . . . . . . . . . . . . .
+                        . . . . . . . . . . . . . . . .
+                        . . . . . . . . . . . . . . . .
+                        . . . . . . . . . . . . . . . .
+                        . . . . . . . . . . . . . . . .
         """))
-        sprites.destroy_all_sprites_of_kind(SpriteKind.button)
-        sprites.destroy_all_sprites_of_kind(SpriteKind.cursor)
-        button_lvl_1 = sprites.create(img("""
-                .cccccccccccccccccccccccccccc...
-                            .cddbbbbbbbbbbbbbbbbbbbbbbddc...
-                            .cdbbbbbbbbbbbbbbbbbbbbbbbbdc...
-                            .cbbbbbbbbbbbbbbbbbbbbbbbbbbc...
-                            .cb1bbb1bbb1b1bbbbbbbbb1bbbbc...
-                            .cb1bbb1bbb1b1bbbbbbbb11bbbbc...
-                            .cb1bbbb1b1bb1bbbbbbb1b1bbbbc...
-                            .cb1bbbb1b1bb1bbbbbb1bb1bbbbc...
-                            .cb1bbbb1b1bb1bbbbbbbbb1bbbbc...
-                            .cb1bbbbb1bbb1bbbbbbbbb1bbbbc...
-                            .cb1bbbbb1bbb1bbbbbbbbb1bbbbc...
-                            .cb1111bb1bbb1111bbbbbb1bbbbc...
-                            .cbbbbbbbbbbbbbbbbbbbbbbbbbbc...
-                            .cdbbbbbbbbbbbbbbbbbbbbbbbbdc...
-                            .cddbbbbbbbbbbbbbbbbbbbbbbddc...
-                            .cccccccccccccccccccccccccccc...
-            """),
-            SpriteKind.button)
-        button_lvl_1.set_position(35, 40)
-        button_lvl_2 = sprites.create(img("""
-                .cccccccccccccccccccccccccccc...
-                            .cddbbbbbbbbbbbbbbbbbbbbbbddc...
-                            .cdbbbbbbbbbbbbbbbbbbbbbbbbdc...
-                            .cbbbbbbbbbbbbbbbbbbbbbbbbbbc...
-                            .cb1bbb1bbb1b1bbbbbbb11bbbbbc...
-                            .cb1bbb1bbb1b1bbbbbb1bb1bbbbc...
-                            .cb1bbbb1b1bb1bbbbb1bbb1bbbbc...
-                            .cb1bbbb1b1bb1bbbbbbbb1bbbbbc...
-                            .cb1bbbb1b1bb1bbbbbbb1bbbbbbc...
-                            .cb1bbbbb1bbb1bbbbbb1bbbbbbbc...
-                            .cb1bbbbb1bbb1bbbbb1bbbbbbbbc...
-                            .cb1111bb1bbb1111bb111111bbbc...
-                            .cbbbbbbbbbbbbbbbbbbbbbbbbbbc...
-                            .cdbbbbbbbbbbbbbbbbbbbbbbbbdc...
-                            .cddbbbbbbbbbbbbbbbbbbbbbbddc...
-                            .cccccccccccccccccccccccccccc...
-            """),
-            SpriteKind.button)
-        button_lvl_2.set_position(35, 55)
-        button_lvl_3 = sprites.create(img("""
-                .cccccccccccccccccccccccccccc...
-                            .cddbbbbbbbbbbbbbbbbbbbbbbddc...
-                            .cdbbbbbbbbbbbbbbbbbbbbbbbbdc...
-                            .cbbbbbbbbbbbbbbbbbbbbbbbbbbc...
-                            .cb1bbb1bbb1b1bbbbbbb111bbbbc...
-                            .cb1bbb1bbb1b1bbbbbb1bbb1bbbc...
-                            .cb1bbbb1b1bb1bbbbb1bbbb1bbbc...
-                            .cb1bbbb1b1bb1bbbbbbbbb1bbbbc...
-                            .cb1bbbb1b1bb1bbbbbbb11bbbbbc...
-                            .cb1bbbbb1bbb1bbbbbbbbb11bbbc...
-                            .cb1bbbbb1bbb1bbbbbbbbbb1bbbc...
-                            .cb1111bb1bbb1111bbbbbbb1bbbc...
-                            .cbbbbbbbbbbbbbbbbbb1111bbbbc...
-                            .cdbbbbbbbbbbbbbbbbbbbbbbbbdc...
-                            .cddbbbbbbbbbbbbbbbbbbbbbbddc...
-                            .cccccccccccccccccccccccccccc...
-            """),
-            SpriteKind.button)
-        button_lvl_3.set_position(35, 70)
-        button_lvl_4 = sprites.create(img("""
-                .cccccccccccccccccccccccccccc...
-                            .cddbbbbbbbbbbbbbbbbbbbbbbddc...
-                            .cdbbbbbbbbbbbbbbbbbbbbbbbbdc...
-                            .cbbbbbbbbbbbbbbbbbbbbbbbbbbc...
-                            .cb1bbb1bbb1b1bbbbbbbb1bbbbbc...
-                            .cb1bbb1bbb1b1bbbbbbb1bbbbbbc...
-                            .cb1bbbb1b1bb1bbbbbb1bbbbbbbc...
-                            .cb1bbbb1b1bb1bbbbb1bbb1bbbbc...
-                            .cb1bbbb1b1bb1bbbbb111111bbbc...
-                            .cb1bbbbb1bbb1bbbbbbbbb1bbbbc...
-                            .cb1bbbbb1bbb1bbbbbbbbb1bbbbc...
-                            .cb1111bb1bbb1111bbbbbb1bbbbc...
-                            .cbbbbbbbbbbbbbbbbbbbbbbbbbbc...
-                            .cdbbbbbbbbbbbbbbbbbbbbbbbbdc...
-                            .cddbbbbbbbbbbbbbbbbbbbbbbddc...
-                            .cccccccccccccccccccccccccccc...
-            """),
-            SpriteKind.button)
-        button_lvl_4.set_position(35, 85)
-        button_lvl_5 = sprites.create(img("""
-                .cccccccccccccccccccccccccccc...
-                            .cddbbbbbbbbbbbbbbbbbbbbbbddc...
-                            .cdbbbbbbbbbbbbbbbbbbbbbbbbdc...
-                            .cbbbbbbbbbbbbbbbbbbbbbbbbbbc...
-                            .cb1bbb1bbb1b1bbbbbb11111bbbc...
-                            .cb1bbb1bbb1b1bbbbbb1bbbbbbbc...
-                            .cb1bbbb1b1bb1bbbbbb1b11bbbbc...
-                            .cb1bbbb1b1bb1bbbbbb11bb1bbbc...
-                            .cb1bbbb1b1bb1bbbbbbbbbb1bbbc...
-                            .cb1bbbbb1bbb1bbbbbb1bbb1bbbc...
-                            .cb1bbbbb1bbb1bbbbbbb111bbbbc...
-                            .cb1111bb1bbb1111bbbbbbbbbbbc...
-                            .cbbbbbbbbbbbbbbbbbbbbbbbbbbc...
-                            .cdbbbbbbbbbbbbbbbbbbbbbbbbdc...
-                            .cddbbbbbbbbbbbbbbbbbbbbbbddc...
-                            .cccccccccccccccccccccccccccc...
-            """),
-            SpriteKind.button)
-        button_lvl_5.set_position(35, 100)
-        cursor2 = sprites.create(img("""
-                . . . . . . . . . . . . . . . . 
-                            . . . . . . . . . . . . . . . . 
-                            . . . . . . . f . . . . . . . . 
-                            . . . . . . f 1 f . . . . . . . 
-                            . . . . . f 1 1 1 f . . . . . . 
-                            . . . . . f 1 1 1 1 f . . . . . 
-                            . . . . f 1 1 1 1 1 1 f . . . . 
-                            . . . . f 1 1 1 1 1 1 1 f . . . 
-                            . . . f 1 1 1 1 1 1 1 1 1 f . . 
-                            . . . f 1 1 1 1 1 1 1 1 1 1 f . 
-                            . . f 1 1 1 1 1 1 1 1 1 1 1 1 f 
-                            . . f 1 1 1 1 1 1 1 1 1 1 1 1 f 
-                            . f 1 1 1 1 1 1 1 1 1 1 1 1 1 f 
-                            . f f f f f f f f f f f f f f f 
-                            . . . . . . . . . . . . . . . . 
-                            . . . . . . . . . . . . . . . .
-            """),
-            SpriteKind.cursor)
-        controller.move_sprite(cursor2, 80, 80)
-    elif otherSprite == button_lvl_1 and controller.A.is_pressed():
-        currentLevel = 0
-        startNextLevel()
-    elif otherSprite == button_lvl_2 and controller.A.is_pressed():
-        currentLevel = 1
-        startNextLevel()
-    elif otherSprite == button_lvl_3 and controller.A.is_pressed():
-        currentLevel = 2
-        startNextLevel()
-    elif otherSprite == button_lvl_4 and controller.A.is_pressed():
-        currentLevel = 3
-        startNextLevel()
-    elif otherSprite == button_lvl_5 and controller.A.is_pressed():
-        currentLevel = 4
-        startNextLevel()
-    elif False:
-        pass
-sprites.on_overlap(SpriteKind.cursor, SpriteKind.button, on_on_overlap2)
+        if cas_konec - cas_zacatek > 1000:
+            if pozice_zbrane[0] == True:
+                arrow = sprites.create_projectile_from_sprite(img("""
+                        . . . . . . . . . . . . . . . .
+                                            . . . . . . . f . . . . . . . .
+                                            . . . . . . f e f . . . . . . .
+                                            . . . . . f . e . f . . . . . .
+                                            . . . . . . . e . . . . . . . .
+                                            . . . . . . . e . . . . . . . .
+                                            . . . . . . . e . . . . . . . .
+                                            . . . . . . . e . . . . . . . .
+                                            . . . . . . . e . . . . . . . .
+                                            . . . . . . . e . . . . . . . .
+                                            . . . . . . . e . . . . . . . .
+                                            . . . . . . . e . . . . . . . .
+                                            . . . . . . . e . . . . . . . .
+                                            . . . . . . . e . . . . . . . .
+                                            . . . . . . 1 1 1 . . . . . . .
+                                            . . . . . 1 . 1 . 1 . . . . . .
+                    """),
+                    mySprite,
+                    0,
+                    -100)
+            elif pozice_zbrane[1] == True:
+                projectile = sprites.create_projectile_from_sprite(img("""
+                        . . . . . 1 . 1 . 1 . . . . . .
+                                            . . . . . . 1 1 1 . . . . . . .
+                                            . . . . . . . e . . . . . . . .
+                                            . . . . . . . e . . . . . . . .
+                                            . . . . . . . e . . . . . . . .
+                                            . . . . . . . e . . . . . . . .
+                                            . . . . . . . e . . . . . . . .
+                                            . . . . . . . e . . . . . . . .
+                                            . . . . . . . e . . . . . . . .
+                                            . . . . . . . e . . . . . . . .
+                                            . . . . . . . e . . . . . . . .
+                                            . . . . . . . e . . . . . . . .
+                                            . . . . . f . e . f . . . . . .
+                                            . . . . . . f e f . . . . . . .
+                                            . . . . . . . f . . . . . . . .
+                                            . . . . . . . . . . . . . . . .
+                    """),
+                    mySprite,
+                    0,
+                    100)
+            elif pozice_zbrane[2] == True:
+                projectile2 = sprites.create_projectile_from_sprite(img("""
+                        . . . . . . . . . . . . . . . .
+                                            . . . . . . . . . . . . . . . .
+                                            . . . . . . . . . . . . . . . .
+                                            . . . . . . . . . . . . . . . .
+                                            . . . . . . . . . . . . . . . .
+                                            . . . f . . . . . . . . . . . 1
+                                            . . f . . . . . . . . . . . 1 .
+                                            . f e e e e e e e e e e e e 1 1
+                                            . . f . . . . . . . . . . . 1 .
+                                            . . . f . . . . . . . . . . . 1
+                                            . . . . . . . . . . . . . . . .
+                                            . . . . . . . . . . . . . . . .
+                                            . . . . . . . . . . . . . . . .
+                                            . . . . . . . . . . . . . . . .
+                                            . . . . . . . . . . . . . . . .
+                                            . . . . . . . . . . . . . . . .
+                    """),
+                    mySprite,
+                    -100,
+                    0)
+            elif pozice_zbrane[3] == True:
+                projectile3 = sprites.create_projectile_from_sprite(img("""
+                        . . . . . . . . . . . . . . . .
+                                            . . . . . . . . . . . . . . . .
+                                            . . . . . . . . . . . . . . . .
+                                            . . . . . . . . . . . . . . . .
+                                            . . . . . . . . . . . . . . . .
+                                            1 . . . . . . . . . . . f . . .
+                                            . 1 . . . . . . . . . . . f . .
+                                            1 1 e e e e e e e e e e e e f .
+                                            . 1 . . . . . . . . . . . f . .
+                                            1 . . . . . . . . . . . f . . .
+                                            . . . . . . . . . . . . . . . .
+                                            . . . . . . . . . . . . . . . .
+                                            . . . . . . . . . . . . . . . .
+                                            . . . . . . . . . . . . . . . .
+                                            . . . . . . . . . . . . . . . .
+                                            . . . . . . . . . . . . . . . .
+                    """),
+                    mySprite,
+                    100,
+                    0)
+controller.B.on_event(ControllerButtonEvent.RELEASED, on_b_released)
 
-def startNextLevel():
+def on_on_update(): #pozice zbrani
+    if mec == True:
+        if mySprite.vx < 0:
+            sword.right = mySprite.left
+            sword.y = mySprite.y
+        elif mySprite.vx > 0:
+            sword.left = mySprite.right
+            sword.y = mySprite.y
+        elif mySprite.vy > 0:
+            sword.top = mySprite.bottom
+            sword.x = mySprite.x
+        elif mySprite.vy < 0:
+            sword.bottom = mySprite.top
+            sword.x = mySprite.x
+    if luk == True:
+        if mySprite.vx < 0:
+            BowImage.right = mySprite.left
+            BowImage.y = mySprite.y
+        elif mySprite.vx > 0:
+            BowImage.left = mySprite.right
+            BowImage.y = mySprite.y
+        elif mySprite.vy > 0:
+            BowImage.top = mySprite.bottom
+            BowImage.x = mySprite.x
+        elif mySprite.vy < 0:
+            BowImage.bottom = mySprite.top
+            BowImage.x = mySprite.x
+game.on_update(on_on_update)
+#ovladani\
+
+
+
+#obecne funkce/
+def startNextLevel(): #zmena levelu
     global currentLevel, button_1, button_2, cursor2, StromTmavy
     currentLevel += 1
     if not (currentLevel == 0):
         mySprite.set_image(img("""
-            . . . . . . f f f f . . . . . . 
-                        . . . . f f f 2 2 f f f . . . . 
-                        . . . f f f 2 2 2 2 f f f . . . 
-                        . . f f f e e e e e e f f f . . 
-                        . . f f e 2 2 2 2 2 2 e e f . . 
-                        . . f e 2 f f f f f f 2 e f . . 
-                        . . f f f f e e e e f f f f . . 
-                        . f f e f b f 4 4 f b f e f f . 
-                        . f e e 4 1 f d d f 1 4 e e f . 
-                        . . f e e d d d d d d e e f . . 
-                        . . . f e e 4 4 4 4 e e f . . . 
-                        . . e 4 f 2 2 2 2 2 2 f 4 e . . 
-                        . . 4 d f 2 2 2 2 2 2 f d 4 . . 
-                        . . 4 4 f 4 4 5 5 4 4 f 4 4 . . 
-                        . . . . . f f f f f f . . . . . 
+            . . . . . . f f f f . . . . . .
+                        . . . . f f f 2 2 f f f . . . .
+                        . . . f f f 2 2 2 2 f f f . . .
+                        . . f f f e e e e e e f f f . .
+                        . . f f e 2 2 2 2 2 2 e e f . .
+                        . . f e 2 f f f f f f 2 e f . .
+                        . . f f f f e e e e f f f f . .
+                        . f f e f b f 4 4 f b f e f f .
+                        . f e e 4 1 f d d f 1 4 e e f .
+                        . . f e e d d d d d d e e f . .
+                        . . . f e e 4 4 4 4 e e f . . .
+                        . . e 4 f 2 2 2 2 2 2 f 4 e . .
+                        . . 4 d f 2 2 2 2 2 2 f d 4 . .
+                        . . 4 4 f 4 4 5 5 4 4 f 4 4 . .
+                        . . . . . f f f f f f . . . . .
                         . . . . . f f . . f f . . . . .
         """))
         controller.move_sprite(mySprite, 80, 80)
@@ -983,21 +857,21 @@ def startNextLevel():
             """),
             SpriteKind.button)
         cursor2 = sprites.create(img("""
-                . . . . . . . . . . . . . . . . 
-                            . . . . . . . . . . . . . . . . 
-                            . . . . . . . f . . . . . . . . 
-                            . . . . . . f 1 f . . . . . . . 
-                            . . . . . f 1 1 1 f . . . . . . 
-                            . . . . . f 1 1 1 1 f . . . . . 
-                            . . . . f 1 1 1 1 1 1 f . . . . 
-                            . . . . f 1 1 1 1 1 1 1 f . . . 
-                            . . . f 1 1 1 1 1 1 1 1 1 f . . 
-                            . . . f 1 1 1 1 1 1 1 1 1 1 f . 
-                            . . f 1 1 1 1 1 1 1 1 1 1 1 1 f 
-                            . . f 1 1 1 1 1 1 1 1 1 1 1 1 f 
-                            . f 1 1 1 1 1 1 1 1 1 1 1 1 1 f 
-                            . f f f f f f f f f f f f f f f 
-                            . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . .
+                            . . . . . . . . . . . . . . . .
+                            . . . . . . . f . . . . . . . .
+                            . . . . . . f 1 f . . . . . . .
+                            . . . . . f 1 1 1 f . . . . . .
+                            . . . . . f 1 1 1 1 f . . . . .
+                            . . . . f 1 1 1 1 1 1 f . . . .
+                            . . . . f 1 1 1 1 1 1 1 f . . .
+                            . . . f 1 1 1 1 1 1 1 1 1 f . .
+                            . . . f 1 1 1 1 1 1 1 1 1 1 f .
+                            . . f 1 1 1 1 1 1 1 1 1 1 1 1 f
+                            . . f 1 1 1 1 1 1 1 1 1 1 1 1 f
+                            . f 1 1 1 1 1 1 1 1 1 1 1 1 1 f
+                            . f f f f f f f f f f f f f f f
+                            . . . . . . . . . . . . . . . .
                             . . . . . . . . . . . . . . . .
             """),
             SpriteKind.cursor)
@@ -1304,6 +1178,420 @@ def startNextLevel():
         level5()
     else:
         game.over(True)
+
+def move_lock(bool3: bool): #zamek pohybu
+    if bool3 == True:
+        controller.move_sprite(mySprite, 0, 0)
+    else:
+        controller.move_sprite(mySprite, 80, 80)
+
+def on_on_overlap7(sprite52, otherSprite22): #odecteni zivota
+    sprite52.destroy(effects.disintegrate, 200)
+    info.change_life_by(-1)
+sprites.on_overlap(SpriteKind.enemy, SpriteKind.player, on_on_overlap7)
+
+def on_on_overlap6(sprite4, otherSprite): #menu
+    global button_lvl_1, button_lvl_2, button_lvl_3, button_lvl_4, button_lvl_5, cursor2, currentLevel
+    if otherSprite == button_1 and controller.A.is_pressed():
+        startNextLevel()
+    elif otherSprite == button_2 and controller.A.is_pressed():
+        scene.set_background_image(img("""
+            6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        66666666666666666666666666666666fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff666666666666666666666666666666666666666
+                        66666666666666666666666666666666fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff666666666666666666666666666666666666666
+                        66666666666666666666666666666666fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff666666666666666666666666666666666666666
+                        66666666666666666666666666666666fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff666666666666666666666666666666666666666
+                        66666666666666666666666666666666ffff111fffffff1111111ff111fffffff111ff111111ff111ffffff111ffffff111ffffff111fffffffffffff666666666666666666666666666666666666666
+                        66666666666666666666666666666666ffff111fffffff1111111ff111ffffff1111ff111111ff111ffffff1111ffff1111fffff11111ffffffffffff666666666666666666666666666666666666666
+                        66666666666666666666666666666666ffff111fffffff1111111ff111ffffff1111ff111111ff111ffffff1111fff11111fffff11111ffffffffffff666666666666666666666666666666666666666
+                        66666666666666666666666666666666ffff111fffffff111ffffffff111fff1111fff111fffff111ffffff11111f111111fffff11111ffffffffffff666666666666666666666666666666666666666
+                        66666666666666666666666666666666ffff111fffffff111ffffffff111fff111ffff111fffff111fffffff1111111111fffffff111fffffffffffff666666666666666666666666666666666666666
+                        66666666666666666666666666666666ffff111fffffff1111111ffff111fff111ffff111111ff111fffffff111111111ffffffffffffffffffffffff666666666666666666666666666666666666666
+                        66666666666666666666666666666666ffff111fffffff1111111fffff111f111fffff111111ff111ffffffff1111111fffffffffffffffffffffffff666666666666666666666666666666666666666
+                        66666666666666666666666666666666ffff111fffffff1111111fffff111f111fffff111111ff111fffffffff1111fffffffffff111fffffffffffff666666666666666666666666666666666666666
+                        66666666666666666666666666666666ffff111fffffff111fffffffff1111111fffff111fffff111ffffffffff111ffffffffff11111ffffffffffff666666666666666666666666666666666666666
+                        66666666666666666666666666666666ffff111fffffff111ffffffffff111111fffff111fffff1111111ffffff111ffffffffff11111ffffffffffff666666666666666666666666666666666666666
+                        66666666666666666666666666666666ffff111fffffff1111111ffffff111111fffff111111ff1111111ffffff111ffffffffff11111ffffffffffff666666666666666666666666666666666666666
+                        66666666666666666666666666666666ffff11111111ff1111111fffffff111fffffff111111ff1111111ffffff111fffffffffff1111ffffffffffff666666666666666666666666666666666666666
+                        66666666666666666666666666666666ffff11111111ff1111111fffffff111fffffff111111fffffffffffffff111fffffffffff111fffffffffffff666666666666666666666666666666666666666
+                        66666666666666666666666666666666ffff11111111fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff666666666666666666666666666666666666666
+                        66666666666666666666666666666666fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff666666666666666666666666666666666666666
+                        66666666666666666666666666666666fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff666666666666666666666666666666666666666
+                        66666666666666666666666666666666fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff666666666666666666666666666666666666666
+                        66666666666666666666666666666666fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+                        6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+        """))
+        sprites.destroy_all_sprites_of_kind(SpriteKind.button)
+        sprites.destroy_all_sprites_of_kind(SpriteKind.cursor)
+        button_lvl_1 = sprites.create(img("""
+                .cccccccccccccccccccccccccccc...
+                            .cddbbbbbbbbbbbbbbbbbbbbbbddc...
+                            .cdbbbbbbbbbbbbbbbbbbbbbbbbdc...
+                            .cbbbbbbbbbbbbbbbbbbbbbbbbbbc...
+                            .cb1bbb1bbb1b1bbbbbbbbb1bbbbc...
+                            .cb1bbb1bbb1b1bbbbbbbb11bbbbc...
+                            .cb1bbbb1b1bb1bbbbbbb1b1bbbbc...
+                            .cb1bbbb1b1bb1bbbbbb1bb1bbbbc...
+                            .cb1bbbb1b1bb1bbbbbbbbb1bbbbc...
+                            .cb1bbbbb1bbb1bbbbbbbbb1bbbbc...
+                            .cb1bbbbb1bbb1bbbbbbbbb1bbbbc...
+                            .cb1111bb1bbb1111bbbbbb1bbbbc...
+                            .cbbbbbbbbbbbbbbbbbbbbbbbbbbc...
+                            .cdbbbbbbbbbbbbbbbbbbbbbbbbdc...
+                            .cddbbbbbbbbbbbbbbbbbbbbbbddc...
+                            .cccccccccccccccccccccccccccc...
+            """),
+            SpriteKind.button)
+        button_lvl_1.set_position(35, 40)
+        button_lvl_2 = sprites.create(img("""
+                .cccccccccccccccccccccccccccc...
+                            .cddbbbbbbbbbbbbbbbbbbbbbbddc...
+                            .cdbbbbbbbbbbbbbbbbbbbbbbbbdc...
+                            .cbbbbbbbbbbbbbbbbbbbbbbbbbbc...
+                            .cb1bbb1bbb1b1bbbbbbb11bbbbbc...
+                            .cb1bbb1bbb1b1bbbbbb1bb1bbbbc...
+                            .cb1bbbb1b1bb1bbbbb1bbb1bbbbc...
+                            .cb1bbbb1b1bb1bbbbbbbb1bbbbbc...
+                            .cb1bbbb1b1bb1bbbbbbb1bbbbbbc...
+                            .cb1bbbbb1bbb1bbbbbb1bbbbbbbc...
+                            .cb1bbbbb1bbb1bbbbb1bbbbbbbbc...
+                            .cb1111bb1bbb1111bb111111bbbc...
+                            .cbbbbbbbbbbbbbbbbbbbbbbbbbbc...
+                            .cdbbbbbbbbbbbbbbbbbbbbbbbbdc...
+                            .cddbbbbbbbbbbbbbbbbbbbbbbddc...
+                            .cccccccccccccccccccccccccccc...
+            """),
+            SpriteKind.button)
+        button_lvl_2.set_position(35, 55)
+        button_lvl_3 = sprites.create(img("""
+                .cccccccccccccccccccccccccccc...
+                            .cddbbbbbbbbbbbbbbbbbbbbbbddc...
+                            .cdbbbbbbbbbbbbbbbbbbbbbbbbdc...
+                            .cbbbbbbbbbbbbbbbbbbbbbbbbbbc...
+                            .cb1bbb1bbb1b1bbbbbbb111bbbbc...
+                            .cb1bbb1bbb1b1bbbbbb1bbb1bbbc...
+                            .cb1bbbb1b1bb1bbbbb1bbbb1bbbc...
+                            .cb1bbbb1b1bb1bbbbbbbbb1bbbbc...
+                            .cb1bbbb1b1bb1bbbbbbb11bbbbbc...
+                            .cb1bbbbb1bbb1bbbbbbbbb11bbbc...
+                            .cb1bbbbb1bbb1bbbbbbbbbb1bbbc...
+                            .cb1111bb1bbb1111bbbbbbb1bbbc...
+                            .cbbbbbbbbbbbbbbbbbb1111bbbbc...
+                            .cdbbbbbbbbbbbbbbbbbbbbbbbbdc...
+                            .cddbbbbbbbbbbbbbbbbbbbbbbddc...
+                            .cccccccccccccccccccccccccccc...
+            """),
+            SpriteKind.button)
+        button_lvl_3.set_position(35, 70)
+        button_lvl_4 = sprites.create(img("""
+                .cccccccccccccccccccccccccccc...
+                            .cddbbbbbbbbbbbbbbbbbbbbbbddc...
+                            .cdbbbbbbbbbbbbbbbbbbbbbbbbdc...
+                            .cbbbbbbbbbbbbbbbbbbbbbbbbbbc...
+                            .cb1bbb1bbb1b1bbbbbbbb1bbbbbc...
+                            .cb1bbb1bbb1b1bbbbbbb1bbbbbbc...
+                            .cb1bbbb1b1bb1bbbbbb1bbbbbbbc...
+                            .cb1bbbb1b1bb1bbbbb1bbb1bbbbc...
+                            .cb1bbbb1b1bb1bbbbb111111bbbc...
+                            .cb1bbbbb1bbb1bbbbbbbbb1bbbbc...
+                            .cb1bbbbb1bbb1bbbbbbbbb1bbbbc...
+                            .cb1111bb1bbb1111bbbbbb1bbbbc...
+                            .cbbbbbbbbbbbbbbbbbbbbbbbbbbc...
+                            .cdbbbbbbbbbbbbbbbbbbbbbbbbdc...
+                            .cddbbbbbbbbbbbbbbbbbbbbbbddc...
+                            .cccccccccccccccccccccccccccc...
+            """),
+            SpriteKind.button)
+        button_lvl_4.set_position(35, 85)
+        button_lvl_5 = sprites.create(img("""
+                .cccccccccccccccccccccccccccc...
+                            .cddbbbbbbbbbbbbbbbbbbbbbbddc...
+                            .cdbbbbbbbbbbbbbbbbbbbbbbbbdc...
+                            .cbbbbbbbbbbbbbbbbbbbbbbbbbbc...
+                            .cb1bbb1bbb1b1bbbbbb11111bbbc...
+                            .cb1bbb1bbb1b1bbbbbb1bbbbbbbc...
+                            .cb1bbbb1b1bb1bbbbbb1b11bbbbc...
+                            .cb1bbbb1b1bb1bbbbbb11bb1bbbc...
+                            .cb1bbbb1b1bb1bbbbbbbbbb1bbbc...
+                            .cb1bbbbb1bbb1bbbbbb1bbb1bbbc...
+                            .cb1bbbbb1bbb1bbbbbbb111bbbbc...
+                            .cb1111bb1bbb1111bbbbbbbbbbbc...
+                            .cbbbbbbbbbbbbbbbbbbbbbbbbbbc...
+                            .cdbbbbbbbbbbbbbbbbbbbbbbbbdc...
+                            .cddbbbbbbbbbbbbbbbbbbbbbbddc...
+                            .cccccccccccccccccccccccccccc...
+            """),
+            SpriteKind.button)
+        button_lvl_5.set_position(35, 100)
+        cursor2 = sprites.create(img("""
+                . . . . . . . . . . . . . . . .
+                            . . . . . . . . . . . . . . . .
+                            . . . . . . . f . . . . . . . .
+                            . . . . . . f 1 f . . . . . . .
+                            . . . . . f 1 1 1 f . . . . . .
+                            . . . . . f 1 1 1 1 f . . . . .
+                            . . . . f 1 1 1 1 1 1 f . . . .
+                            . . . . f 1 1 1 1 1 1 1 f . . .
+                            . . . f 1 1 1 1 1 1 1 1 1 f . .
+                            . . . f 1 1 1 1 1 1 1 1 1 1 f .
+                            . . f 1 1 1 1 1 1 1 1 1 1 1 1 f
+                            . . f 1 1 1 1 1 1 1 1 1 1 1 1 f
+                            . f 1 1 1 1 1 1 1 1 1 1 1 1 1 f
+                            . f f f f f f f f f f f f f f f
+                            . . . . . . . . . . . . . . . .
+                            . . . . . . . . . . . . . . . .
+            """),
+            SpriteKind.cursor)
+        controller.move_sprite(cursor2, 80, 80)
+    elif otherSprite == button_lvl_1 and controller.A.is_pressed():
+        currentLevel = 0
+        startNextLevel()
+    elif otherSprite == button_lvl_2 and controller.A.is_pressed():
+        currentLevel = 1
+        startNextLevel()
+    elif otherSprite == button_lvl_3 and controller.A.is_pressed():
+        currentLevel = 2
+        startNextLevel()
+    elif otherSprite == button_lvl_4 and controller.A.is_pressed():
+        currentLevel = 3
+        startNextLevel()
+    elif otherSprite == button_lvl_5 and controller.A.is_pressed():
+        currentLevel = 4
+        startNextLevel()
+sprites.on_overlap(SpriteKind.cursor, SpriteKind.button, on_on_overlap6)
+
+def on_on_overlap(sprite11, otherSprite5): #zniceni enemy
+    otherSprite5.destroy(effects.disintegrate, 200)
+sprites.on_overlap(SpriteKind.projectile, SpriteKind.enemy, on_on_overlap)
+
+def on_hit_wall(sprite, location): #narazeni na zed
+    if currentLevel == 2:
+        game.splash("Měl bych jít po cestě...")
+scene.on_hit_wall(SpriteKind.player, on_hit_wall)
+
+def on_on_overlap3(sprite7, otherSprite3): #checkpoint
+    if currentLevel == 3 and dialogSkoncen == True:
+        startNextLevel()
+    else:
+        startNextLevel()
+sprites.on_overlap(SpriteKind.player, SpriteKind.checkpoint, on_on_overlap3)
+
+def zmena_pozice_zbrane(num: number): #zmena pozice zbrane
+    pozice_zbrane[0] = False
+    pozice_zbrane[1] = False
+    pozice_zbrane[2] = False
+    pozice_zbrane[3] = False
+    pozice_zbrane[num] = True
+
+def pronasledovani(bool2: bool, Pronasledovatel: Sprite, Obet: Sprite): #pronasledovani
+    if bool2 == True:
+        Pronasledovatel.follow(Obet, 90)
+    else:
+        Pronasledovatel.follow(Obet, 0)
+
+def on_life_zero(): #umrti
+    global fightScene, currentLevel
+    game.splash("Zemřel jsi.")
+    if currentLevel == 3:
+        fightScene = False
+        Lucistnik.destroy()
+        sprites.destroy_all_sprites_of_kind(SpriteKind.enemy)
+    currentLevel = currentLevel - 1
+    sprites.destroy_all_sprites_of_kind(SpriteKind.enemy)
+    startNextLevel()
+info.on_life_zero(on_life_zero)
+#obecne funkce\
+
+
+
+#level 1/
+def level1():
+    global Kral
+    Kral = sprites.create(img("""
+            ................
+                    ................
+                    ................
+                    ................
+                    ................
+                    ...5.5.555.5.5..
+                    ...5f5f555f5f5..
+                    ...55555555555..
+                    ....55555555ff..
+                    ....fdddfbddff..
+                    ....fdbbf1bfff..
+                    ....1bbbbddff...
+                    ....111111bdf...
+                    ....111111bd....
+                    ....11111ddf....
+                    .....111fff.....
+                    .....8ffff8.....
+                    .....666666.....
+                    ................
+                    ................
+        """),
+        SpriteKind.King)
+    tiles.place_on_random_tile(Kral, assets.tile("""
+        myTile0
+    """))
+    game.splash("Přišel jsi za králem pro jeho nabídku.")
+    game.splash("Stiskem A s ním promluvíš.")
+
+def on_overlap_tile8(sprite12, location7):
+    if currentLevel == 1:
+        if dialogSkoncen == True:
+            startNextLevel()
+        else:
+            game.splash("Král po tobě něco chce.")
+            if controller.A.is_pressed():
+                mySprite.set_position(25, 70)
+scene.on_overlap_tile(SpriteKind.player,
+    assets.tile("""
+        dvere kral
+    """),
+    on_overlap_tile8)
+
+def on_overlap_tile9(sprite62, location42):
+    global dialogSkoncen
+    if controller.A.is_pressed() and dialogSkoncen == False:
+        game.set_dialog_frame(img("""
+            d d d d d d d d d d d d d d d
+                        d d d d d d d d d d d d d d d
+                        d d d d d d d d d d d d d d d
+                        d d d d d d d d d d d d d d d
+                        d d d d d d d d d d d d d d d
+                        d d d d d d d d d d d d d d d
+                        d d d d d d d d d d d d d d d
+                        d d d d d d d d d d d d d d d
+                        d d d d d d d d d d d d d d d
+                        d d d d d d d d d d d d d d d
+                        d d d d d d d d d d d d d d d
+                        d d d d d d d d d d d d d d d
+                        d d d d d d d d d d d d d d d
+                        d d d d d d d d d d d d d d d
+                        d d d d d d d d d d d d d d d
+        """))
+        game.show_long_text("KRÁL: Zdravím, jsem rád, že jsi přišel.",
+            DialogLayout.BOTTOM)
+        game.show_long_text("KRÁL: Mám pro tebe důležitý úkol.", DialogLayout.BOTTOM)
+        game.show_long_text("KRÁL: Má dcera byla unesena a nyní je na dalekém zámku.",
+            DialogLayout.BOTTOM)
+        game.show_long_text("KRÁL: Onen zámek se nachází za černým lesem a řekou.",
+            DialogLayout.BOTTOM)
+        game.show_long_text("KRÁL: Vězní ji tam obávaný černokněžník.",
+            DialogLayout.BOTTOM)
+        game.show_long_text("KRÁL: Pokud ji osvobodíš, dostaneš ji za ženu",
+            DialogLayout.BOTTOM)
+        game.show_long_text("JÁ: Dobrá, pokusím se ji najít a přivést.",
+            DialogLayout.BOTTOM)
+        game.show_long_text("KRÁL: Přeji hodně štěstí a dávej na sebe pozor.",
+            DialogLayout.BOTTOM)
+        dialogSkoncen = True
+scene.on_overlap_tile(SpriteKind.player,
+    assets.tile("""
+        koberec0
+    """),
+    on_overlap_tile9)
+#level 1\
+
+
+
+#level 2/
 def level2():
     global Zbrojar, House1, Strom, rocks
     sprites.destroy_all_sprites_of_kind(SpriteKind.King)
@@ -1409,164 +1697,140 @@ def level2():
     tiles.place_on_tile(rocks, tiles.get_tile_location(14, 0))
     tiles.place_on_tile(mySprite, tiles.get_tile_location(30, 22))
 
-def on_overlap_tile4(sprite12, location7):
-    if currentLevel == 1:
-        if dialogSkoncen == True:
-            startNextLevel()
-        else:
-            game.splash("Král po tobě něco chce.")
-            if controller.A.is_pressed():
-                mySprite.set_position(25, 70)
-scene.on_overlap_tile(SpriteKind.player,
-    assets.tile("""
-        dvere kral
-    """),
-    on_overlap_tile4)
-
-def on_on_overlap3(sprite5, otherSprite2):
-    otherSprite2.destroy(effects.cool_radial, 1)
-    sprite5.destroy()
-    tiles.set_tile_at(otherSprite2.tilemap_location(),
-        assets.tile("""
-            myTile11
-        """))
-    if otherSprite2.tile_kind_at(TileDirection.LEFT, assets.tile("""
-        myTile11
-    """)) or otherSprite2.tile_kind_at(TileDirection.LEFT, assets.tile("""
-        wood
-    """)):
-        sprites.destroy_all_sprites_of_kind(SpriteKind.bobr)
-        zmena_sloupce()
-sprites.on_overlap(SpriteKind.projectile, SpriteKind.bobr, on_on_overlap3)
-
-def on_overlap_tile5(sprite6, location4):
-    tiles.set_tile_at(location4, sprites.dungeon.chest_open)
-    effects.hearts.start_screen_effect(500)
-    game.splash("Získal jsi život navíc")
-    info.change_life_by(1)
-scene.on_overlap_tile(SpriteKind.player,
-    sprites.dungeon.chest_closed,
-    on_overlap_tile5)
-
-def on_right_pressed():
-    if not (currentLevel == 0):
-        zmena_pozice_zbrane(3)
-        animation.run_image_animation(mySprite,
-            [img("""
-                    . . . . . . . . . . . . . . . . 
-                                . . . . . . f f f f f f . . . . 
-                                . . . . f f e e e e f 2 f . . . 
-                                . . . f f e e e e f 2 2 2 f . . 
-                                . . . f e e e f f e e e e f . . 
-                                . . . f f f f e e 2 2 2 2 e f . 
-                                . . . f e 2 2 2 f f f f e 2 f . 
-                                . . f f f f f f f e e e f f f . 
-                                . . f f e 4 4 e b f 4 4 e e f . 
-                                . . f e e 4 d 4 1 f d d e f . . 
-                                . . . f e e e e e d d d f . . . 
-                                . . . . . f 4 d d e 4 e f . . . 
-                                . . . . . f e d d e 2 2 f . . . 
-                                . . . . f f f e e f 5 5 f f . . 
-                                . . . . f f f f f f f f f f . . 
-                                . . . . . f f . . . f f f . . .
-                """),
-                img("""
-                    . . . . . . f f f f f f . . . . 
-                                . . . . f f e e e e f 2 f . . . 
-                                . . . f f e e e e f 2 2 2 f . . 
-                                . . . f e e e f f e e e e f . . 
-                                . . . f f f f e e 2 2 2 2 e f . 
-                                . . . f e 2 2 2 f f f f e 2 f . 
-                                . . f f f f f f f e e e f f f . 
-                                . . f f e 4 4 e b f 4 4 e e f . 
-                                . . f e e 4 d 4 1 f d d e f . . 
-                                . . . f e e e 4 d d d d f . . . 
-                                . . . . f f e e 4 4 4 e f . . . 
-                                . . . . . 4 d d e 2 2 2 f . . . 
-                                . . . . . e d d e 2 2 2 f . . . 
-                                . . . . . f e e f 4 5 5 f . . . 
-                                . . . . . . f f f f f f . . . . 
-                                . . . . . . . f f f . . . . . .
-                """),
-                img("""
-                    . . . . . . . . . . . . . . . . 
-                                . . . . . . f f f f f f . . . . 
-                                . . . . f f e e e e f 2 f . . . 
-                                . . . f f e e e e f 2 2 2 f . . 
-                                . . . f e e e f f e e e e f . . 
-                                . . . f f f f e e 2 2 2 2 e f . 
-                                . . . f e 2 2 2 f f f f e 2 f . 
-                                . . f f f f f f f e e e f f f . 
-                                . . f f e 4 4 e b f 4 4 e e f . 
-                                . . f e e 4 d 4 1 f d d e f . . 
-                                . . . f e e e 4 d d d d f . . . 
-                                . . . . 4 d d e 4 4 4 e f . . . 
-                                . . . . e d d e 2 2 2 2 f . . . 
-                                . . . . f e e f 4 4 5 5 f f . . 
-                                . . . . f f f f f f f f f f . . 
-                                . . . . . f f . . . f f f . . .
-                """)],
-            100,
-            False)
-controller.right.on_event(ControllerButtonEvent.PRESSED, on_right_pressed)
-
-def on_overlap_tile6(sprite62, location42):
-    global dialogSkoncen
-    if controller.A.is_pressed() and dialogSkoncen == False:
-        game.set_dialog_frame(img("""
-            d d d d d d d d d d d d d d d 
-                        d d d d d d d d d d d d d d d 
-                        d d d d d d d d d d d d d d d 
-                        d d d d d d d d d d d d d d d 
-                        d d d d d d d d d d d d d d d 
-                        d d d d d d d d d d d d d d d 
-                        d d d d d d d d d d d d d d d 
-                        d d d d d d d d d d d d d d d 
-                        d d d d d d d d d d d d d d d 
-                        d d d d d d d d d d d d d d d 
-                        d d d d d d d d d d d d d d d 
-                        d d d d d d d d d d d d d d d 
-                        d d d d d d d d d d d d d d d 
-                        d d d d d d d d d d d d d d d 
-                        d d d d d d d d d d d d d d d
-        """))
-        game.show_long_text("KRÁL: Zdravím, jsem rád, že si přišel.",
+def on_overlap_tile7(sprite32, location32):
+    global mec, dialogSkoncen
+    if dialogSkoncen == False:
+        game.show_long_text("ZBROJÍŘ: Počkej, počkej.", DialogLayout.BOTTOM)
+        game.show_long_text("ZBROJÍŘ: Povídal mi o tobě král.", DialogLayout.BOTTOM)
+        game.show_long_text("ZBROJÍŘ: Jsem místní zbrojíř a mám ti dát todle.",
             DialogLayout.BOTTOM)
-        game.show_long_text("KRÁL: Mám pro tebe důležitý úkol.", DialogLayout.BOTTOM)
-        game.show_long_text("KRÁL: Má dcera byla unesena a nyní je na dalekém zámku.",
-            DialogLayout.BOTTOM)
-        game.show_long_text("KRÁL: Onen zámek se nachází za černým lesem a řekou.",
-            DialogLayout.BOTTOM)
-        game.show_long_text("KRÁL: Vězní ji tam obávaný černokněžník.",
-            DialogLayout.BOTTOM)
-        game.show_long_text("KRÁL: Pokud ji osvobodíš, dostaneš ji za ženu",
-            DialogLayout.BOTTOM)
-        game.show_long_text("JÁ: Dobrá, pokusím se ji najít a přivést.",
-            DialogLayout.BOTTOM)
-        game.show_long_text("KRÁL: Přeji hodně štěstí a dávej na sebe pozor.",
-            DialogLayout.BOTTOM)
+        mec = True
+        game.splash("Získal jsi meč")
+        game.splash("Stiskem A mečem sekáš")
         dialogSkoncen = True
 scene.on_overlap_tile(SpriteKind.player,
     assets.tile("""
-        koberec0
+        hlina
     """),
-    on_overlap_tile6)
+    on_overlap_tile7)
 
-def on_on_overlap4(sprite7, otherSprite3):
-    if currentLevel == 3 and dialogSkoncen == True:
+def on_overlap_tile10(sprite8, location5):
+    if currentLevel == 2:
+        if dialogSkoncen == False:
+            game.splash("Na něco jsem zapomněl...")
+            tiles.place_on_tile(mySprite, tiles.get_tile_location(15, 8))
+    elif currentLevel == 3:
+        if dialogSkoncen == False and fightScene == False:
+            pronasledovani(True, Lucistnik, mySprite)
+scene.on_overlap_tile(SpriteKind.player,
+    assets.tile("""
+        active2
+    """),
+    on_overlap_tile10)
+#level 2\
+
+
+
+#level 3/
+def level3():
+    global dialogSkoncen, mec, luk, Lucistnik
+    sprites.destroy_all_sprites_of_kind(SpriteKind.enemy)
+    dialogSkoncen = False
+    mec = False
+    luk = False
+    scene.set_background_color(6)
+    Lucistnik = sprites.create(img("""
+            . . . . f f f f . . . . .
+                    . . f f f f f f f f . . .
+                    . f f f f f f c f f f . .
+                    f f f f f f c c f f f c .
+                    f f f c f f f f f f f c .
+                    c c c f f f e e f f c c .
+                    f f f f f e e f f c c f .
+                    f f f b f e e f b f f f .
+                    . f 4 1 f 4 4 f 1 4 f . .
+                    . f e 4 4 4 4 4 4 e f . .
+                    . f f f e e e e f f f . .
+                    f e f b 7 7 7 7 b f e f .
+                    e 4 f 7 7 7 7 7 7 f 4 e .
+                    e e f 6 6 6 6 6 6 f e e .
+                    . . . f f f f f f . . . .
+                    . . . f f . . f f . . . .
+        """),
+        SpriteKind.NPC)
+    animation.run_image_animation(Lucistnik,
+        [img("""
+                . . . . . f f f f f . . .
+                        . . . f f f f f f f f f .
+                        . . f f f c f f f f f f .
+                        . . f f c f f f c f f f f
+                        f f c c f f f c c f f c f
+                        f f f f f e f f f f c c f
+                        . f f f e e f f f f f f f
+                        . . f f e e f b f e e f f
+                        . . . f 4 4 f 1 e 4 e f .
+                        . . . f 4 4 4 4 e f f f .
+                        . . . f f e e e e e f . .
+                        . . . f 7 7 7 e 4 4 e . .
+                        . . . f 7 7 7 e 4 4 e . .
+                        . . . f 6 6 6 f e e f . .
+                        . . . . f f f f f f . . .
+                        . . . . . . f f f . . . .
+            """),
+            img("""
+                . . . . . . . . . . . . .
+                        . . . . f f f f f f . . .
+                        . . . f f f f f f f f f .
+                        . . f f f c f f f f f f .
+                        . f f f c f f f c f f f f
+                        f f c c f f f c c f f c f
+                        f f f f f e f f f f c c f
+                        . f f f e e f f f f f f f
+                        . . f f e e f b f e e f f
+                        . . f f 4 4 f 1 e 4 e f .
+                        . . . f 4 4 4 e e f f f .
+                        . . . f f e e 4 4 e f . .
+                        . . . f 7 7 e 4 4 e f . .
+                        . . f f 6 6 f e e f f f .
+                        . . f f f f f f f f f f .
+                        . . . f f f . . . f f . .
+            """),
+            img("""
+                . . . . . . . . . . . . .
+                        . . . . f f f f f f . . .
+                        . . . f f f f f f f f f .
+                        . . f f f c f f f f f f .
+                        . f f f c f f f c f f f f
+                        f f c c f f f c c f f c f
+                        f f f f f e f f f f c c f
+                        . f f f e e f f f f f f f
+                        . f f f e e f b f e e f f
+                        . . f f 4 4 f 1 e 4 e f f
+                        . . . f 4 4 4 4 e f f f .
+                        . . . f f e e e e 4 4 4 .
+                        . . . f 7 7 7 7 e 4 4 e .
+                        . . f f 6 6 6 6 f e e f .
+                        . . f f f f f f f f f f .
+                        . . . f f f . . . f f . .
+            """)],
+        100,
+        False)
+    tiles.place_on_tile(Lucistnik, tiles.get_tile_location(18, 10))
+    tiles.place_on_tile(mySprite, tiles.get_tile_location(0, 7))
+    
+def on_overlap_tile5(sprite102, location62):
+    if dialogSkoncen2 == True or currentLevel == 4:
         startNextLevel()
-    else:
-        startNextLevel()
-sprites.on_overlap(SpriteKind.player, SpriteKind.checkpoint, on_on_overlap4)
+    elif currentLevel == 3:
+        game.splash("Na něco jsem zapomněl...")
+        tiles.place_on_tile(mySprite, tiles.get_tile_location(53, 9))
+scene.on_overlap_tile(SpriteKind.player,
+    assets.tile("""
+        active
+    """),
+    on_overlap_tile5)
 
-def zmena_pozice_zbrane(num: number):
-    pozice_zbrane[0] = False
-    pozice_zbrane[1] = False
-    pozice_zbrane[2] = False
-    pozice_zbrane[3] = False
-    pozice_zbrane[num] = True
-
-def on_on_overlap5(sprite9, otherSprite4):
+def on_on_overlap4(sprite9, otherSprite4):
     global luk, dialogSkoncen2, dialogSkoncen, fightScene, mec
     if currentLevel == 3:
         if afterFight == True and dialogSkoncen2 == False:
@@ -1593,247 +1857,9 @@ def on_on_overlap5(sprite9, otherSprite4):
             mec = True
             info.set_life(3)
             pronasledovani(False, Lucistnik, mySprite)
-sprites.on_overlap(SpriteKind.NPC, SpriteKind.player, on_on_overlap5)
+sprites.on_overlap(SpriteKind.NPC, SpriteKind.player, on_on_overlap4)
 
-def on_overlap_tile7(sprite8, location5):
-    if currentLevel == 2:
-        if dialogSkoncen == False:
-            game.splash("Na něco jsem zapomněl...")
-            tiles.place_on_tile(mySprite, tiles.get_tile_location(15, 8))
-    elif currentLevel == 3:
-        if dialogSkoncen == False and fightScene == False:
-            pronasledovani(True, Lucistnik, mySprite)
-scene.on_overlap_tile(SpriteKind.player,
-    assets.tile("""
-        active2
-    """),
-    on_overlap_tile7)
-
-def pronasledovani(bool2: bool, Pronasledovatel: Sprite, Obet: Sprite):
-    if bool2 == True:
-        Pronasledovatel.follow(Obet, 90)
-    else:
-        Pronasledovatel.follow(Obet, 0)
-
-def on_down_pressed():
-    if not (currentLevel == 0):
-        zmena_pozice_zbrane(1)
-        animation.run_image_animation(mySprite,
-            [img("""
-                    . . . . . . . . . . . . . . . . 
-                                . . . . . . f f f f . . . . . . 
-                                . . . . f f f 2 2 f f f . . . . 
-                                . . . f f f 2 2 2 2 f f f . . . 
-                                . . f f f e e e e e e f f f . . 
-                                . . f f e 2 2 2 2 2 2 e e f . . 
-                                . f f e 2 f f f f f f 2 e f f . 
-                                . f f f f f e e e e f f f f f . 
-                                . . f e f b f 4 4 f b f e f . . 
-                                . . f e 4 1 f d d f 1 4 e f . . 
-                                . . . f e 4 d d d d 4 e f e . . 
-                                . . f e f 2 2 2 2 e d d 4 e . . 
-                                . . e 4 f 2 2 2 2 e d d e . . . 
-                                . . . . f 4 4 5 5 f e e . . . . 
-                                . . . . f f f f f f f . . . . . 
-                                . . . . f f f . . . . . . . . .
-                """),
-                img("""
-                    . . . . . . f f f f . . . . . . 
-                                . . . . f f f 2 2 f f f . . . . 
-                                . . . f f f 2 2 2 2 f f f . . . 
-                                . . f f f e e e e e e f f f . . 
-                                . . f f e 2 2 2 2 2 2 e e f . . 
-                                . . f e 2 f f f f f f 2 e f . . 
-                                . . f f f f e e e e f f f f . . 
-                                . f f e f b f 4 4 f b f e f f . 
-                                . f e e 4 1 f d d f 1 4 e e f . 
-                                . . f e e d d d d d d e e f . . 
-                                . . . f e e 4 4 4 4 e e f . . . 
-                                . . e 4 f 2 2 2 2 2 2 f 4 e . . 
-                                . . 4 d f 2 2 2 2 2 2 f d 4 . . 
-                                . . 4 4 f 4 4 5 5 4 4 f 4 4 . . 
-                                . . . . . f f f f f f . . . . . 
-                                . . . . . f f . . f f . . . . .
-                """),
-                img("""
-                    . . . . . . . . . . . . . . . . 
-                                . . . . . . f f f f . . . . . . 
-                                . . . . f f f 2 2 f f f . . . . 
-                                . . . f f f 2 2 2 2 f f f . . . 
-                                . . f f f e e e e e e f f f . . 
-                                . . f e e 2 2 2 2 2 2 e f f . . 
-                                . f f e 2 f f f f f f 2 e f f . 
-                                . f f f f f e e e e f f f f f . 
-                                . . f e f b f 4 4 f b f e f . . 
-                                . . f e 4 1 f d d f 1 4 e f . . 
-                                . . e f e 4 d d d d 4 e f . . . 
-                                . . e 4 d d e 2 2 2 2 f e f . . 
-                                . . . e d d e 2 2 2 2 f 4 e . . 
-                                . . . . e e f 5 5 4 4 f . . . . 
-                                . . . . . f f f f f f f . . . . 
-                                . . . . . . . . . f f f . . . .
-                """)],
-            100,
-            False)
-controller.down.on_event(ControllerButtonEvent.PRESSED, on_down_pressed)
-
-def on_life_zero():
-    global fightScene, currentLevel
-    game.splash("Zemřel jsi.")
-    if currentLevel == 3:
-        fightScene = False
-        Lucistnik.destroy()
-        sprites.destroy_all_sprites_of_kind(SpriteKind.enemy)
-    currentLevel = currentLevel - 1
-    sprites.destroy_all_sprites_of_kind(SpriteKind.enemy)
-    startNextLevel()
-info.on_life_zero(on_life_zero)
-
-def on_b_released():
-    global cas_konec, arrow, projectile, projectile2, projectile3
-    cas_konec = game.runtime()
-    BowImage.set_image(img("""
-        . . . . . . . . . . . . . . . . 
-                . . . . . . . . . . . . . . . . 
-                . . . . . . . . . . . . . . . . 
-                . . . . . . . . . . . . . . . . 
-                . . . . . . . . . . . . . . . . 
-                . . . . . . . . . . . . . . . . 
-                . . . . . . . . . . . . . . . . 
-                . . . . . . . . . . . . . . . . 
-                . . . . . . . . . . . . . . . . 
-                . . . . . . . . . . . . . . . . 
-                . . . . . . . . . . . . . . . . 
-                . . . . . . . . . . . . . . . . 
-                . . . . . . . . . . . . . . . . 
-                . . . . . . . . . . . . . . . . 
-                . . . . . . . . . . . . . . . . 
-                . . . . . . . . . . . . . . . .
-    """))
-    if cas_konec - cas_zacatek > 1000:
-        if pozice_zbrane[0] == True:
-            arrow = sprites.create_projectile_from_sprite(img("""
-                    . . . . . . . . . . . . . . . . 
-                                    . . . . . . . f . . . . . . . . 
-                                    . . . . . . f e f . . . . . . . 
-                                    . . . . . f . e . f . . . . . . 
-                                    . . . . . . . e . . . . . . . . 
-                                    . . . . . . . e . . . . . . . . 
-                                    . . . . . . . e . . . . . . . . 
-                                    . . . . . . . e . . . . . . . . 
-                                    . . . . . . . e . . . . . . . . 
-                                    . . . . . . . e . . . . . . . . 
-                                    . . . . . . . e . . . . . . . . 
-                                    . . . . . . . e . . . . . . . . 
-                                    . . . . . . . e . . . . . . . . 
-                                    . . . . . . . e . . . . . . . . 
-                                    . . . . . . 1 1 1 . . . . . . . 
-                                    . . . . . 1 . 1 . 1 . . . . . .
-                """),
-                mySprite,
-                0,
-                -100)
-        elif pozice_zbrane[1] == True:
-            projectile = sprites.create_projectile_from_sprite(img("""
-                    . . . . . 1 . 1 . 1 . . . . . . 
-                                    . . . . . . 1 1 1 . . . . . . . 
-                                    . . . . . . . e . . . . . . . . 
-                                    . . . . . . . e . . . . . . . . 
-                                    . . . . . . . e . . . . . . . . 
-                                    . . . . . . . e . . . . . . . . 
-                                    . . . . . . . e . . . . . . . . 
-                                    . . . . . . . e . . . . . . . . 
-                                    . . . . . . . e . . . . . . . . 
-                                    . . . . . . . e . . . . . . . . 
-                                    . . . . . . . e . . . . . . . . 
-                                    . . . . . . . e . . . . . . . . 
-                                    . . . . . f . e . f . . . . . . 
-                                    . . . . . . f e f . . . . . . . 
-                                    . . . . . . . f . . . . . . . . 
-                                    . . . . . . . . . . . . . . . .
-                """),
-                mySprite,
-                0,
-                100)
-        elif pozice_zbrane[2] == True:
-            projectile2 = sprites.create_projectile_from_sprite(img("""
-                    . . . . . . . . . . . . . . . . 
-                                    . . . . . . . . . . . . . . . . 
-                                    . . . . . . . . . . . . . . . . 
-                                    . . . . . . . . . . . . . . . . 
-                                    . . . . . . . . . . . . . . . . 
-                                    . . . f . . . . . . . . . . . 1 
-                                    . . f . . . . . . . . . . . 1 . 
-                                    . f e e e e e e e e e e e e 1 1 
-                                    . . f . . . . . . . . . . . 1 . 
-                                    . . . f . . . . . . . . . . . 1 
-                                    . . . . . . . . . . . . . . . . 
-                                    . . . . . . . . . . . . . . . . 
-                                    . . . . . . . . . . . . . . . . 
-                                    . . . . . . . . . . . . . . . . 
-                                    . . . . . . . . . . . . . . . . 
-                                    . . . . . . . . . . . . . . . .
-                """),
-                mySprite,
-                -100,
-                0)
-        elif pozice_zbrane[3] == True:
-            projectile3 = sprites.create_projectile_from_sprite(img("""
-                    . . . . . . . . . . . . . . . . 
-                                    . . . . . . . . . . . . . . . . 
-                                    . . . . . . . . . . . . . . . . 
-                                    . . . . . . . . . . . . . . . . 
-                                    . . . . . . . . . . . . . . . . 
-                                    1 . . . . . . . . . . . f . . . 
-                                    . 1 . . . . . . . . . . . f . . 
-                                    1 1 e e e e e e e e e e e e f . 
-                                    . 1 . . . . . . . . . . . f . . 
-                                    1 . . . . . . . . . . . f . . . 
-                                    . . . . . . . . . . . . . . . . 
-                                    . . . . . . . . . . . . . . . . 
-                                    . . . . . . . . . . . . . . . . 
-                                    . . . . . . . . . . . . . . . . 
-                                    . . . . . . . . . . . . . . . . 
-                                    . . . . . . . . . . . . . . . .
-                """),
-                mySprite,
-                100,
-                0)
-controller.B.on_event(ControllerButtonEvent.RELEASED, on_b_released)
-
-def move_lock(bool3: bool):
-    if bool3 == True:
-        controller.move_sprite(mySprite, 0, 0)
-    else:
-        controller.move_sprite(mySprite, 80, 80)
-
-def on_overlap_tile8(sprite10, location6):
-    if currentLevel == 5:
-        game.splash("Dveře jsou zavřené, musím najít jiný vchod")
-        tiles.place_on_tile(mySprite, tiles.get_tile_location(19, 8))
-scene.on_overlap_tile(SpriteKind.player,
-    assets.tile("""
-        active
-    """),
-    on_overlap_tile8)
-
-def on_overlap_tile9(sprite13, location8):
-    if currentLevel == 5:
-        game.splash("Bohužel, spadl na tebe strop")
-        game.splash("Zemřel jsi.")
-        info.set_life(0)
-scene.on_overlap_tile(SpriteKind.player,
-    assets.tile("""
-        active_black
-    """),
-    on_overlap_tile9)
-
-def on_on_overlap6(sprite52, otherSprite22):
-    sprite52.destroy(effects.disintegrate, 200)
-    info.change_life_by(-1)
-sprites.on_overlap(SpriteKind.enemy, SpriteKind.player, on_on_overlap6)
-
-def on_on_overlap7(sprite42, otherSprite6):
+def on_on_overlap5(sprite42, otherSprite6):
     animation.run_image_animation(otherSprite6,
         [img("""
                 ........................
@@ -2003,46 +2029,285 @@ def on_on_overlap7(sprite42, otherSprite6):
                         ........feeefeef........
                         ........fefeffef........
             """)],
-        50,
-        False)
+        50, False)
     scene.camera_shake(4, 500)
     otherSprite6.set_kind(SpriteKind.Tree)
     tiles.set_tile_at(otherSprite6.tilemap_location(),
         assets.tile("""
             spawner
         """))
-sprites.on_overlap(SpriteKind.projectile, SpriteKind.enemyTree, on_on_overlap7)
+sprites.on_overlap(SpriteKind.projectile, SpriteKind.enemyTree, on_on_overlap5)
 
-def on_overlap_tile10(sprite32, location32):
-    global mec, dialogSkoncen
-    if dialogSkoncen == False:
-        game.show_long_text("ZBROJÍŘ: Počkej, počkej.", DialogLayout.BOTTOM)
-        game.show_long_text("ZBROJÍŘ: Povídal mi o tobě král.", DialogLayout.BOTTOM)
-        game.show_long_text("ZBROJÍŘ: Jsem místní zbrojíř a mám ti dát todle.",
-            DialogLayout.BOTTOM)
-        mec = True
-        game.splash("Získal jsi meč")
-        game.splash("Stiskem A mečem sekáš")
-        dialogSkoncen = True
+def on_update_interval():
+    global myEnemy, fightScene, afterFight
+    if currentLevel == 3:
+        if fightScene == True:
+            if len(tiles.get_tiles_by_type(assets.tile("""
+                myTile9
+            """))) > 0:
+                myEnemy = sprites.create(img("""
+                        . . f f f . . . . . . . . . . .
+                                            f f f c c . . . . . . . . f f f
+                                            f f c c . . c c . . . f c b b c
+                                            f f c 3 c c 3 c c f f b b b c .
+                                            f f b 3 b c 3 b c f b b c c c .
+                                            . c b b b b b b c f b c b c c .
+                                            . c b b b b b b c b b c b b c .
+                                            c b 1 b b b 1 b b b c c c b c .
+                                            c b b b b b b b b c c c c c . .
+                                            f b c b b b c b b b b f c . . .
+                                            f b 1 f f f 1 b b b b f c c . .
+                                            . f b b b b b b b b c f . . . .
+                                            . . f b b b b b b c f . . . . .
+                                            . . . f f f f f f f . . . . . .
+                                            . . . . . . . . . . . . . . . .
+                                            . . . . . . . . . . . . . . . .
+                    """),
+                    SpriteKind.enemy)
+                animation.run_image_animation(myEnemy,
+                    [img("""
+                            . . f f f . . . . . . . . f f f
+                                                . f f c c . . . . . . f c b b c
+                                                f f c c . . . . . . f c b b c .
+                                                f c f c . . . . . . f b c c c .
+                                                f f f c c . c c . f c b b c c .
+                                                f f c 3 c c 3 c c f b c b b c .
+                                                f f b 3 b c 3 b c f b c c b c .
+                                                . c 1 b b b 1 b c b b c c c . .
+                                                . c 1 b b b 1 b b c c c c . . .
+                                                c b b b b b b b b b c c . . . .
+                                                c b 1 f f 1 c b b b b f . . . .
+                                                f f 1 f f 1 f b b b b f c . . .
+                                                f f 2 2 2 2 f b b b b f c c . .
+                                                . f 2 2 2 2 b b b b c f . . . .
+                                                . . f b b b b b b c f . . . . .
+                                                . . . f f f f f f f . . . . . .
+                        """),
+                        img("""
+                            . . f f f . . . . . . . . . . .
+                                                f f f c c . . . . . . . . f f f
+                                                f f c c c . c c . . . f c b b c
+                                                f f c 3 c c 3 c c f f b b b c .
+                                                f f c 3 b c 3 b c f b b c c c .
+                                                f c b b b b b b c f b c b c c .
+                                                c c 1 b b b 1 b c b b c b b c .
+                                                c b b b b b b b b b c c c b c .
+                                                c b 1 f f 1 c b b c c c c c . .
+                                                c f 1 f f 1 f b b b b f c . . .
+                                                f f f f f f f b b b b f c . . .
+                                                f f 2 2 2 2 f b b b b f c c . .
+                                                . f 2 2 2 2 2 b b b c f . . . .
+                                                . . f 2 2 2 b b b c f . . . . .
+                                                . . . f f f f f f f . . . . . .
+                                                . . . . . . . . . . . . . . . .
+                        """),
+                        img("""
+                            . . . . . . . . . . . . . . . .
+                                                . . . . . . . . . . . . . . . .
+                                                . . . c c . c c . . . . . . . .
+                                                . . f 3 c c 3 c c c . . . . . .
+                                                . f c 3 b c 3 b c c c . . . . .
+                                                f c b b b b b b b b f f . . . .
+                                                c c 1 b b b 1 b b b f f . . . .
+                                                c b b b b b b b b c f f f . . .
+                                                c b 1 f f 1 c b b f f f f . . .
+                                                f f 1 f f 1 f b c c b b b . . .
+                                                f f f f f f f b f c c c c . . .
+                                                f f 2 2 2 2 f b f b b c c c . .
+                                                . f 2 2 2 2 2 b c c b b c . . .
+                                                . . f 2 2 2 b f f c c b b c . .
+                                                . . . f f f f f f f c c c c c .
+                                                . . . . . . . . . . . . c c c c
+                        """),
+                        img("""
+                            . f f f . . . . . . . . f f f .
+                                                f f c . . . . . . . f c b b c .
+                                                f c c . . . . . . f c b b c . .
+                                                c f . . . . . . . f b c c c . .
+                                                c f f . . . . . f f b b c c . .
+                                                f f f c c . c c f b c b b c . .
+                                                f f f c c c c c f b c c b c . .
+                                                . f c 3 c c 3 b c b c c c . . .
+                                                . c b 3 b c 3 b b c c c c . . .
+                                                c c b b b b b b b b c c . . . .
+                                                c 1 1 b b b 1 1 b b b f c . . .
+                                                f b b b b b b b b b b f c c . .
+                                                f b c b b b c b b b b f . . . .
+                                                . f 1 f f f 1 b b b c f . . . .
+                                                . . f b b b b b b c f . . . . .
+                                                . . . f f f f f f f . . . . . .
+                        """)],
+                    250,
+                    True)
+                tiles.place_on_tile(myEnemy,
+                    tiles.get_tiles_by_type(assets.tile("""
+                        myTile9
+                    """))._pick_random())
+                myEnemy.follow(mySprite, randint(20, 40))
+            else:
+                fightScene = False
+                pronasledovani(True, Lucistnik, mySprite)
+                afterFight = True
+game.on_update_interval(3000, on_update_interval)
+#level 3\
+
+
+
+#level 4/
+def level4():
+    global dialogSkoncen, dialogSkoncen2, luk, mec, cislo_sloupce, spawn_bobri, time, bobr2
+    info.set_life(3)
+    dialogSkoncen = False
+    dialogSkoncen2 = False
+    tiles.place_on_tile(mySprite, tiles.get_tile_location(0, 7))
+    luk = True
+    mec = False
+    cislo_sloupce = -1
+    spawn_bobri = False
+    time = 3000
+    bobr2 = sprites.create(assets.image("""
+        bobr
+    """), SpriteKind.bobr)
+
+def on_overlap_tile(sprite3, location3):
+    if naBobrovi == False:
+        game.splash("Utopil jsi se.")
+        info.set_life(0)
 scene.on_overlap_tile(SpriteKind.player,
     assets.tile("""
-        hlina
+        myTile12
     """),
-    on_overlap_tile10)
+    on_overlap_tile)
 
-def on_overlap_tile11(sprite102, location62):
-    if dialogSkoncen2 == True or currentLevel == 4:
-        startNextLevel()
-    elif currentLevel == 3:
-        game.splash("Na něco jsem zapomněl...")
-        tiles.place_on_tile(mySprite, tiles.get_tile_location(53, 9))
+def on_on_update2():
+    global naBobrovi
+    if currentLevel == 4:
+        if tiles.tile_at_location_equals(mySprite.tilemap_location(),
+            assets.tile("""
+                myTile11
+            """)) or tiles.tile_at_location_equals(mySprite.tilemap_location(), assets.tile("""
+            wood
+        """)):
+            naBobrovi = True
+        elif tiles.tile_at_location_equals(mySprite.tilemap_location(), sprites.castle.tile_grass1) or tiles.tile_at_location_equals(mySprite.tilemap_location(), sprites.castle.tile_path4):
+            naBobrovi = True
+        else:
+            naBobrovi = False
+game.on_update(on_on_update2)
+
+def on_forever():
+    global bobr2
+    if currentLevel == 4 and spawn_bobri == True:
+        zmena_bobra()
+        bobr2 = sprites.create(assets.image("""
+            bobr
+        """), SpriteKind.bobr)
+        tiles.place_on_tile(bobr2, tiles.get_tile_location(cislo_sloupce + 10, row))
+        bobr2.ay = speed
+        bobr2.set_flag(SpriteFlag.DESTROY_ON_WALL, True)
+        pause(time)
+forever(on_forever)
+
+def zmena_bobra():
+    global time, vertical, speed, row
+    time = randint(2500, 5000)
+    vertical = randint(0, 1)
+    if vertical == 0:
+        speed = randint(150, 400)
+        row = 0
+    else:
+        speed = randint(-150, -400)
+        row = 15
+
+def zmena_sloupce():
+    global cislo_sloupce
+    if cislo_sloupce == 10:
+        sprites.destroy_all_sprites_of_kind(SpriteKind.bobr)
+    else:
+        cislo_sloupce = cislo_sloupce + 1
+#level 4\
+
+
+
+#level 5/
+def level5():
+    global dialogSkoncen, dialogSkoncen2, fightScene
+    dialogSkoncen = False
+    dialogSkoncen2 = False
+    tiles.place_on_tile(mySprite, tiles.get_tile_location(0, 7))
+    fightScene = False
+
+def on_overlap_tile4(sprite2, location2):
+    global dialogSkoncen, spawn_bobri, dialogSkoncen2
+    if currentLevel == 2:
+        dialogSkoncen = False
+    if currentLevel == 4 and dialogSkoncen == False:
+        dialogSkoncen = True
+        game.show_long_text("Sakra, neumím plavat. Musím nějak přebrodit řeku",
+            DialogLayout.BOTTOM)
+        spawn_bobri = True
+        zmena_sloupce()
+    if currentLevel == 4 and (bobr2.tile_kind_at(TileDirection.LEFT, assets.tile("""
+        wood
+    """)) or bobr2.tile_kind_at(TileDirection.RIGHT, assets.tile("""
+        wood
+    """))):
+        if dialogSkoncen2 == False:
+            game.show_long_text("Proč tu sviští bobři?!", DialogLayout.BOTTOM)
+            dialogSkoncen2 = True
+scene.on_overlap_tile(SpriteKind.player,
+    assets.tile("""
+        wood
+    """),
+    on_overlap_tile4)
+
+def on_overlap_tile11(sprite10, location6):
+    if currentLevel == 5:
+        game.splash("Dveře jsou zavřené, musím najít jiný vchod")
+        tiles.place_on_tile(mySprite, tiles.get_tile_location(19, 8))
 scene.on_overlap_tile(SpriteKind.player,
     assets.tile("""
         active
     """),
     on_overlap_tile11)
 
-def on_overlap_tile12(sprite14, location9):
+def on_on_overlap2(sprite5, otherSprite2):
+    otherSprite2.destroy(effects.cool_radial, 1)
+    sprite5.destroy()
+    tiles.set_tile_at(otherSprite2.tilemap_location(),
+        assets.tile("""
+            myTile11
+        """))
+    if otherSprite2.tile_kind_at(TileDirection.LEFT, assets.tile("""
+        myTile11
+    """)) or otherSprite2.tile_kind_at(TileDirection.LEFT, assets.tile("""
+        wood
+    """)):
+        sprites.destroy_all_sprites_of_kind(SpriteKind.bobr)
+        zmena_sloupce()
+sprites.on_overlap(SpriteKind.projectile, SpriteKind.bobr, on_on_overlap2)
+
+def on_overlap_tile6(sprite13, location8):
+    if currentLevel == 5:
+        game.splash("Bohužel, spadl na tebe strop")
+        game.splash("Zemřel jsi.")
+        info.set_life(0)
+scene.on_overlap_tile(SpriteKind.player,
+    assets.tile("""
+        active_black
+    """),
+    on_overlap_tile6)
+
+def on_overlap_tile2(sprite6, location4):
+    tiles.set_tile_at(location4, sprites.dungeon.chest_open)
+    effects.hearts.start_screen_effect(500)
+    game.splash("Získal jsi život navíc")
+    info.change_life_by(1)
+scene.on_overlap_tile(SpriteKind.player,
+    sprites.dungeon.chest_closed,
+    on_overlap_tile2)
+
+def on_overlap_tile3(sprite14, location9):
     global luk, mec, fightScene, netopyr
     if currentLevel == 5:
         game.show_long_text("Mohl bych tam zkusit vlézt", DialogLayout.BOTTOM)
@@ -2219,248 +2484,6 @@ scene.on_overlap_tile(SpriteKind.player,
     assets.tile("""
         myTile26
     """),
-    on_overlap_tile12)
+    on_overlap_tile3)
+#level 5\
 
-myEnemy: Sprite = None
-netopyr: Sprite = None
-projectile3: Sprite = None
-projectile2: Sprite = None
-projectile: Sprite = None
-arrow: Sprite = None
-cas_konec = 0
-afterFight = False
-rocks: Sprite = None
-Strom: Sprite = None
-House1: Sprite = None
-Zbrojar: Sprite = None
-StromTmavy: Sprite = None
-cursor2: Sprite = None
-button_lvl_5: Sprite = None
-button_lvl_4: Sprite = None
-button_lvl_3: Sprite = None
-button_lvl_2: Sprite = None
-button_lvl_1: Sprite = None
-button_2: Sprite = None
-button_1: Sprite = None
-Lucistnik: Sprite = None
-naBobrovi = False
-fightScene = False
-swingingSword = False
-Kral: Sprite = None
-row = 0
-speed = 0
-vertical = 0
-swingingBow = False
-cas_zacatek = 0
-time = 0
-cislo_sloupce = 0
-mec = False
-luk = False
-dialogSkoncen2 = False
-bobr2: Sprite = None
-spawn_bobri = False
-dialogSkoncen = False
-BowImage: Sprite = None
-sword: Sprite = None
-currentLevel = 0
-pozice_zbrane: List[bool] = []
-mySprite: Sprite = None
-mySprite = sprites.create(img("""
-        . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . .
-    """),
-    SpriteKind.player)
-scene.camera_follow_sprite(mySprite)
-pozice_zbrane = [False, False, False, False]
-currentLevel = -1
-sword = sprites.create(assets.image("""
-    swordUP
-"""), SpriteKind.projectile)
-BowImage = sprites.create(assets.image("""
-    swordUP
-"""), SpriteKind.item)
-startNextLevel()
-
-def on_on_update():
-    if mec == True:
-        if mySprite.vx < 0:
-            sword.right = mySprite.left
-            sword.y = mySprite.y
-        elif mySprite.vx > 0:
-            sword.left = mySprite.right
-            sword.y = mySprite.y
-        elif mySprite.vy > 0:
-            sword.top = mySprite.bottom
-            sword.x = mySprite.x
-        elif mySprite.vy < 0:
-            sword.bottom = mySprite.top
-            sword.x = mySprite.x
-    if luk == True:
-        if mySprite.vx < 0:
-            BowImage.right = mySprite.left
-            BowImage.y = mySprite.y
-        elif mySprite.vx > 0:
-            BowImage.left = mySprite.right
-            BowImage.y = mySprite.y
-        elif mySprite.vy > 0:
-            BowImage.top = mySprite.bottom
-            BowImage.x = mySprite.x
-        elif mySprite.vy < 0:
-            BowImage.bottom = mySprite.top
-            BowImage.x = mySprite.x
-game.on_update(on_on_update)
-
-def on_on_update2():
-    global naBobrovi
-    if currentLevel == 4:
-        if tiles.tile_at_location_equals(mySprite.tilemap_location(),
-            assets.tile("""
-                myTile11
-            """)) or tiles.tile_at_location_equals(mySprite.tilemap_location(), assets.tile("""
-            wood
-        """)):
-            naBobrovi = True
-        elif tiles.tile_at_location_equals(mySprite.tilemap_location(), sprites.castle.tile_grass1) or tiles.tile_at_location_equals(mySprite.tilemap_location(), sprites.castle.tile_path4):
-            naBobrovi = True
-        else:
-            naBobrovi = False
-game.on_update(on_on_update2)
-
-def on_forever():
-    global bobr2
-    if currentLevel == 4 and spawn_bobri == True:
-        zmena_bobra()
-        bobr2 = sprites.create(assets.image("""
-            bobr
-        """), SpriteKind.bobr)
-        tiles.place_on_tile(bobr2, tiles.get_tile_location(cislo_sloupce + 10, row))
-        bobr2.ay = speed
-        bobr2.set_flag(SpriteFlag.DESTROY_ON_WALL, True)
-        pause(time)
-forever(on_forever)
-
-def on_update_interval():
-    global myEnemy, fightScene, afterFight
-    if currentLevel == 3:
-        if fightScene == True:
-            if len(tiles.get_tiles_by_type(assets.tile("""
-                myTile9
-            """))) > 0:
-                myEnemy = sprites.create(img("""
-                        . . f f f . . . . . . . . . . . 
-                                            f f f c c . . . . . . . . f f f 
-                                            f f c c . . c c . . . f c b b c 
-                                            f f c 3 c c 3 c c f f b b b c . 
-                                            f f b 3 b c 3 b c f b b c c c . 
-                                            . c b b b b b b c f b c b c c . 
-                                            . c b b b b b b c b b c b b c . 
-                                            c b 1 b b b 1 b b b c c c b c . 
-                                            c b b b b b b b b c c c c c . . 
-                                            f b c b b b c b b b b f c . . . 
-                                            f b 1 f f f 1 b b b b f c c . . 
-                                            . f b b b b b b b b c f . . . . 
-                                            . . f b b b b b b c f . . . . . 
-                                            . . . f f f f f f f . . . . . . 
-                                            . . . . . . . . . . . . . . . . 
-                                            . . . . . . . . . . . . . . . .
-                    """),
-                    SpriteKind.enemy)
-                animation.run_image_animation(myEnemy,
-                    [img("""
-                            . . f f f . . . . . . . . f f f 
-                                                . f f c c . . . . . . f c b b c 
-                                                f f c c . . . . . . f c b b c . 
-                                                f c f c . . . . . . f b c c c . 
-                                                f f f c c . c c . f c b b c c . 
-                                                f f c 3 c c 3 c c f b c b b c . 
-                                                f f b 3 b c 3 b c f b c c b c . 
-                                                . c 1 b b b 1 b c b b c c c . . 
-                                                . c 1 b b b 1 b b c c c c . . . 
-                                                c b b b b b b b b b c c . . . . 
-                                                c b 1 f f 1 c b b b b f . . . . 
-                                                f f 1 f f 1 f b b b b f c . . . 
-                                                f f 2 2 2 2 f b b b b f c c . . 
-                                                . f 2 2 2 2 b b b b c f . . . . 
-                                                . . f b b b b b b c f . . . . . 
-                                                . . . f f f f f f f . . . . . .
-                        """),
-                        img("""
-                            . . f f f . . . . . . . . . . . 
-                                                f f f c c . . . . . . . . f f f 
-                                                f f c c c . c c . . . f c b b c 
-                                                f f c 3 c c 3 c c f f b b b c . 
-                                                f f c 3 b c 3 b c f b b c c c . 
-                                                f c b b b b b b c f b c b c c . 
-                                                c c 1 b b b 1 b c b b c b b c . 
-                                                c b b b b b b b b b c c c b c . 
-                                                c b 1 f f 1 c b b c c c c c . . 
-                                                c f 1 f f 1 f b b b b f c . . . 
-                                                f f f f f f f b b b b f c . . . 
-                                                f f 2 2 2 2 f b b b b f c c . . 
-                                                . f 2 2 2 2 2 b b b c f . . . . 
-                                                . . f 2 2 2 b b b c f . . . . . 
-                                                . . . f f f f f f f . . . . . . 
-                                                . . . . . . . . . . . . . . . .
-                        """),
-                        img("""
-                            . . . . . . . . . . . . . . . . 
-                                                . . . . . . . . . . . . . . . . 
-                                                . . . c c . c c . . . . . . . . 
-                                                . . f 3 c c 3 c c c . . . . . . 
-                                                . f c 3 b c 3 b c c c . . . . . 
-                                                f c b b b b b b b b f f . . . . 
-                                                c c 1 b b b 1 b b b f f . . . . 
-                                                c b b b b b b b b c f f f . . . 
-                                                c b 1 f f 1 c b b f f f f . . . 
-                                                f f 1 f f 1 f b c c b b b . . . 
-                                                f f f f f f f b f c c c c . . . 
-                                                f f 2 2 2 2 f b f b b c c c . . 
-                                                . f 2 2 2 2 2 b c c b b c . . . 
-                                                . . f 2 2 2 b f f c c b b c . . 
-                                                . . . f f f f f f f c c c c c . 
-                                                . . . . . . . . . . . . c c c c
-                        """),
-                        img("""
-                            . f f f . . . . . . . . f f f . 
-                                                f f c . . . . . . . f c b b c . 
-                                                f c c . . . . . . f c b b c . . 
-                                                c f . . . . . . . f b c c c . . 
-                                                c f f . . . . . f f b b c c . . 
-                                                f f f c c . c c f b c b b c . . 
-                                                f f f c c c c c f b c c b c . . 
-                                                . f c 3 c c 3 b c b c c c . . . 
-                                                . c b 3 b c 3 b b c c c c . . . 
-                                                c c b b b b b b b b c c . . . . 
-                                                c 1 1 b b b 1 1 b b b f c . . . 
-                                                f b b b b b b b b b b f c c . . 
-                                                f b c b b b c b b b b f . . . . 
-                                                . f 1 f f f 1 b b b c f . . . . 
-                                                . . f b b b b b b c f . . . . . 
-                                                . . . f f f f f f f . . . . . .
-                        """)],
-                    250,
-                    True)
-                tiles.place_on_tile(myEnemy,
-                    tiles.get_tiles_by_type(assets.tile("""
-                        myTile9
-                    """))._pick_random())
-                myEnemy.follow(mySprite, randint(20, 40))
-            else:
-                fightScene = False
-                pronasledovani(True, Lucistnik, mySprite)
-                afterFight = True
-game.on_update_interval(3000, on_update_interval)
