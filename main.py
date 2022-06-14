@@ -16,6 +16,7 @@ class SpriteKind:
     button = SpriteKind.create()
     Kostlivec = SpriteKind.create()
     button_small = SpriteKind.create()
+    neznicitelny_enemy = SpriteKind.create()
 @namespace
 class StrProp:
     Name = StrProp.create()
@@ -33,6 +34,7 @@ projectile2: Sprite = None
 projectile: Sprite = None
 arrow: Sprite = None
 cas_konec = 0
+duch: Sprite = None
 afterFight = False
 rocks: Sprite = None
 Strom: Sprite = None
@@ -49,6 +51,7 @@ fightScene = False
 Kral: Sprite = None
 row = 0
 speed = 0
+pozice = 0
 vertical = 0
 swingingBow = False
 cas_zacatek = 0
@@ -62,10 +65,11 @@ luk = False
 dialogSkoncen2 = False
 dialogSkoncen = False
 BowImage: Sprite = None
-sword: Sprite = None
+SwordImage: Sprite = None
 currentLevel = 0
 pozice_zbrane: List[bool] = []
 mySprite: Sprite = None
+enemy_position: List[List[number]] = []
 
 mySprite = sprites.create(img("""
     . . . . . . . . . . . . . . . .
@@ -84,20 +88,20 @@ mySprite = sprites.create(img("""
     . . . . . . . . . . . . . . . .
     . . . . . . . . . . . . . . . .
     . . . . . . . . . . . . . . . .
-"""),
-    SpriteKind.player)
+"""), SpriteKind.player)
 
 scene.camera_follow_sprite(mySprite)
-pozice_zbrane = [False, False, False, False]
+pozice_zbrane = [False, False, False, False] # smery drzeni zbrane
 
-sword = sprites.create(assets.image("""
+SwordImage = sprites.create(assets.image("""
     swordUP
 """), SpriteKind.projectile)
 
 BowImage = sprites.create(assets.image("""
     swordUP
 """), SpriteKind.item)
-currentLevel = -1
+
+currentLevel = -1 # level (0 = MENU)
 startNextLevel()
 
 
@@ -108,57 +112,57 @@ def on_up_pressed():
         zmena_pozice_zbrane(0)
         animation.run_image_animation(mySprite,
             [img("""
-                    . . . . . . . . . . . . . . . . 
-                                . . . . . . f f f f . . . . . . 
-                                . . . . f f e e e e f f . . . . 
-                                . . . f e e e f f e e e f . . . 
-                                . . . f f f f 2 2 f f f f . . . 
-                                . . f f e 2 e 2 2 e 2 e f f . . 
-                                . . f e 2 f 2 f f f 2 f e f . . 
-                                . . f f f 2 f e e 2 2 f f f . . 
-                                . . f e 2 f f e e 2 f e e f . . 
-                                . f f e f f e e e f e e e f f . 
-                                . f f e e e e e e e e e e f f . 
-                                . . . f e e e e e e e e f . . . 
-                                . . . e f f f f f f f f 4 e . . 
-                                . . . 4 f 2 2 2 2 2 e d d 4 . . 
-                                . . . e f f f f f f e e 4 . . . 
+                    . . . . . . . . . . . . . . . .
+                                . . . . . . f f f f . . . . . .
+                                . . . . f f e e e e f f . . . .
+                                . . . f e e e f f e e e f . . .
+                                . . . f f f f 2 2 f f f f . . .
+                                . . f f e 2 e 2 2 e 2 e f f . .
+                                . . f e 2 f 2 f f f 2 f e f . .
+                                . . f f f 2 f e e 2 2 f f f . .
+                                . . f e 2 f f e e 2 f e e f . .
+                                . f f e f f e e e f e e e f f .
+                                . f f e e e e e e e e e e f f .
+                                . . . f e e e e e e e e f . . .
+                                . . . e f f f f f f f f 4 e . .
+                                . . . 4 f 2 2 2 2 2 e d d 4 . .
+                                . . . e f f f f f f e e 4 . . .
                                 . . . . f f f . . . . . . . . .
                 """),
                 img("""
-                    . . . . . . f f f f . . . . . . 
-                                . . . . f f e e e e f f . . . . 
-                                . . . f e e e f f e e e f . . . 
-                                . . f f f f f 2 2 f f f f f . . 
-                                . . f f e 2 e 2 2 e 2 e f f . . 
-                                . . f e 2 f 2 f f 2 f 2 e f . . 
-                                . . f f f 2 2 e e 2 2 f f f . . 
-                                . f f e f 2 f e e f 2 f e f f . 
-                                . f e e f f e e e e f e e e f . 
-                                . . f e e e e e e e e e e f . . 
-                                . . . f e e e e e e e e f . . . 
-                                . . e 4 f f f f f f f f 4 e . . 
-                                . . 4 d f 2 2 2 2 2 2 f d 4 . . 
-                                . . 4 4 f 4 4 4 4 4 4 f 4 4 . . 
-                                . . . . . f f f f f f . . . . . 
+                    . . . . . . f f f f . . . . . .
+                                . . . . f f e e e e f f . . . .
+                                . . . f e e e f f e e e f . . .
+                                . . f f f f f 2 2 f f f f f . .
+                                . . f f e 2 e 2 2 e 2 e f f . .
+                                . . f e 2 f 2 f f 2 f 2 e f . .
+                                . . f f f 2 2 e e 2 2 f f f . .
+                                . f f e f 2 f e e f 2 f e f f .
+                                . f e e f f e e e e f e e e f .
+                                . . f e e e e e e e e e e f . .
+                                . . . f e e e e e e e e f . . .
+                                . . e 4 f f f f f f f f 4 e . .
+                                . . 4 d f 2 2 2 2 2 2 f d 4 . .
+                                . . 4 4 f 4 4 4 4 4 4 f 4 4 . .
+                                . . . . . f f f f f f . . . . .
                                 . . . . . f f . . f f . . . . .
                 """),
                 img("""
-                    . . . . . . . . . . . . . . . . 
-                                . . . . . . f f f f . . . . . . 
-                                . . . . f f e e e e f f . . . . 
-                                . . . f e e e f f e e e f . . . 
-                                . . . f f f f 2 2 f f f f . . . 
-                                . . f f e 2 e 2 2 e 2 e f f . . 
-                                . . f e f 2 f f f 2 f 2 e f . . 
-                                . . f f f 2 2 e e f 2 f f f . . 
-                                . . f e e f 2 e e f f 2 e f . . 
-                                . f f e e e f e e e f f e f f . 
-                                . f f e e e e e e e e e e f f . 
-                                . . . f e e e e e e e e f . . . 
-                                . . e 4 f f f f f f f f e . . . 
-                                . . 4 d d e 2 2 2 2 2 f 4 . . . 
-                                . . . 4 e e f f f f f f e . . . 
+                    . . . . . . . . . . . . . . . .
+                                . . . . . . f f f f . . . . . .
+                                . . . . f f e e e e f f . . . .
+                                . . . f e e e f f e e e f . . .
+                                . . . f f f f 2 2 f f f f . . .
+                                . . f f e 2 e 2 2 e 2 e f f . .
+                                . . f e f 2 f f f 2 f 2 e f . .
+                                . . f f f 2 2 e e f 2 f f f . .
+                                . . f e e f 2 e e f f 2 e f . .
+                                . f f e e e f e e e f f e f f .
+                                . f f e e e e e e e e e e f f .
+                                . . . f e e e e e e e e f . . .
+                                . . e 4 f f f f f f f f e . . .
+                                . . 4 d d e 2 2 2 2 2 f 4 . . .
+                                . . . 4 e e f f f f f f e . . .
                                 . . . . . . . . . f f f . . . .
                 """)], 100, False)
 controller.up.on_event(ControllerButtonEvent.PRESSED, on_up_pressed)
@@ -220,9 +224,7 @@ def on_down_pressed():
                                 . . . . e e f 5 5 4 4 f . . . .
                                 . . . . . f f f f f f f . . . .
                                 . . . . . . . . . f f f . . . .
-                """)],
-            100,
-            False)
+                """)], 100, False)
 controller.down.on_event(ControllerButtonEvent.PRESSED, on_down_pressed)
 
 def on_right_pressed():
@@ -282,9 +284,7 @@ def on_right_pressed():
                                 . . . . f e e f 4 4 5 5 f f . .
                                 . . . . f f f f f f f f f f . .
                                 . . . . . f f . . . f f f . . .
-                """)],
-            100,
-            False)
+                """)], 100, False)
 controller.right.on_event(ControllerButtonEvent.PRESSED, on_right_pressed)
 
 def on_left_pressed():
@@ -344,15 +344,13 @@ def on_left_pressed():
                                 . . f f 5 5 4 4 f e e f . . . .
                                 . . f f f f f f f f f f . . . .
                                 . . . f f f . . . f f . . . . .
-                """)],
-            100,
-            False)
+                """)], 100, False)
 controller.left.on_event(ControllerButtonEvent.PRESSED, on_left_pressed)
 
 
 def on_b_pressed(): #mereni casu natazeni luku
     global cas_zacatek, swingingBow
-    if luk == True:
+    if luk:
         cas_zacatek = game.runtime()
         if swingingBow == False:
             swingingBow = True
@@ -417,88 +415,87 @@ def on_b_pressed(): #mereni casu natazeni luku
         swingingBow = False
 controller.B.on_event(ControllerButtonEvent.PRESSED, on_b_pressed)
 
-def on_a_pressed():
+def on_a_pressed(): # seknuti mecem do ruznych smeru
     global swingingSword
-    if mec == True:
-        if swingingSword == False:
-            swingingSword = True
-            if pozice_zbrane[0] == True:
-                sword.set_image(img("""
-                    . . . . 1 . . . . . 1 . . . .
-                                        . . . . . . . . . . . . . . .
-                                        . . . . . . . . . . . . . . .
-                                        . . . c c c . . . . 1 . . . .
-                                        . . . c d d c . . . . . . . .
-                                        1 . . c d b d c . . . . . . .
-                                        . . . . c d b d c . . . . . .
-                                        . . . . . c d b d c . . . . .
-                                        . . . . . . c d b d c . . . .
-                                        . . . . . . . c d b d c . . .
-                                        1 . . . 1 . . . c d b d c . .
-                                        . . . . . . . . . c d d c . .
-                                        . . . . . . . . . . c c a c .
-                                        . . . . . . . . . . . . c c c
-                                        . . . . . . . 1 . . . . . c c
-                """))
-            elif pozice_zbrane[1] == True:
-                sword.set_image(img("""
-                    c c . . . . . 1 . . . . . . . 1
-                                        c c c . . . . . . . . . . . . .
-                                        . c a c c . . . . . . . . . . .
-                                        . . c d d c . . . . . . . . . .
-                                        . . c d b d c . . . . . . . . 1
-                                        . . . c d b d c . . . . . . . .
-                                        1 . . . c d b d c . . . . . . .
-                                        . . . . . c d b d c . . . . . 1
-                                        . . . . . . c d b d c . . . . .
-                                        . . . . . . . c d b d c . . . .
-                                        . . . . . . . . c d b d c . . .
-                                        . . . 1 . . . . . c d d c . . .
-                                        . . . . . . . . . . c c c . . .
-                                        . . . . . . . . . . . . . . . .
-                                        . . . . . . . . . . . . . . . .
-                                        . . . . . . . . 1 . . . . . . 1
-                """))
-            elif pozice_zbrane[2] == True:
-                sword.set_image(img("""
-                    1 . . . . 1 . . . . . . . 1 . .
-                    . . . . . . . . . . . . . . . .
-                    . . . . . . . . . . . 1 . . . .
-                    . . . c c c . . . . . . . . . .
-                    . . . c d d c . . . . . . . . .
-                    . . . c d b d c . . . . . . . .
-                    . . . . c d b d c . . . . . . .
-                    1 . . . . c d b d c . . . . . .
-                    . . . . . . c d b d c . . . . .
-                    . . . . . . . c d b d c . . . .
-                    . . . . . . . . c d b d c . . .
-                    . . . . . . . . . c d b d c . .
-                    . . . 1 . . . . . . c d d c . .
-                    . . . . . . . . . . . c c a c .
-                    . . . . . . . . . . . . . c c c
-                    1 . . . . . . 1 . . . . . . c c
-                """))
-            elif pozice_zbrane[3] == True:
-                sword.set_image(img("""
-                    . . . . . . . . . . 1 . . . . 1
-                    . . . . . . . . . . . . . . . .
-                    . . . 1 . . . . . . . . . . . .
-                    . . . . . . . . . . c c c . . .
-                    . . . . . . . . . c d d c . . .
-                    . . . . . . . . c d b d c . . .
-                    . . . . . . . c d b d c . . . 1
-                    . . . . . . c d b d c . . . . .
-                    1 . . . . c d b d c . . . . . .
-                    . . . . c d b d c . . . . . . .
-                    . . . c d b d c . . . . . . . .
-                    . . c d b d c . . . . . . . . 1
-                    . . c d d c . . . . . . . . . .
-                    . c a c c . . . . . . . . . . .
-                    c c c . . . . . . . . . . . . .
-                    c c . . . . . . 1 . . . . . . .
-                """))
+    if mec == True and swingingSword == False:
+        swingingSword = True
+        if pozice_zbrane[0] == True:
+            SwordImage.set_image(img("""
+                . . . . 1 . . . . . 1 . . . .
+                                    . . . . . . . . . . . . . . .
+                                    . . . . . . . . . . . . . . .
+                                    . . . c c c . . . . 1 . . . .
+                                    . . . c d d c . . . . . . . .
+                                    1 . . c d b d c . . . . . . .
+                                    . . . . c d b d c . . . . . .
+                                    . . . . . c d b d c . . . . .
+                                    . . . . . . c d b d c . . . .
+                                    . . . . . . . c d b d c . . .
+                                    1 . . . 1 . . . c d b d c . .
+                                    . . . . . . . . . c d d c . .
+                                    . . . . . . . . . . c c a c .
+                                    . . . . . . . . . . . . c c c
+                                    . . . . . . . 1 . . . . . c c
+            """))
+        elif pozice_zbrane[1] == True:
+            SwordImage.set_image(img("""
+                c c . . . . . 1 . . . . . . . 1
+                                    c c c . . . . . . . . . . . . .
+                                    . c a c c . . . . . . . . . . .
+                                    . . c d d c . . . . . . . . . .
+                                    . . c d b d c . . . . . . . . 1
+                                    . . . c d b d c . . . . . . . .
+                                    1 . . . c d b d c . . . . . . .
+                                    . . . . . c d b d c . . . . . 1
+                                    . . . . . . c d b d c . . . . .
+                                    . . . . . . . c d b d c . . . .
+                                    . . . . . . . . c d b d c . . .
+                                    . . . 1 . . . . . c d d c . . .
+                                    . . . . . . . . . . c c c . . .
+                                    . . . . . . . . . . . . . . . .
+                                    . . . . . . . . . . . . . . . .
+                                    . . . . . . . . 1 . . . . . . 1
+            """))
+        elif pozice_zbrane[2] == True:
+            SwordImage.set_image(img("""
+                1 . . . . 1 . . . . . . . 1 . .
+                . . . . . . . . . . . . . . . .
+                . . . . . . . . . . . 1 . . . .
+                . . . c c c . . . . . . . . . .
+                . . . c d d c . . . . . . . . .
+                . . . c d b d c . . . . . . . .
+                . . . . c d b d c . . . . . . .
+                1 . . . . c d b d c . . . . . .
+                . . . . . . c d b d c . . . . .
+                . . . . . . . c d b d c . . . .
+                . . . . . . . . c d b d c . . .
+                . . . . . . . . . c d b d c . .
+                . . . 1 . . . . . . c d d c . .
+                . . . . . . . . . . . c c a c .
+                . . . . . . . . . . . . . c c c
+                1 . . . . . . 1 . . . . . . c c
+            """))
+        else:
+            SwordImage.set_image(img("""
+                . . . . . . . . . . 1 . . . . 1
+                . . . . . . . . . . . . . . . .
+                . . . 1 . . . . . . . . . . . .
+                . . . . . . . . . . c c c . . .
+                . . . . . . . . . c d d c . . .
+                . . . . . . . . c d b d c . . .
+                . . . . . . . c d b d c . . . 1
+                . . . . . . c d b d c . . . . .
+                1 . . . . c d b d c . . . . . .
+                . . . . c d b d c . . . . . . .
+                . . . c d b d c . . . . . . . .
+                . . c d b d c . . . . . . . . 1
+                . . c d d c . . . . . . . . . .
+                . c a c c . . . . . . . . . . .
+                c c c . . . . . . . . . . . . .
+                c c . . . . . . 1 . . . . . . .
+            """))
         pause(200)
-        sword.set_image(img("""
+        SwordImage.set_image(img("""
             . . . . . . . . . . . . . . . .
                         . . . . . . . . . . . . . . . .
                         . . . . . . . . . . . . . . . .
@@ -519,9 +516,9 @@ def on_a_pressed():
         swingingSword = False
 controller.A.on_event(ControllerButtonEvent.PRESSED, on_a_pressed)
 
-def on_b_released(): #odecteni casu natazeni luku
+def on_b_released(): # vypocet delky casu natazeni luku
     global cas_konec, arrow, projectile, projectile2, projectile3
-    if luk == True:
+    if luk:
         cas_konec = game.runtime()
         BowImage.set_image(img("""
             . . . . . . . . . . . . . . . .
@@ -561,9 +558,7 @@ def on_b_released(): #odecteni casu natazeni luku
                                             . . . . . . 1 1 1 . . . . . . .
                                             . . . . . 1 . 1 . 1 . . . . . .
                     """),
-                    mySprite,
-                    0,
-                    -100)
+                    mySprite, 0, -100)
             elif pozice_zbrane[1] == True:
                 projectile = sprites.create_projectile_from_sprite(img("""
                         . . . . . 1 . 1 . 1 . . . . . .
@@ -583,9 +578,7 @@ def on_b_released(): #odecteni casu natazeni luku
                                             . . . . . . . f . . . . . . . .
                                             . . . . . . . . . . . . . . . .
                     """),
-                    mySprite,
-                    0,
-                    100)
+                    mySprite, 0, 100)
             elif pozice_zbrane[2] == True:
                 projectile2 = sprites.create_projectile_from_sprite(img("""
                         . . . . . . . . . . . . . . . .
@@ -605,10 +598,8 @@ def on_b_released(): #odecteni casu natazeni luku
                                             . . . . . . . . . . . . . . . .
                                             . . . . . . . . . . . . . . . .
                     """),
-                    mySprite,
-                    -100,
-                    0)
-            elif pozice_zbrane[3] == True:
+                    mySprite, -100, 0)
+            else:
                 projectile3 = sprites.create_projectile_from_sprite(img("""
                         . . . . . . . . . . . . . . . .
                                             . . . . . . . . . . . . . . . .
@@ -627,26 +618,24 @@ def on_b_released(): #odecteni casu natazeni luku
                                             . . . . . . . . . . . . . . . .
                                             . . . . . . . . . . . . . . . .
                     """),
-                    mySprite,
-                    100,
-                    0)
+                    mySprite, 100, 0)
 controller.B.on_event(ControllerButtonEvent.RELEASED, on_b_released)
 
-def on_on_update(): #pozice zbrani
-    if mec == True:
+def on_update_pozice_zbrani(): # pozice zbrani
+    if mec:
         if mySprite.vx < 0:
-            sword.right = mySprite.left
-            sword.y = mySprite.y
+            SwordImage.right = mySprite.left
+            SwordImage.y = mySprite.y
         elif mySprite.vx > 0:
-            sword.left = mySprite.right
-            sword.y = mySprite.y
+            SwordImage.left = mySprite.right
+            SwordImage.y = mySprite.y
         elif mySprite.vy > 0:
-            sword.top = mySprite.bottom
-            sword.x = mySprite.x
+            SwordImage.top = mySprite.bottom
+            SwordImage.x = mySprite.x
         elif mySprite.vy < 0:
-            sword.bottom = mySprite.top
-            sword.x = mySprite.x
-    if luk == True:
+            SwordImage.bottom = mySprite.top
+            SwordImage.x = mySprite.x
+    elif luk:
         if mySprite.vx < 0:
             BowImage.right = mySprite.left
             BowImage.y = mySprite.y
@@ -659,17 +648,13 @@ def on_on_update(): #pozice zbrani
         elif mySprite.vy < 0:
             BowImage.bottom = mySprite.top
             BowImage.x = mySprite.x
-game.on_update(on_on_update)
-
-def on_on_overlap70(sprite4, otherSprite2):
-    otherSprite2.set_scale(2, ScaleAnchor.MIDDLE)
-sprites.on_overlap(SpriteKind.cursor, SpriteKind.button, on_on_overlap70)
+game.on_update(on_update_pozice_zbrani)
 #ovladani\
 
 
 
 #obecne funkce/
-def startNextLevel(): #zmena levelu
+def startNextLevel(): # funkce menici levely
     global currentLevel, button_1, button_2, kursor, StromTmavy
     currentLevel += 1
     if not (currentLevel == 0):
@@ -701,6 +686,7 @@ def startNextLevel(): #zmena levelu
         sprites.destroy_all_sprites_of_kind(SpriteKind.checkpoint)
         sprites.destroy_all_sprites_of_kind(SpriteKind.King)
         sprites.destroy_all_sprites_of_kind(SpriteKind.NPC)
+
     if currentLevel == 0:
         scene.set_background_image(img("""
             6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
@@ -824,6 +810,7 @@ def startNextLevel(): #zmena levelu
                         6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666111666666666611166666666666666666666666666666666666666666666666666
                         6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666661111111111116666666666666666666666666666666666666666666666666666
         """))
+
         button_1 = sprites.create(img("""
                 .cccccccccccccccccccccccccccc...
                             .cddbbbbbbbbbbbbbbbbbbbb1bddc...
@@ -841,9 +828,9 @@ def startNextLevel(): #zmena levelu
                             .cdbbbbbbbbbbbbbbbbbbbbbbbbdc...
                             .cddbbbbbbbbbbbbbbbbbbbbbbddc...
                             .cccccccccccccccccccccccccccc...
-            """),
-            SpriteKind.button)
+            """), SpriteKind.button)
         button_1.set_scale(1.75, ScaleAnchor.MIDDLE)
+
         button_2 = sprites.create(img("""
                 .cccccccccccccccccccccccccccc...
                             .cddbbbbbbbbbbbbbbbbbbbbbbddc...
@@ -861,9 +848,9 @@ def startNextLevel(): #zmena levelu
                             .cdbbbbbbbbbbbbbbbbbbbbbbbbdc...
                             .cddbbbbbbbbbbbbbbbbbbbbbbddc...
                             .cccccccccccccccccccccccccccc...
-            """),
-            SpriteKind.button)
+            """), SpriteKind.button)
         button_2.set_scale(1.75, ScaleAnchor.MIDDLE)
+
         kursor = sprites.create(img("""
                 . . . . . . . . . . . . . . . .
                             . . . . . . . . . . . . . . . .
@@ -881,22 +868,25 @@ def startNextLevel(): #zmena levelu
                             . f f f f f f f f f f f f f f f
                             . . . . . . . . . . . . . . . .
                             . . . . . . . . . . . . . . . .
-            """),
-            SpriteKind.cursor)
+            """), SpriteKind.cursor)
+
         kursor.set_stay_in_screen(True)
         button_1.set_position(35, 65)
         button_2.set_position(120, 65)
         controller.move_sprite(kursor, 80, 80)
+
     elif currentLevel == 1:
         tiles.set_current_tilemap(tilemap("""
             level1
         """))
         level1()
+
     elif currentLevel == 2:
         tiles.set_current_tilemap(tilemap("""
             level2
         """))
         level2()
+
     elif currentLevel == 3:
         tiles.set_current_tilemap(tilemap("""
             level0
@@ -923,6 +913,7 @@ def startNextLevel(): #zmena levelu
                         6666666666666666666666666666666666666666666666666666666
         """))
         move_lock(False)
+        #sazeni stromu
         for value in tiles.get_tiles_by_type(assets.tile("""
             myTile9
         """)):
@@ -931,6 +922,7 @@ def startNextLevel(): #zmena levelu
             """), SpriteKind.enemyTree)
             tiles.place_on_tile(StromTmavy, value)
         level3()
+
     elif currentLevel == 4:
         scene.set_background_image(img("""
             9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999
@@ -1058,6 +1050,7 @@ def startNextLevel(): #zmena levelu
             level28
         """))
         level4()
+
     elif currentLevel == 5:
         scene.set_background_image(img("""
             7777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777
@@ -1188,19 +1181,31 @@ def startNextLevel(): #zmena levelu
     else:
         game.over(True)
 
-def move_lock(bool3: bool): #zamek pohybu
-    if bool3 == True:
+def on_overlap_cursor(sprite, otherSprite): # pri najeti v MENU kurzorem se tlacitka zvets
+    otherSprite.set_scale(2, ScaleAnchor.MIDDLE)
+sprites.on_overlap(SpriteKind.cursor, SpriteKind.button, on_overlap_cursor)
+
+def move_lock(boolean: bool): # zamek pohybu postav
+    if boolean:
         controller.move_sprite(mySprite, 0, 0)
     else:
         controller.move_sprite(mySprite, 80, 80)
 
-def on_on_overlap7(sprite52, otherSprite22): #odecteni zivota
-    sprite52.destroy(effects.disintegrate, 200)
-    info.change_life_by(-1)
-sprites.on_overlap(SpriteKind.enemy, SpriteKind.player, on_on_overlap7)
 
-def on_on_overlap6(sprite4, otherSprite): #menu
-    global button_lvl_1, button_lvl_2, button_lvl_3, button_lvl_4, button_lvl_5, kursor, currentLevel
+def on_overlap_enemy(sprite, otherSprite): # odecteni zivota pri najeti na enemy
+    sprite.destroy(effects.disintegrate, 200)
+    info.change_life_by(-1)
+sprites.on_overlap(SpriteKind.enemy, SpriteKind.player, on_overlap_enemy)
+
+def on_overlap_neznicitelny_enemy(sprite, otherSprite): # odecteni zivota pri najeti na neznicitelny enemy
+    sprite.destroy(effects.disintegrate, 200)
+    info.change_life_by(-1)
+sprites.on_overlap(SpriteKind.neznicitelny_enemy, SpriteKind.player, on_overlap_neznicitelny_enemy)
+
+
+def on_overlap_levely(sprite, otherSprite): # MENU
+    global button_lvl_1, button_lvl_2, button_lvl_3, button_lvl_4, button_lvl_5, kursor
+
     if otherSprite == button_1 and controller.A.is_pressed():
         startNextLevel()
     elif otherSprite == button_2 and controller.A.is_pressed():
@@ -1347,7 +1352,7 @@ def on_on_overlap6(sprite4, otherSprite): #menu
                             .cccccccccccccccccccccccccccc...
             """),
             SpriteKind.button_small)
-        button_lvl_1.set_position(35, 40)
+        button_lvl_1.set_position(55, 55)
         button_lvl_2 = sprites.create(img("""
                 .cccccccccccccccccccccccccccc...
                             .cddbbbbbbbbbbbbbbbbbbbbbbddc...
@@ -1367,7 +1372,7 @@ def on_on_overlap6(sprite4, otherSprite): #menu
                             .cccccccccccccccccccccccccccc...
             """),
             SpriteKind.button_small)
-        button_lvl_2.set_position(35, 55)
+        button_lvl_2.set_position(105, 55)
         button_lvl_3 = sprites.create(img("""
                 .cccccccccccccccccccccccccccc...
                             .cddbbbbbbbbbbbbbbbbbbbbbbddc...
@@ -1387,7 +1392,7 @@ def on_on_overlap6(sprite4, otherSprite): #menu
                             .cccccccccccccccccccccccccccc...
             """),
             SpriteKind.button_small)
-        button_lvl_3.set_position(35, 70)
+        button_lvl_3.set_position(55, 75)
         button_lvl_4 = sprites.create(img("""
                 .cccccccccccccccccccccccccccc...
                             .cddbbbbbbbbbbbbbbbbbbbbbbddc...
@@ -1407,7 +1412,7 @@ def on_on_overlap6(sprite4, otherSprite): #menu
                             .cccccccccccccccccccccccccccc...
             """),
             SpriteKind.button_small)
-        button_lvl_4.set_position(35, 85)
+        button_lvl_4.set_position(105, 75)
         button_lvl_5 = sprites.create(img("""
                 .cccccccccccccccccccccccccccc...
                             .cddbbbbbbbbbbbbbbbbbbbbbbddc...
@@ -1427,7 +1432,7 @@ def on_on_overlap6(sprite4, otherSprite): #menu
                             .cccccccccccccccccccccccccccc...
             """),
             SpriteKind.button_small)
-        button_lvl_5.set_position(35, 100)
+        button_lvl_5.set_position(80, 95)
         kursor = sprites.create(img("""
                 . . . . . . . . . . . . . . . .
                             . . . . . . . . . . . . . . . .
@@ -1449,9 +1454,9 @@ def on_on_overlap6(sprite4, otherSprite): #menu
             SpriteKind.cursor)
         kursor.set_stay_in_screen(True)
         controller.move_sprite(kursor, 80, 80)
-sprites.on_overlap(SpriteKind.cursor, SpriteKind.button, on_on_overlap6)
+sprites.on_overlap(SpriteKind.cursor, SpriteKind.button, on_overlap_levely)
 
-def on_overlap(sprite, otherSprite):
+def on_overlap_levels(sprite, otherSprite):
     global currentLevel
     if otherSprite == button_lvl_1 and controller.A.is_pressed():
         currentLevel = 0
@@ -1468,48 +1473,44 @@ def on_overlap(sprite, otherSprite):
     elif otherSprite == button_lvl_5 and controller.A.is_pressed():
         currentLevel = 4
         startNextLevel()
-    else:
-        pass
-sprites.on_overlap(SpriteKind.cursor, SpriteKind.button_small, on_overlap)
+sprites.on_overlap(SpriteKind.cursor, SpriteKind.button_small, on_overlap_levels)
 
-def on_on_overlap(sprite11, otherSprite5): #zniceni enemy
-    otherSprite5.destroy(effects.disintegrate, 200)
-sprites.on_overlap(SpriteKind.projectile, SpriteKind.enemy, on_on_overlap)
 
-def on_hit_wall(sprite, location): #narazeni na zed
+def on_overlap_enemy_zniceni(sprite, otherSprite): # zniceni enemy pri stretnuti
+    otherSprite.destroy(effects.disintegrate, 200)
+sprites.on_overlap(SpriteKind.projectile, SpriteKind.enemy, on_overlap_enemy_zniceni)
+
+def on_hit_wall(sprite, location): # narazeni na zed
     if currentLevel == 2:
         game.splash("Měl bych jít po cestě...")
-    if currentLevel == 4:
+    elif currentLevel == 4:
         game.splash("Měl bych se vrátit...")
 scene.on_hit_wall(SpriteKind.player, on_hit_wall)
 
-def on_on_overlap3(sprite7, otherSprite3): #checkpoint
-    if currentLevel == 3 and dialogSkoncen == True:
+def on_overlap_checkpoint(sprite, otherSprite): # najeti na checkpoint
+    if currentLevel == 3 and dialogSkoncen:
         startNextLevel()
     else:
         startNextLevel()
-sprites.on_overlap(SpriteKind.player, SpriteKind.checkpoint, on_on_overlap3)
+sprites.on_overlap(SpriteKind.player, SpriteKind.checkpoint, on_overlap_checkpoint)
 
-def zmena_pozice_zbrane(num: number): #zmena pozice zbrane
-    pozice_zbrane[0] = False
-    pozice_zbrane[1] = False
-    pozice_zbrane[2] = False
-    pozice_zbrane[3] = False
+def zmena_pozice_zbrane(num: number): # zmena aktualni pozice zbrane
+    for pos in range(4):
+        pozice_zbrane[pos] = False
     pozice_zbrane[num] = True
 
-def pronasledovani(bool2: bool, Pronasledovatel: Sprite, Obet: Sprite): #pronasledovani
-    if bool2 == True:
+def pronasledovani(boolean: bool, Pronasledovatel: Sprite, Obet: Sprite): # pronasledovani
+    if boolean:
         Pronasledovatel.follow(Obet, 90)
     else:
         Pronasledovatel.follow(Obet, 0)
 
-def on_life_zero(): #umrti
+def on_life_zero(): # umrti hlavni postavy
     global fightScene, currentLevel
     game.splash("Zemřel jsi.")
     if currentLevel == 3:
         fightScene = False
         Lucistnik.destroy()
-        sprites.destroy_all_sprites_of_kind(SpriteKind.enemy)
     currentLevel = currentLevel - 1
     sprites.destroy_all_sprites_of_kind(SpriteKind.enemy)
     startNextLevel()
@@ -1542,29 +1543,15 @@ def level1():
                     .....666666.....
                     ................
                     ................
-        """),
-        SpriteKind.King)
+        """), SpriteKind.King)
+
     tiles.place_on_random_tile(Kral, assets.tile("""
         myTile0
     """))
     game.splash("Přišel jsi za králem pro jeho nabídku.")
     game.splash("Stiskem A s ním promluvíš.")
 
-def on_overlap_tile8(sprite12, location7):
-    if currentLevel == 1:
-        if dialogSkoncen == True:
-            startNextLevel()
-        else:
-            game.splash("Král po tobě něco chce.")
-            if controller.A.is_pressed():
-                mySprite.set_position(25, 70)
-scene.on_overlap_tile(SpriteKind.player,
-    assets.tile("""
-        dvere kral
-    """),
-    on_overlap_tile8)
-
-def on_overlap_tile9(sprite62, location42):
+def on_overlap_kral(sprite, location): # rozhovor s kralem
     global dialogSkoncen
     if controller.A.is_pressed() and dialogSkoncen == False:
         game.set_dialog_frame(img("""
@@ -1600,11 +1587,21 @@ def on_overlap_tile9(sprite62, location42):
         game.show_long_text("KRÁL: Přeji hodně štěstí a dávej na sebe pozor.",
             DialogLayout.BOTTOM)
         dialogSkoncen = True
-scene.on_overlap_tile(SpriteKind.player,
-    assets.tile("""
+scene.on_overlap_tile(SpriteKind.player, assets.tile("""
         koberec0
-    """),
-    on_overlap_tile9)
+    """), on_overlap_kral)
+
+def on_overlap_dvere(sprite, location):
+    if currentLevel == 1:
+        if dialogSkoncen: #pokud probehl dialog, zacne novy level
+            startNextLevel()
+        else: # pokud dialog neprobehl, nepusti hrace k novemu levelu
+            game.splash("Král po tobě něco chce.")
+            if controller.A.is_pressed():
+                mySprite.set_position(25, 70)
+scene.on_overlap_tile(SpriteKind.player, assets.tile("""
+        dvere kral
+    """), on_overlap_dvere)
 #level 1\
 
 
@@ -1613,6 +1610,7 @@ scene.on_overlap_tile(SpriteKind.player,
 def level2():
     global Zbrojar, House1, Strom, rocks
     sprites.destroy_all_sprites_of_kind(SpriteKind.King)
+    #spawn kamenu, stromu, baraku..
     Zbrojar = sprites.create(assets.image("""
         Lucistnik
     """), SpriteKind.Zbrojir)
@@ -1666,8 +1664,7 @@ def level2():
                     ....b44444444cbbf4e44e44e44e44eebbc44444444b....
                     .....b4eee444cbbf4e44e44e44e44eebbc444eee4b.....
                     ......bcccbbbcbbe4e44e44e44e44eebbcbbbcccb......
-        """),
-        SpriteKind.House)
+        """), SpriteKind.House)
     tiles.place_on_tile(House1, tiles.get_tile_location(11, 11))
     Strom = sprites.create(img("""
             .............6666...............
@@ -1702,8 +1699,7 @@ def level2():
                     ............ffffeef..ee.........
                     ...............fee..............
                     ................e...............
-        """),
-        SpriteKind.Tree)
+        """), SpriteKind.Tree)
     tiles.place_on_tile(Strom, tiles.get_tile_location(17, 17))
     rocks = sprites.create(assets.image("""
         checkpoint
@@ -1715,36 +1711,31 @@ def level2():
     tiles.place_on_tile(rocks, tiles.get_tile_location(14, 0))
     tiles.place_on_tile(mySprite, tiles.get_tile_location(30, 22))
 
-def on_overlap_tile7(sprite32, location32):
+def on_overlap_zbrojir(sprite, location):
     global mec, dialogSkoncen
     if dialogSkoncen == False:
         game.show_long_text("ZBROJÍŘ: Počkej, počkej.", DialogLayout.BOTTOM)
         game.show_long_text("ZBROJÍŘ: Povídal mi o tobě král.", DialogLayout.BOTTOM)
-        game.show_long_text("ZBROJÍŘ: Jsem místní zbrojíř a mám ti dát todle.",
-            DialogLayout.BOTTOM)
+        game.show_long_text("ZBROJÍŘ: Jsem místní zbrojíř a mám ti dát todle.", DialogLayout.BOTTOM)
         mec = True
         game.splash("Získal jsi meč")
         game.splash("Stiskem A mečem sekáš")
         dialogSkoncen = True
-scene.on_overlap_tile(SpriteKind.player,
-    assets.tile("""
+scene.on_overlap_tile(SpriteKind.player, assets.tile("""
         hlina
-    """),
-    on_overlap_tile7)
+    """), on_overlap_zbrojir)
 
-def on_overlap_tile10(sprite8, location5):
-    if currentLevel == 2:
-        if dialogSkoncen == False:
-            game.splash("Na něco jsem zapomněl...")
-            tiles.place_on_tile(mySprite, tiles.get_tile_location(15, 8))
-    elif currentLevel == 3:
-        if dialogSkoncen == False and fightScene == False:
-            pronasledovani(True, Lucistnik, mySprite)
-scene.on_overlap_tile(SpriteKind.player,
-    assets.tile("""
+def on_overlap_konec_cesty(sprite, location):
+    if currentLevel == 2 and dialogSkoncen == False:
+        game.splash("Na něco jsem zapomněl...")
+
+        tiles.place_on_tile(mySprite, tiles.get_tile_location(15, 8))
+    elif currentLevel == 3 and dialogSkoncen == False and fightScene == False:
+        pronasledovani(True, Lucistnik, mySprite)
+
+scene.on_overlap_tile(SpriteKind.player, assets.tile("""
         active2
-    """),
-    on_overlap_tile10)
+    """), on_overlap_konec_cesty)
 #level 2\
 
 
@@ -1774,8 +1765,7 @@ def level3():
                     e e f 6 6 6 6 6 6 f e e .
                     . . . f f f f f f . . . .
                     . . . f f . . f f . . . .
-        """),
-        SpriteKind.NPC)
+        """), SpriteKind.NPC)
     animation.run_image_animation(Lucistnik,
         [img("""
                 . . . . . f f f f f . . .
@@ -1830,27 +1820,22 @@ def level3():
                         . . f f 6 6 6 6 f e e f .
                         . . f f f f f f f f f f .
                         . . . f f f . . . f f . .
-            """)],
-        100,
-        False)
+            """)], 100, False)
     tiles.place_on_tile(Lucistnik, tiles.get_tile_location(18, 10))
     tiles.place_on_tile(mySprite, tiles.get_tile_location(0, 7))
     
-def on_overlap_tile5(sprite102, location62):
+def on_overlap_cesta_level(sprite102, location62): # pusti novy level jen po dokonceni levelu
     if dialogSkoncen2 == True or currentLevel == 4:
         startNextLevel()
     elif currentLevel == 3:
         game.splash("Na něco jsem zapomněl...")
         tiles.place_on_tile(mySprite, tiles.get_tile_location(53, 9))
-scene.on_overlap_tile(SpriteKind.player,
-    assets.tile("""
+scene.on_overlap_tile(SpriteKind.player, assets.tile("""
         active
-    """),
-    on_overlap_tile5)
+    """), on_overlap_cesta_level)
 
 
-
-def on_on_overlap4(sprite9, otherSprite4):
+def on_overlap_lucistnik(sprite9, otherSprite4): # rozhovor s lucistnikem
     global luk, dialogSkoncen2, dialogSkoncen, fightScene, mec
     if currentLevel == 3:
         if afterFight == True and dialogSkoncen2 == False:
@@ -1861,15 +1846,13 @@ def on_on_overlap4(sprite9, otherSprite4):
             game.splash("Podržením B vystřelíš šíp")
             luk = True
             dialogSkoncen2 = True
+
         elif dialogSkoncen == False:
             pronasledovani(False, Lucistnik, mySprite)
             game.show_long_text("LUČIŠTNÍK:  Bože zachraň mne!", DialogLayout.BOTTOM)
-            game.show_long_text("LUČIŠTNÍK:  Šel jsem lesem a napadli mě obří netopýři",
-                DialogLayout.BOTTOM)
-            game.show_long_text("LUČIŠTNÍK:  Vylétavají ze začarovaných stromů kolem cesty",
-                DialogLayout.BOTTOM)
-            game.show_long_text("LUČIŠTNÍK:  Pokus se zničit ty modré stromy, jinak zhynem!!",
-                DialogLayout.BOTTOM)
+            game.show_long_text("LUČIŠTNÍK:  Šel jsem lesem a napadli mě obří netopýři", DialogLayout.BOTTOM)
+            game.show_long_text("LUČIŠTNÍK:  Vylétavají ze začarovaných stromů kolem cesty", DialogLayout.BOTTOM)
+            game.show_long_text("LUČIŠTNÍK:  Pokus se zničit ty modré stromy, jinak zhynem!!", DialogLayout.BOTTOM)
             game.show_long_text("JÁ:  Co?!", DialogLayout.BOTTOM)
             dialogSkoncen = True
             dialogSkoncen2 = False
@@ -1877,10 +1860,10 @@ def on_on_overlap4(sprite9, otherSprite4):
             mec = True
             info.set_life(3)
             pronasledovani(False, Lucistnik, mySprite)
-sprites.on_overlap(SpriteKind.NPC, SpriteKind.player, on_on_overlap4)
+sprites.on_overlap(SpriteKind.NPC, SpriteKind.player, on_overlap_lucistnik)
 
-def on_on_overlap5(sprite42, otherSprite6):
-    animation.run_image_animation(otherSprite6,
+def on_overlap_strom(sprite, otherSprite): # zniceni stromu
+    animation.run_image_animation(otherSprite,
         [img("""
                 ........................
                         ...........88...........
@@ -2048,126 +2031,120 @@ def on_on_overlap5(sprite42, otherSprite6):
                         .........feeeef.........
                         ........feeefeef........
                         ........fefeffef........
-            """)],
-        100, False)
+            """)], 100, False)
     scene.camera_shake(4, 500)
-    otherSprite6.set_kind(SpriteKind.Tree)
-    tiles.set_tile_at(otherSprite6.tilemap_location(),
-        assets.tile("""
+    otherSprite.set_kind(SpriteKind.Tree)
+    tiles.set_tile_at(otherSprite.tilemap_location(), assets.tile("""
             spawner
         """))
-sprites.on_overlap(SpriteKind.projectile, SpriteKind.enemyTree, on_on_overlap5)
+sprites.on_overlap(SpriteKind.projectile, SpriteKind.enemyTree, on_overlap_strom)
 
-def on_update_interval():
+def on_update_interval(): # spawn netopyru
     global myEnemy, fightScene, afterFight
-    if currentLevel == 3:
-        if fightScene == True:
-            if len(tiles.get_tiles_by_type(assets.tile("""
-                myTile9
-            """))) > 0:
-                myEnemy = sprites.create(img("""
-                        . . f f f . . . . . . . . . . .
-                                            f f f c c . . . . . . . . f f f
-                                            f f c c . . c c . . . f c b b c
-                                            f f c 3 c c 3 c c f f b b b c .
-                                            f f b 3 b c 3 b c f b b c c c .
-                                            . c b b b b b b c f b c b c c .
-                                            . c b b b b b b c b b c b b c .
-                                            c b 1 b b b 1 b b b c c c b c .
-                                            c b b b b b b b b c c c c c . .
-                                            f b c b b b c b b b b f c . . .
-                                            f b 1 f f f 1 b b b b f c c . .
-                                            . f b b b b b b b b c f . . . .
+    if currentLevel == 3 and fightScene:
+        if len(tiles.get_tiles_by_type(assets.tile("""
+            myTile9
+        """))) > 0:
+            myEnemy = sprites.create(img("""
+                    . . f f f . . . . . . . . . . .
+                                        f f f c c . . . . . . . . f f f
+                                        f f c c . . c c . . . f c b b c
+                                        f f c 3 c c 3 c c f f b b b c .
+                                        f f b 3 b c 3 b c f b b c c c .
+                                        . c b b b b b b c f b c b c c .
+                                        . c b b b b b b c b b c b b c .
+                                        c b 1 b b b 1 b b b c c c b c .
+                                        c b b b b b b b b c c c c c . .
+                                        f b c b b b c b b b b f c . . .
+                                        f b 1 f f f 1 b b b b f c c . .
+                                        . f b b b b b b b b c f . . . .
+                                        . . f b b b b b b c f . . . . .
+                                        . . . f f f f f f f . . . . . .
+                                        . . . . . . . . . . . . . . . .
+                                        . . . . . . . . . . . . . . . .
+                """), SpriteKind.enemy)
+            animation.run_image_animation(myEnemy,
+                [img("""
+                        . . f f f . . . . . . . . f f f
+                                            . f f c c . . . . . . f c b b c
+                                            f f c c . . . . . . f c b b c .
+                                            f c f c . . . . . . f b c c c .
+                                            f f f c c . c c . f c b b c c .
+                                            f f c 3 c c 3 c c f b c b b c .
+                                            f f b 3 b c 3 b c f b c c b c .
+                                            . c 1 b b b 1 b c b b c c c . .
+                                            . c 1 b b b 1 b b c c c c . . .
+                                            c b b b b b b b b b c c . . . .
+                                            c b 1 f f 1 c b b b b f . . . .
+                                            f f 1 f f 1 f b b b b f c . . .
+                                            f f 2 2 2 2 f b b b b f c c . .
+                                            . f 2 2 2 2 b b b b c f . . . .
                                             . . f b b b b b b c f . . . . .
                                             . . . f f f f f f f . . . . . .
-                                            . . . . . . . . . . . . . . . .
+                    """),
+                    img("""
+                        . . f f f . . . . . . . . . . .
+                                            f f f c c . . . . . . . . f f f
+                                            f f c c c . c c . . . f c b b c
+                                            f f c 3 c c 3 c c f f b b b c .
+                                            f f c 3 b c 3 b c f b b c c c .
+                                            f c b b b b b b c f b c b c c .
+                                            c c 1 b b b 1 b c b b c b b c .
+                                            c b b b b b b b b b c c c b c .
+                                            c b 1 f f 1 c b b c c c c c . .
+                                            c f 1 f f 1 f b b b b f c . . .
+                                            f f f f f f f b b b b f c . . .
+                                            f f 2 2 2 2 f b b b b f c c . .
+                                            . f 2 2 2 2 2 b b b c f . . . .
+                                            . . f 2 2 2 b b b c f . . . . .
+                                            . . . f f f f f f f . . . . . .
                                             . . . . . . . . . . . . . . . .
                     """),
-                    SpriteKind.enemy)
-                animation.run_image_animation(myEnemy,
-                    [img("""
-                            . . f f f . . . . . . . . f f f
-                                                . f f c c . . . . . . f c b b c
-                                                f f c c . . . . . . f c b b c .
-                                                f c f c . . . . . . f b c c c .
-                                                f f f c c . c c . f c b b c c .
-                                                f f c 3 c c 3 c c f b c b b c .
-                                                f f b 3 b c 3 b c f b c c b c .
-                                                . c 1 b b b 1 b c b b c c c . .
-                                                . c 1 b b b 1 b b c c c c . . .
-                                                c b b b b b b b b b c c . . . .
-                                                c b 1 f f 1 c b b b b f . . . .
-                                                f f 1 f f 1 f b b b b f c . . .
-                                                f f 2 2 2 2 f b b b b f c c . .
-                                                . f 2 2 2 2 b b b b c f . . . .
-                                                . . f b b b b b b c f . . . . .
-                                                . . . f f f f f f f . . . . . .
-                        """),
-                        img("""
-                            . . f f f . . . . . . . . . . .
-                                                f f f c c . . . . . . . . f f f
-                                                f f c c c . c c . . . f c b b c
-                                                f f c 3 c c 3 c c f f b b b c .
-                                                f f c 3 b c 3 b c f b b c c c .
-                                                f c b b b b b b c f b c b c c .
-                                                c c 1 b b b 1 b c b b c b b c .
-                                                c b b b b b b b b b c c c b c .
-                                                c b 1 f f 1 c b b c c c c c . .
-                                                c f 1 f f 1 f b b b b f c . . .
-                                                f f f f f f f b b b b f c . . .
-                                                f f 2 2 2 2 f b b b b f c c . .
-                                                . f 2 2 2 2 2 b b b c f . . . .
-                                                . . f 2 2 2 b b b c f . . . . .
-                                                . . . f f f f f f f . . . . . .
-                                                . . . . . . . . . . . . . . . .
-                        """),
-                        img("""
-                            . . . . . . . . . . . . . . . .
-                                                . . . . . . . . . . . . . . . .
-                                                . . . c c . c c . . . . . . . .
-                                                . . f 3 c c 3 c c c . . . . . .
-                                                . f c 3 b c 3 b c c c . . . . .
-                                                f c b b b b b b b b f f . . . .
-                                                c c 1 b b b 1 b b b f f . . . .
-                                                c b b b b b b b b c f f f . . .
-                                                c b 1 f f 1 c b b f f f f . . .
-                                                f f 1 f f 1 f b c c b b b . . .
-                                                f f f f f f f b f c c c c . . .
-                                                f f 2 2 2 2 f b f b b c c c . .
-                                                . f 2 2 2 2 2 b c c b b c . . .
-                                                . . f 2 2 2 b f f c c b b c . .
-                                                . . . f f f f f f f c c c c c .
-                                                . . . . . . . . . . . . c c c c
-                        """),
-                        img("""
-                            . f f f . . . . . . . . f f f .
-                                                f f c . . . . . . . f c b b c .
-                                                f c c . . . . . . f c b b c . .
-                                                c f . . . . . . . f b c c c . .
-                                                c f f . . . . . f f b b c c . .
-                                                f f f c c . c c f b c b b c . .
-                                                f f f c c c c c f b c c b c . .
-                                                . f c 3 c c 3 b c b c c c . . .
-                                                . c b 3 b c 3 b b c c c c . . .
-                                                c c b b b b b b b b c c . . . .
-                                                c 1 1 b b b 1 1 b b b f c . . .
-                                                f b b b b b b b b b b f c c . .
-                                                f b c b b b c b b b b f . . . .
-                                                . f 1 f f f 1 b b b c f . . . .
-                                                . . f b b b b b b c f . . . . .
-                                                . . . f f f f f f f . . . . . .
-                        """)],
-                    250,
-                    True)
-                tiles.place_on_tile(myEnemy,
-                    tiles.get_tiles_by_type(assets.tile("""
-                        myTile9
-                    """))._pick_random())
-                myEnemy.follow(mySprite, randint(20, 40))
-            else:
-                fightScene = False
-                pronasledovani(True, Lucistnik, mySprite)
-                afterFight = True
+                    img("""
+                        . . . . . . . . . . . . . . . .
+                                            . . . . . . . . . . . . . . . .
+                                            . . . c c . c c . . . . . . . .
+                                            . . f 3 c c 3 c c c . . . . . .
+                                            . f c 3 b c 3 b c c c . . . . .
+                                            f c b b b b b b b b f f . . . .
+                                            c c 1 b b b 1 b b b f f . . . .
+                                            c b b b b b b b b c f f f . . .
+                                            c b 1 f f 1 c b b f f f f . . .
+                                            f f 1 f f 1 f b c c b b b . . .
+                                            f f f f f f f b f c c c c . . .
+                                            f f 2 2 2 2 f b f b b c c c . .
+                                            . f 2 2 2 2 2 b c c b b c . . .
+                                            . . f 2 2 2 b f f c c b b c . .
+                                            . . . f f f f f f f c c c c c .
+                                            . . . . . . . . . . . . c c c c
+                    """),
+                    img("""
+                        . f f f . . . . . . . . f f f .
+                                            f f c . . . . . . . f c b b c .
+                                            f c c . . . . . . f c b b c . .
+                                            c f . . . . . . . f b c c c . .
+                                            c f f . . . . . f f b b c c . .
+                                            f f f c c . c c f b c b b c . .
+                                            f f f c c c c c f b c c b c . .
+                                            . f c 3 c c 3 b c b c c c . . .
+                                            . c b 3 b c 3 b b c c c c . . .
+                                            c c b b b b b b b b c c . . . .
+                                            c 1 1 b b b 1 1 b b b f c . . .
+                                            f b b b b b b b b b b f c c . .
+                                            f b c b b b c b b b b f . . . .
+                                            . f 1 f f f 1 b b b c f . . . .
+                                            . . f b b b b b b c f . . . . .
+                                            . . . f f f f f f f . . . . . .
+                    """)], 250, True)
+            tiles.place_on_tile(myEnemy, tiles.get_tiles_by_type(assets.tile("""
+                    myTile9
+                """))._pick_random())
+            myEnemy.follow(mySprite, randint(20, 40))
+
+        else:
+            fightScene = False
+            pronasledovani(True, Lucistnik, mySprite)
+            afterFight = True
 game.on_update_interval(3000, on_update_interval)
 #level 3\
 
@@ -2189,21 +2166,41 @@ def level4():
         bobr
     """), SpriteKind.bobr)
 
-def on_overlap_tile(sprite3, location3):
+def on_overlap_molo(sprite2, location2): # slapnuti na molo
+    global dialogSkoncen, spawn_bobri, dialogSkoncen2
+    if currentLevel == 2:
+        dialogSkoncen = False
+
+    if currentLevel == 4 and dialogSkoncen == False:
+        dialogSkoncen = True
+        game.show_long_text("Sakra, neumím plavat. Musím nějak přebrodit řeku", DialogLayout.BOTTOM)
+        spawn_bobri = True
+        zmena_sloupce()
+
+    if currentLevel == 4 and (bobr2.tile_kind_at(TileDirection.LEFT, assets.tile("""
+        wood
+    """)) or bobr2.tile_kind_at(TileDirection.RIGHT, assets.tile("""
+        wood
+    """))):
+        if dialogSkoncen2 == False:
+            game.show_long_text("Proč tu sviští bobři?!", DialogLayout.BOTTOM)
+            dialogSkoncen2 = True
+scene.on_overlap_tile(SpriteKind.player, assets.tile("""
+        wood
+    """), on_overlap_molo)
+
+def on_overlap_voda(sprite3, location3): # pri najeti na vodu hrac zemre
     if naBobrovi == False:
         game.splash("Utopil jsi se.")
         info.set_life(0)
-scene.on_overlap_tile(SpriteKind.player,
-    assets.tile("""
+scene.on_overlap_tile(SpriteKind.player, assets.tile("""
         myTile12
-    """),
-    on_overlap_tile)
+    """), on_overlap_voda)
 
-def on_on_update2():
+def on_update_pozice_hrace(): # hlida, zda je hrac na bobrovi/molu nebo na vode
     global naBobrovi
     if currentLevel == 4:
-        if tiles.tile_at_location_equals(mySprite.tilemap_location(),
-            assets.tile("""
+        if tiles.tile_at_location_equals(mySprite.tilemap_location(), assets.tile("""
                 myTile11
             """)) or tiles.tile_at_location_equals(mySprite.tilemap_location(), assets.tile("""
             wood
@@ -2213,11 +2210,11 @@ def on_on_update2():
             naBobrovi = True
         else:
             naBobrovi = False
-game.on_update(on_on_update2)
+game.on_update(on_update_pozice_hrace)
 
-def on_forever():
+def on_forever(): # spawn bobru
     global bobr2
-    if currentLevel == 4 and spawn_bobri == True:
+    if currentLevel == 4 and spawn_bobri:
         zmena_bobra()
         bobr2 = sprites.create(assets.image("""
             bobr
@@ -2226,13 +2223,14 @@ def on_forever():
         bobr2.ay = speed
         bobr2.set_flag(SpriteFlag.DESTROY_ON_WALL, True)
         pause(time)
-    if currentLevel == 0 and not (kursor.overlaps_with(button_1)):
+    elif currentLevel == 0 and not (kursor.overlaps_with(button_1)): # zmenseni tlacitek v menu
         if not (kursor.overlaps_with(button_2)):
             button_1.set_scale(1.75, ScaleAnchor.MIDDLE)
             button_2.set_scale(1.75, ScaleAnchor.MIDDLE)
 forever(on_forever)
 
-def zmena_bobra():
+
+def zmena_bobra(): # meni rychlost a smer bobra
     global time, vertical, speed, row
     time = randint(2500, 5000)
     vertical = randint(0, 1)
@@ -2243,12 +2241,27 @@ def zmena_bobra():
         speed = randint(-150, -400)
         row = 15
 
-def zmena_sloupce():
+def zmena_sloupce(): # meni aktualni sloupec bobru
     global cislo_sloupce
     if cislo_sloupce == 10:
         sprites.destroy_all_sprites_of_kind(SpriteKind.bobr)
     else:
         cislo_sloupce = cislo_sloupce + 1
+
+def on_overlap_zniceni_bobra(sprite, otherSprite): # znici bobra pri zastreleni sipem
+    otherSprite.destroy(effects.cool_radial, 1)
+    sprite.destroy()
+    tiles.set_tile_at(otherSprite.tilemap_location(), assets.tile("""
+            myTile11
+        """))
+    if otherSprite.tile_kind_at(TileDirection.LEFT, assets.tile("""
+        myTile11
+    """)) or otherSprite.tile_kind_at(TileDirection.LEFT, assets.tile("""
+        wood
+    """)):
+        sprites.destroy_all_sprites_of_kind(SpriteKind.bobr)
+        zmena_sloupce()
+sprites.on_overlap(SpriteKind.projectile, SpriteKind.bobr, on_overlap_zniceni_bobra)
 #level 4\
 
 
@@ -2261,78 +2274,173 @@ def level5():
     tiles.place_on_tile(mySprite, tiles.get_tile_location(0, 7))
     fightScene = False
 
-def on_overlap_tile4(sprite2, location2):
-    global dialogSkoncen, spawn_bobri, dialogSkoncen2
-    if currentLevel == 2:
-        dialogSkoncen = False
-    if currentLevel == 4 and dialogSkoncen == False:
-        dialogSkoncen = True
-        game.show_long_text("Sakra, neumím plavat. Musím nějak přebrodit řeku",
-            DialogLayout.BOTTOM)
-        spawn_bobri = True
-        zmena_sloupce()
-    if currentLevel == 4 and (bobr2.tile_kind_at(TileDirection.LEFT, assets.tile("""
-        wood
-    """)) or bobr2.tile_kind_at(TileDirection.RIGHT, assets.tile("""
-        wood
-    """))):
-        if dialogSkoncen2 == False:
-            game.show_long_text("Proč tu sviští bobři?!", DialogLayout.BOTTOM)
-            dialogSkoncen2 = True
-scene.on_overlap_tile(SpriteKind.player,
-    assets.tile("""
-        wood
-    """),
-    on_overlap_tile4)
-
-def on_overlap_tile11(sprite10, location6):
+def on_overlap_brana(sprite, location): # zavrena brana
     if currentLevel == 5:
         game.splash("Dveře jsou zavřené, musím najít jiný vchod")
         tiles.place_on_tile(mySprite, tiles.get_tile_location(19, 8))
-scene.on_overlap_tile(SpriteKind.player,
-    assets.tile("""
+scene.on_overlap_tile(SpriteKind.player, assets.tile("""
         active
-    """),
-    on_overlap_tile11)
+    """), on_overlap_brana)
 
-def on_on_overlap2(sprite5, otherSprite2):
-    otherSprite2.destroy(effects.cool_radial, 1)
-    sprite5.destroy()
-    tiles.set_tile_at(otherSprite2.tilemap_location(),
-        assets.tile("""
-            myTile11
-        """))
-    if otherSprite2.tile_kind_at(TileDirection.LEFT, assets.tile("""
-        myTile11
-    """)) or otherSprite2.tile_kind_at(TileDirection.LEFT, assets.tile("""
-        wood
-    """)):
-        sprites.destroy_all_sprites_of_kind(SpriteKind.bobr)
-        zmena_sloupce()
-sprites.on_overlap(SpriteKind.projectile, SpriteKind.bobr, on_on_overlap2)
-
-def on_overlap_tile6(sprite13, location8):
+def on_overlap_strop(sprite, location): # spadnuti stropu
     if currentLevel == 5:
         game.splash("Bohužel, spadl na tebe strop")
         game.splash("Zemřel jsi.")
         info.set_life(0)
-scene.on_overlap_tile(SpriteKind.player,
-    assets.tile("""
+scene.on_overlap_tile(SpriteKind.player, assets.tile("""
         active_black
-    """),
-    on_overlap_tile6)
+    """), on_overlap_strop)
 
-def on_overlap_tile2(sprite6, location4):
-    tiles.set_tile_at(location4, sprites.dungeon.chest_open)
+def on_overlap_treasure(sprite, location): # ziskani zivota navic z truhly
+    tiles.set_tile_at(location, sprites.dungeon.chest_open)
     effects.hearts.start_screen_effect(500)
     game.splash("Získal jsi život navíc")
     info.change_life_by(1)
-scene.on_overlap_tile(SpriteKind.player,
-    sprites.dungeon.chest_closed,
-    on_overlap_tile2)
+scene.on_overlap_tile(SpriteKind.player, sprites.dungeon.chest_closed, on_overlap_treasure)
 
-def on_overlap_tile3(sprite14, location9):
-    global luk, mec, fightScene, netopyr
+def set_duchove(num: number, num2: number): # funkce nastavujici duchy
+    global duch
+    duch = sprites.create(img("""
+            ........................
+                    ........................
+                    ........................
+                    ........................
+                    ..........ffff..........
+                    ........ff1111ff........
+                    .......fb111111bf.......
+                    .......f11111111f.......
+                    ......fd11111111df......
+                    ......fd11111111df......
+                    ......fddd1111dddf......
+                    ......fbdbfddfbdbf......
+                    ......fcdcf11fcdcf......
+                    .......fb111111bf.......
+                    ......fffcdb1bdffff.....
+                    ....fc111cbfbfc111cf....
+                    ....f1b1b1ffff1b1b1f....
+                    ....fbfbffffffbfbfbf....
+                    .........ffffff.........
+                    ...........fff..........
+                    ........................
+                    ........................
+                    ........................
+                    ........................
+        """), SpriteKind.neznicitelny_enemy)
+
+    animation.run_image_animation(duch,
+        [img("""
+                ........................
+                        ........................
+                        ........................
+                        ........................
+                        ..........ffff..........
+                        ........ff1111ff........
+                        .......fb111111bf.......
+                        .......f11111111f.......
+                        ......fd11111111df......
+                        ......fd11111111df......
+                        ......fddd1111dddf......
+                        ......fbdbfddfbdbf......
+                        ......fcdcf11fcdcf......
+                        .......fb111111bf.......
+                        ......fffcdb1bdffff.....
+                        ....fc111cbfbfc111cf....
+                        ....f1b1b1ffff1b1b1f....
+                        ....fbfbffffffbfbfbf....
+                        .........ffffff.........
+                        ...........fff..........
+                        ........................
+                        ........................
+                        ........................
+                        ........................
+            """),
+            img("""
+                ........................
+                        ........................
+                        ........................
+                        ........................
+                        ..........ffff..........
+                        ........ff1111ff........
+                        .......fb111111bf.......
+                        .......f11111111f.......
+                        ......fd11111111df......
+                        ......fd11111111df......
+                        ......fddd1111dddf......
+                        ......fbdbfddfbdbf......
+                        ......fcdcf11fcdcf......
+                        .......fb111111ffff.....
+                        ......fffcdb1bc111cf....
+                        ....fc111cbfbf1b1b1f....
+                        ....f1b1b1ffffbfbfbf....
+                        ....fbfbfffffff.........
+                        .........fffff..........
+                        ..........fff...........
+                        ........................
+                        ........................
+                        ........................
+                        ........................
+            """),
+            img("""
+                ........................
+                        ........................
+                        ........................
+                        ........................
+                        ..........ffff..........
+                        ........ff1111ff........
+                        .......fb111111bf.......
+                        .......f11111111f.......
+                        ......fd11111111df......
+                        ......fd11111111df......
+                        ......fddd1111dddf......
+                        ......fbdbfddfbdbf......
+                        ......fcdcf11fcdcf......
+                        .......fb111111bf.......
+                        ......fffcdb1bdffff.....
+                        ....fc111cbfbfc111cf....
+                        ....f1b1b1ffff1b1b1f....
+                        ....fbfbffffffbfbfbf....
+                        .........ffffff.........
+                        ...........fff..........
+                        ........................
+                        ........................
+                        ........................
+                        ........................
+            """),
+            img("""
+                ........................
+                        ........................
+                        ........................
+                        ........................
+                        ..........ffff..........
+                        ........ff1111ff........
+                        .......fb111111bf.......
+                        .......f11111111f.......
+                        ......fd11111111df......
+                        ......fd11111111df......
+                        ......fddd1111dddf......
+                        ......fbdbfddfbdbf......
+                        ......fcdcf11fcdcf......
+                        .....ffff111111bf.......
+                        ....fc111cdb1bdfff......
+                        ....f1b1bcbfbfc111cf....
+                        ....fbfbfbffff1b1b1f....
+                        .........fffffffbfbf....
+                        ..........fffff.........
+                        ...........fff..........
+                        ........................
+                        ........................
+                        ........................
+                        ........................
+            """)], 300, True)
+    tiles.place_on_tile(duch, tiles.get_tile_location(num, num2))
+
+def spawn_duchove(num: number, num2: number): # funkce spawnujici duchy
+    scene.follow_path(duch,
+        scene.a_star(duch.tilemap_location(),
+            tiles.get_tile_location(num, num2)), 70)
+
+def on_overlap_dira(sprite, location):
+    global luk, mec, enemy_position, fightScene, duch
     if currentLevel == 5:
         game.show_long_text("Mohl bych tam zkusit vlézt", DialogLayout.BOTTOM)
         scene.set_background_image(img("""
@@ -2463,16 +2571,30 @@ def on_overlap_tile3(sprite14, location9):
         tiles.set_current_tilemap(tilemap("""
             level36
         """))
+
         tiles.place_on_tile(mySprite, tiles.get_tile_location(15, 31))
         tiles.set_tile_at(tiles.get_tile_location(5, 11), sprites.dungeon.chest_closed)
         tiles.set_tile_at(tiles.get_tile_location(28, 2), sprites.dungeon.chest_closed)
-        tiles.set_tile_at(tiles.get_tile_location(21, 30),
-            sprites.dungeon.chest_closed)
+        tiles.set_tile_at(tiles.get_tile_location(21, 30), sprites.dungeon.chest_closed)
         tiles.set_tile_at(tiles.get_tile_location(18, 6), sprites.dungeon.chest_closed)
-        tiles.set_tile_at(tiles.get_tile_location(16, 20),
-            sprites.dungeon.chest_closed)
+        tiles.set_tile_at(tiles.get_tile_location(16, 20), sprites.dungeon.chest_closed)
+
+        enemy_position = [[7, 17],
+            [6, 28],
+            [19, 16],
+            [18, 23],
+            [8, 23],
+            [18, 22],
+            [24, 1],
+            [25, 26],
+            [29, 16],
+            [30, 30],
+            [1, 3],
+            [0, 31],
+            [9, 3],
+            [8, 15]]
         fightScene = True
-        netopyr = sprites.create(img("""
+        duch = sprites.create(img("""
                 ........................
                             ........................
                             ........................
@@ -2497,17 +2619,37 @@ def on_overlap_tile3(sprite14, location9):
                             ........................
                             ........................
                             ........................
-            """),
-            SpriteKind.enemy)
-        tiles.place_on_tile(netopyr,
-            tiles.get_tiles_by_type(assets.tile("""
-                spawner_black
-            """))._pick_random())
-        netopyr.follow(mySprite, 50)
-scene.on_overlap_tile(SpriteKind.player,
-    assets.tile("""
-        myTile26
-    """),
-    on_overlap_tile3)
-#level 5\
+            """), SpriteKind.neznicitelny_enemy)
 
+        for value in enemy_position:
+            if (enemy_position.index(value) + 1) % 2 == 0:
+                spawn_duchove(value[0], value[1])
+            else:
+                set_duchove(value[0], value[1])
+scene.on_overlap_tile(SpriteKind.player, assets.tile("""
+        myTile26
+    """), on_overlap_dira)
+
+def on_path_completion(sprite, location): # pri dokonceni cesty enemy se otoci
+    global pozice
+    if currentLevel == 5 and fightScene == True:
+        for value3 in enemy_position:
+            if location.column == value3[0] and location.row == value3[1]:
+                print(enemy_position.index(value3))
+                pozice = enemy_position.index(value3)
+                if (pozice + 1) % 2 == 0:
+                    scene.follow_path(sprite,
+                        scene.a_star(location,
+                            tiles.get_tile_location(enemy_position[pozice - 1][0], enemy_position[pozice - 1][1])),
+                        60)
+                else:
+                    scene.follow_path(sprite,
+                        scene.a_star(location,
+                            tiles.get_tile_location(enemy_position[pozice + 1][0], enemy_position[pozice + 1][1])),
+                        60)
+scene.on_path_completion(SpriteKind.neznicitelny_enemy, on_path_completion)
+
+def on_overlap_schody(sprite, location):
+    startNextLevel()
+scene.on_overlap_tile(SpriteKind.player, sprites.dungeon.stair_west, on_overlap_schody)
+#level 5\
