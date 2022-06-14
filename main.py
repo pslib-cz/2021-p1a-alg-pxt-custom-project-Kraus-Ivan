@@ -1181,9 +1181,7 @@ def startNextLevel(): # funkce menici levely
                         7777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777
                         7777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777
         """))
-        tiles.set_current_tilemap(tilemap("""
-            level34
-        """))
+        tiles.set_current_tilemap(tilemap("""level34"""))
         level5()
     else:
         game.over(True)
@@ -2278,7 +2276,7 @@ def level5():
     global dialogSkoncen, dialogSkoncen2, fightScene
     dialogSkoncen = False
     dialogSkoncen2 = False
-    tiles.place_on_tile(mySprite, tiles.get_tile_location(29, 13))
+    tiles.place_on_tile(mySprite, tiles.get_tile_location(0, 8))
     fightScene = False
 
 def on_overlap_brana(sprite, location): # zavrena brana
@@ -2577,7 +2575,7 @@ def on_overlap_dira(sprite, location):
         mec = True
         tiles.set_current_tilemap(tilemap("""level36"""))
 
-        tiles.place_on_tile(mySprite, tiles.get_tile_location(27, 2))
+        tiles.place_on_tile(mySprite, tiles.get_tile_location(15, 31))
         tiles.set_tile_at(tiles.get_tile_location(5, 11), sprites.dungeon.chest_closed)
         tiles.set_tile_at(tiles.get_tile_location(17, 6), sprites.dungeon.chest_closed)
         tiles.set_tile_at(tiles.get_tile_location(21, 30), sprites.dungeon.chest_closed)

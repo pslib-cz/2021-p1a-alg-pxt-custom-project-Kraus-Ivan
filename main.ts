@@ -1176,9 +1176,7 @@ function startNextLevel() {
                         7777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777
                         7777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777
         `)
-        tiles.setCurrentTilemap(tilemap`
-            level34
-        `)
+        tiles.setCurrentTilemap(tilemap`level34`)
         level5()
     } else {
         game.over(true)
@@ -2303,7 +2301,7 @@ function level5() {
     
     dialogSkoncen = false
     dialogSkoncen2 = false
-    tiles.placeOnTile(mySprite, tiles.getTileLocation(29, 13))
+    tiles.placeOnTile(mySprite, tiles.getTileLocation(0, 8))
     fightScene = false
 }
 
@@ -2605,7 +2603,7 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`
         luk = true
         mec = true
         tiles.setCurrentTilemap(tilemap`level36`)
-        tiles.placeOnTile(mySprite, tiles.getTileLocation(27, 2))
+        tiles.placeOnTile(mySprite, tiles.getTileLocation(15, 31))
         tiles.setTileAt(tiles.getTileLocation(5, 11), sprites.dungeon.chestClosed)
         tiles.setTileAt(tiles.getTileLocation(17, 6), sprites.dungeon.chestClosed)
         tiles.setTileAt(tiles.getTileLocation(21, 30), sprites.dungeon.chestClosed)
