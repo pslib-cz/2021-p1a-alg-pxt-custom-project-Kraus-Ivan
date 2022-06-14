@@ -2609,7 +2609,7 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`
         tiles.setTileAt(tiles.getTileLocation(21, 30), sprites.dungeon.chestClosed)
         tiles.setTileAt(tiles.getTileLocation(18, 6), sprites.dungeon.chestClosed)
         tiles.setTileAt(tiles.getTileLocation(16, 20), sprites.dungeon.chestClosed)
-        enemy_position = [[7, 17], [6, 28], [19, 16], [18, 23], [8, 23], [18, 22], [20, 2], [25, 26], [29, 16], [30, 30], [1, 3], [0, 31], [9, 3], [8, 15], [13, 1], [14, 15], [15, 2], [19, 1], [31, 1], [30, 16], [20, 17], [27, 16], [11, 27], [2, 30], [16, 18], [18, 13], [11, 15], [8, 17]]
+        enemy_position = [[7, 17], [6, 28], [19, 16], [18, 23], [8, 23], [18, 22], [20, 2], [25, 26], [29, 16], [30, 30], [1, 3], [0, 31]]
         fightScene = true
         duch = sprites.create(img`
                 ........................
@@ -2656,9 +2656,9 @@ scene.onPathCompletion(SpriteKind.neznicitelny_enemy, function on_path_completio
             if (location.column == value3[0] && location.row == value3[1]) {
                 pozice = enemy_position.indexOf(value3)
                 if ((pozice + 1) % 2 == 0) {
-                    scene.followPath(sprite, scene.aStar(location, tiles.getTileLocation(enemy_position[pozice - 1][0], enemy_position[pozice - 1][1])), 60)
+                    scene.followPath(sprite, scene.aStar(location, tiles.getTileLocation(enemy_position[pozice - 1][0], enemy_position[pozice - 1][1])), 40)
                 } else {
-                    scene.followPath(sprite, scene.aStar(location, tiles.getTileLocation(enemy_position[pozice + 1][0], enemy_position[pozice + 1][1])), 60)
+                    scene.followPath(sprite, scene.aStar(location, tiles.getTileLocation(enemy_position[pozice + 1][0], enemy_position[pozice + 1][1])), 40)
                 }
                 
             }
@@ -2677,7 +2677,8 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`
         active_kamen
     `, function on_overlap_kamen(sprite: Sprite, location: tiles.Location) {
     //  carodej prijde
-    scene.followPath(carodej, scene.aStar(tiles.getTileLocation(13, 1), tiles.getTileLocation(13, 8)))
+    info.setLife(3)
+    scene.followPath(carodej, scene.aStar(tiles.getTileLocation(13, 1), tiles.getTileLocation(13, 6)))
 })
 scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.stairEast, function on_overlap_schody(sprite: Sprite, location: tiles.Location) {
     //  nastaveni Tilemap na boss fight
@@ -2735,7 +2736,7 @@ game.onUpdateInterval(6000, function on_update_interval_koule() {
                             . . . . . . . . . . . . . . . .
             `, SpriteKind.projectile_koule)
         ohniva_koule.setPosition(carodej.x, carodej.y)
-        ohniva_koule.follow(mySprite, 65)
+        ohniva_koule.follow(mySprite, 50)
     }
     
 })
@@ -2756,7 +2757,7 @@ sprites.onOverlap(SpriteKind.Projectile, SpriteKind.witcher, function on_overlap
     //  zasazeni carodeje
     statusbar.value -= 0.5
 })
-game.onUpdateInterval(3000, function on_update_interval_netopyri() {
+game.onUpdateInterval(5000, function on_update_interval_netopyri() {
     let netopyr_boss: Sprite;
     if (pohyb_carodeje) {
         netopyr_boss = sprites.create(img`
@@ -2795,7 +2796,73 @@ game.onUpdateInterval(3000, function on_update_interval_netopyri() {
             c c c c c c c b c c c c c c b b
             c c c c c c c c c c c c c c b c
         `)
-        netopyr_boss.follow(mySprite)
+        netopyr_boss.follow(mySprite, 40)
     }
     
+})
+scene.onOverlapTile(SpriteKind.Player, img`
+    d d c c c c c c c c c c c c d d
+    d d c b b b b b b b b b b c d d
+    d d b d d d d d d d d d d b d d
+    d d c c c c c c c c c c c c d d
+    d d c b b b b b b b b b b c d d
+    d d b d d d d d d d d d d b d d
+    d d c c c c c c c c c c c c d d
+    d d c b b b b b b b b b b c d d
+    d d b d d d d d d d d d d b d d
+    d d c c c c c c c c c c c c d d
+    d d c b b b b b b b b b b c d d
+    d d b d d d d d d d d d d b d d
+    d d c c c c c c c c c c c c d d
+    d d c b b b b b b b b b b c d d
+    b b b d d d d d d d d d d b b b
+    c c c c c c c c c c c c c c c c
+`, function on_overlap_schody_princezna(sprite: Sprite, location: tiles.Location) {
+    let princezna: Sprite;
+    if (pohyb_carodeje == false) {
+        scene.setBackgroundColor(10)
+        tiles.setCurrentTilemap(tilemap`level44`)
+        tiles.placeOnTile(mySprite, tiles.getTileLocation(7, 15))
+        princezna = sprites.create(img`
+            . . . . . . 5 . 5 . . . . . . .
+            . . . . . f 5 5 5 f f . . . . .
+            . . . . f 1 5 2 5 1 6 f . . . .
+            . . . f 1 6 6 6 6 6 1 6 f . . .
+            . . . f 6 6 f f f f 6 1 f . . .
+            . . . f 6 f f d d f f 6 f . . .
+            . . f 6 f d f d d f d f 6 f . .
+            . . f 6 f d 3 d d 3 d f 6 f . .
+            . . f 6 6 f d d d d f 6 6 f . .
+            . f 6 6 f 3 f f f f 3 f 6 6 f .
+            . . f f d 3 5 3 3 5 3 d f f . .
+            . . f d d f 3 5 5 3 f d d f . .
+            . . . f f 3 3 3 3 3 3 f f . . .
+            . . . f 3 3 5 3 3 5 3 3 f . . .
+            . . . f f f f f f f f f f . . .
+            . . . . . f f . . f f . . . . .
+        `, SpriteKind.Player)
+        tiles.placeOnTile(princezna, tiles.getTileLocation(10, 8))
+    }
+    
+})
+scene.onOverlapTile(SpriteKind.Player, img`
+    a a a a a a a a a a a a a a a a
+    a a a a a a a a a a a a a a a a
+    a a a a a a a a a a a a a a a a
+    a a a a a a a a a a a a a a a a
+    a a a a a a a a a a a a a a a a
+    a a a a a a a a a a a a a a a a
+    a a a a a a a a a a a a a a a a
+    a a a a a a a a a a a a a a a a
+    a a a a a a a a a a a a a a a a
+    a a a a a a a a a a a a a a a a
+    a a a a a a a a a a a a a a a a
+    a a a a a a a a a a a a a a a a
+    a a a a a a a a a a a a a a a a
+    a a a a a a a a a a a a a a a a
+    a a a a a a a a a a a a a a a a
+    a a a a a a a a a a a a a a a a
+`, function on_overlap_koberec_princezna(sprite: Sprite, location: tiles.Location) {
+    game.showLongText("PRINCEZNA: Dokázal jsi to, zachránil si mě!", DialogLayout.Bottom)
+    startNextLevel()
 })

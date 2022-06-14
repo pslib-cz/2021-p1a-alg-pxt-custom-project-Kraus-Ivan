@@ -2593,23 +2593,7 @@ def on_overlap_dira(sprite, location):
             [29, 16],
             [30, 30],
             [1, 3],
-            [0, 31],
-            [9, 3],
-            [8, 15],
-            [13, 1],
-            [14, 15],
-            [15, 2],
-            [19, 1],
-            [31, 1],
-            [30, 16],
-            [20, 17],
-            [27, 16],
-            [11, 27],
-            [2, 30],
-            [16, 18],
-            [18, 13],
-            [11, 15],
-            [8, 17]]
+            [0, 31]]
         fightScene = True
         duch = sprites.create(img("""
                 ........................
@@ -2657,12 +2641,12 @@ def on_path_completion(sprite, location): # pri dokonceni cesty enemy se otoci
                     scene.follow_path(sprite,
                         scene.a_star(location,
                             tiles.get_tile_location(enemy_position[pozice - 1][0], enemy_position[pozice - 1][1])),
-                        60)
+                        40)
                 else:
                     scene.follow_path(sprite,
                         scene.a_star(location,
                             tiles.get_tile_location(enemy_position[pozice + 1][0], enemy_position[pozice + 1][1])),
-                        60)
+                        40)
 scene.on_path_completion(SpriteKind.neznicitelny_enemy, on_path_completion)
 
 
@@ -2675,7 +2659,8 @@ def on_zero(status): # zabije carodeje pri life bar = 0
 statusbars.on_zero(StatusBarKind.health, on_zero)
 
 def on_overlap_kamen(sprite, location): # carodej prijde
-    scene.follow_path(carodej, scene.a_star(tiles.get_tile_location(13, 1), tiles.get_tile_location(13, 8)))
+    info.set_life(3)
+    scene.follow_path(carodej, scene.a_star(tiles.get_tile_location(13, 1), tiles.get_tile_location(13, 6)))
 scene.on_overlap_tile(SpriteKind.player, assets.tile("""
         active_kamen
     """), on_overlap_kamen)
@@ -2734,7 +2719,7 @@ def on_update_interval_koule():
                             . . . . . . . . . . . . . . . .
             """), SpriteKind.projectile_koule)
         ohniva_koule.set_position(carodej.x, carodej.y)
-        ohniva_koule.follow(mySprite, 65)
+        ohniva_koule.follow(mySprite, 50)
 game.on_update_interval(6000, on_update_interval_koule)
 
 def on_path_completion_carodej(sprite, location):
@@ -2794,7 +2779,72 @@ def on_update_interval_netopyri():
             c c c c c c c b c c c c c c b b
             c c c c c c c c c c c c c c b c
         """))
-        netopyr_boss.follow(mySprite)
-game.on_update_interval(3000, on_update_interval_netopyri)
+        netopyr_boss.follow(mySprite, 40)
+game.on_update_interval(5000, on_update_interval_netopyri)
+
+def on_overlap_schody_princezna(sprite, location):
+    if pohyb_carodeje == False:
+        scene.set_background_color(10)
+        tiles.set_current_tilemap(tilemap("""level44"""))
+        tiles.place_on_tile(mySprite, tiles.get_tile_location(7, 15))
+        princezna = sprites.create(img("""
+            . . . . . . 5 . 5 . . . . . . .
+            . . . . . f 5 5 5 f f . . . . .
+            . . . . f 1 5 2 5 1 6 f . . . .
+            . . . f 1 6 6 6 6 6 1 6 f . . .
+            . . . f 6 6 f f f f 6 1 f . . .
+            . . . f 6 f f d d f f 6 f . . .
+            . . f 6 f d f d d f d f 6 f . .
+            . . f 6 f d 3 d d 3 d f 6 f . .
+            . . f 6 6 f d d d d f 6 6 f . .
+            . f 6 6 f 3 f f f f 3 f 6 6 f .
+            . . f f d 3 5 3 3 5 3 d f f . .
+            . . f d d f 3 5 5 3 f d d f . .
+            . . . f f 3 3 3 3 3 3 f f . . .
+            . . . f 3 3 5 3 3 5 3 3 f . . .
+            . . . f f f f f f f f f f . . .
+            . . . . . f f . . f f . . . . .
+        """), SpriteKind.player)
+        tiles.place_on_tile(princezna, tiles.get_tile_location(10, 8))
+scene.on_overlap_tile(SpriteKind.player, img("""
+    d d c c c c c c c c c c c c d d
+    d d c b b b b b b b b b b c d d
+    d d b d d d d d d d d d d b d d
+    d d c c c c c c c c c c c c d d
+    d d c b b b b b b b b b b c d d
+    d d b d d d d d d d d d d b d d
+    d d c c c c c c c c c c c c d d
+    d d c b b b b b b b b b b c d d
+    d d b d d d d d d d d d d b d d
+    d d c c c c c c c c c c c c d d
+    d d c b b b b b b b b b b c d d
+    d d b d d d d d d d d d d b d d
+    d d c c c c c c c c c c c c d d
+    d d c b b b b b b b b b b c d d
+    b b b d d d d d d d d d d b b b
+    c c c c c c c c c c c c c c c c
+"""), on_overlap_schody_princezna)
+
+def on_overlap_koberec_princezna(sprite, location):
+    game.show_long_text("PRINCEZNA: Dokázal jsi to, zachránil si mě!", DialogLayout.BOTTOM)
+    startNextLevel()
+scene.on_overlap_tile(SpriteKind.player, img("""
+    a a a a a a a a a a a a a a a a
+    a a a a a a a a a a a a a a a a
+    a a a a a a a a a a a a a a a a
+    a a a a a a a a a a a a a a a a
+    a a a a a a a a a a a a a a a a
+    a a a a a a a a a a a a a a a a
+    a a a a a a a a a a a a a a a a
+    a a a a a a a a a a a a a a a a
+    a a a a a a a a a a a a a a a a
+    a a a a a a a a a a a a a a a a
+    a a a a a a a a a a a a a a a a
+    a a a a a a a a a a a a a a a a
+    a a a a a a a a a a a a a a a a
+    a a a a a a a a a a a a a a a a
+    a a a a a a a a a a a a a a a a
+    a a a a a a a a a a a a a a a a
+"""), on_overlap_koberec_princezna)
 #level 5\
 

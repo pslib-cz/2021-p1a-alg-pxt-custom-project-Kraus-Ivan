@@ -972,6 +972,35 @@
         ],
         "displayName": "level38"
     },
+    "level44": {
+        "id": "level44",
+        "mimeType": "application/mkcd-tilemap",
+        "data": "MTAxMDAwMTAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA5MDgwZjA4MDgwODA4MGYwODBiMDAwMDAwMDAwMDAwMDQxMjExMTExMDEwMTAxMDE0MDUwMDAwMDAwMDAwMDAwZTEzMTMxMzEwMTAxMDEwMTAwZDAwMDAwMDAwMDAwMDBhMTMxMzEzMTMxMzEwMTAxMDA1MDAwMDAwMDAwMDAwMGExMzEzMTMxMzEzMTMxMzEwMDUwMDAwMDAwMDAwMDAwZTEzMTMxMzEzMTMxMzEzMTMwZDAwMDAwMDAwMDAwMDBhMTMxMzEzMTMxMzEzMTMxMzA1MDAwMDAwMDAwMDAwMDMwYzAxMDYxMzEzMDcwMTBjMDIwMDAwMDAwMDAwMDAwMDAwMDAwNDEzMTMwNTAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAzMTMxMzAyMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAyMDIyMjIyMjIyMDIwMDAwMjIwMDAwMDAwMDAyMDAwMDIyMDAwMDAwMDAwMjAwMDAyMDAwMDAwMDAwMDIwMDAwMjAwMDAwMDAwMDAyMDAwMDIwMDAwMDAwMDAwMjAwMDAyMDAwMDAwMDAwMDIwMDAwMjAyMjAyMjAyMjAyMDAwMDAwMDAwMjIwMDAwMDAwMDAwMDAwMDIyMDAwMDAwMA==",
+        "tileset": [
+            "myTiles.transparency16",
+            "sprites.dungeon.purpleOuterSouth1",
+            "sprites.dungeon.purpleOuterSouthWest",
+            "sprites.dungeon.purpleOuterSouthEast",
+            "sprites.dungeon.purpleOuterWest1",
+            "sprites.dungeon.purpleOuterEast0",
+            "sprites.dungeon.purpleInnerNorthEast",
+            "sprites.dungeon.purpleInnerNorthWest",
+            "sprites.dungeon.purpleOuterNorth1",
+            "sprites.dungeon.purpleOuterNorthWest",
+            "sprites.dungeon.purpleOuterWest0",
+            "sprites.dungeon.purpleOuterNorthEast",
+            "sprites.dungeon.purpleOuterSouth2",
+            "sprites.dungeon.purpleOuterEast2",
+            "sprites.dungeon.purpleOuterWest2",
+            "sprites.dungeon.purpleSwitchUp",
+            "sprites.swamp.swampTile9",
+            "sprites.dungeon.chestClosed",
+            "sprites.dungeon.collectibleBlueCrystal",
+            "sprites.dungeon.darkGroundCenter",
+            "sprites.dungeon.stairLadder"
+        ],
+        "displayName": "level44"
+    },
     "*": {
         "mimeType": "image/x-mkcd-f4",
         "dataEncoding": "base64",
