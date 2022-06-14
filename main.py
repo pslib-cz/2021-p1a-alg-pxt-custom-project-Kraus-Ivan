@@ -30,6 +30,7 @@ ohniva_koule: Sprite = None
 myEnemy: Sprite = None
 button_lvl_5: Sprite = None
 button_lvl_4: Sprite = None
+zasah = 0
 button_lvl_3: Sprite = None
 button_lvl_2: Sprite = None
 button_lvl_1: Sprite = None
@@ -400,7 +401,7 @@ def on_b_pressed(): #mereni casu natazeni luku
                                         . . . . . . . . . . . . e 1 .
                                         . . . . . . . . . . . . . e e
                 """))
-            elif pozice_zbrane[3] == True:
+            else:
                 BowImage.set_image(img("""
                     e e . . . . . . . . . . . . .
                                         . 1 e . . . . . . . . . . . .
@@ -2653,7 +2654,6 @@ def on_path_completion(sprite, location): # pri dokonceni cesty enemy se otoci
     if currentLevel == 5 and fightScene == True:
         for value3 in enemy_position:
             if location.column == value3[0] and location.row == value3[1]:
-                print(enemy_position.index(value3))
                 pozice = enemy_position.index(value3)
                 if (pozice + 1) % 2 == 0:
                     scene.follow_path(sprite,
@@ -2670,10 +2670,9 @@ scene.on_path_completion(SpriteKind.neznicitelny_enemy, on_path_completion)
 
 
 
-
-
-
 def on_zero(status): # zabije carodeje pri life bar = 0
+    global pohyb_carodeje
+    pohyb_carodeje = False
     carodej.destroy(effects.fire, 200)
 statusbars.on_zero(StatusBarKind.health, on_zero)
 
@@ -2737,18 +2736,67 @@ def on_update_interval_koule():
                             . . . . . . . . . . . . . . . .
             """), SpriteKind.projectile_koule)
         ohniva_koule.set_position(carodej.x, carodej.y)
-        ohniva_koule.follow(mySprite, 75)
-game.on_update_interval(5000, on_update_interval_koule)
+        ohniva_koule.follow(mySprite, 65)
+game.on_update_interval(6000, on_update_interval_koule)
 
 def on_path_completion_carodej(sprite, location):
     global pohyb_carodeje
-    if currentLevel == 5:
-        pohyb_carodeje = True
+    game.show_long_text("ČERNOKNĚŽNÍK: Konečně se potkáváme, snad ukážeš, co v tobě je!", DialogLayout.BOTTOM)
+    pohyb_carodeje = True
 scene.on_path_completion(SpriteKind.witcher, on_path_completion_carodej)
 
+def on_overlap_projectile_koule(sprite, otherSprite): # zniceni koule pomoci projectile
+    otherSprite.destroy(effects.warm_radial, 1)
+sprites.on_overlap(SpriteKind.projectile, SpriteKind.projectile_koule, on_overlap_projectile_koule)
 
-def on_overlap_carodej_hit(sprite, otherSprite):
-    statusbar.value += -1
-sprites.on_overlap(SpriteKind.projectile, SpriteKind.witcher, on_overlap_carodej_hit)
+def on_overlap_koule_mySprite(sprite, otherSprite):
+    sprite.destroy()
+    info.change_life_by(-1)
+sprites.on_overlap(SpriteKind.projectile_koule, SpriteKind.player, on_overlap_koule_mySprite)
 
+def on_overlap_projectile_carodej(sprite, otherSprite): # zasazeni carodeje
+        statusbar.value -= 0.5
+sprites.on_overlap(SpriteKind.projectile, SpriteKind.witcher, on_overlap_projectile_carodej)
+
+def on_update_interval_netopyri():
+    if pohyb_carodeje:
+        netopyr_boss = sprites.create(img("""
+            . . f f f . . . . . . . . . . .
+            f f f c c . . . . . . . . f f f
+            f f c c c . c c . . . f c b b c
+            f f c 3 c c 3 c c f f b b b c .
+            f f c 3 b c 3 b c f b b c c c .
+            f c b b b b b b c f b c b c c .
+            c c 1 b b b 1 b c b b c b b c .
+            c b b b b b b b b b c c c b c .
+            c b 1 f f 1 c b b c c c c c . .
+            c f 1 f f 1 f b b b b f c . . .
+            f f f f f f f b b b b f c . . .
+            f f 2 2 2 2 f b b b b f c c . .
+            . f 2 2 2 2 2 b b b c f . . . .
+            . . f 2 2 2 b b b c f . . . . .
+            . . . f f f f f f f . . . . . .
+            . . . . . . . . . . . . . . . .
+        """), SpriteKind.enemy)
+        tiles.place_on_random_tile(netopyr_boss, img("""
+            c c c c c c c c c c c c c c c c
+            c c c c c c c c c b c c c c b c
+            c c b c c c c c c c c c c c c c
+            c c c c c c c c c c c c c c c c
+            c c c c c c c c c c c c c c c c
+            c c c b c c b c c c c b c c c c
+            c c c c c c c c c c c c c c c c
+            c b c c c c c c c c c c c c c c
+            c c c c c c c c c c c c c c c c
+            c c c c c b c c c c c b c c c c
+            c c c c c c c c c c c c c c c c
+            c c c c c c c c c c c c c c c c
+            c c c c c c c c c c c c c c c c
+            c c b c c c c c c c c c c c c c
+            c c c c c c c b c c c c c c b b
+            c c c c c c c c c c c c c c b c
+        """))
+        netopyr_boss.follow(mySprite)
+game.on_update_interval(3000, on_update_interval_netopyri)
 #level 5\
+

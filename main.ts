@@ -30,6 +30,7 @@ let ohniva_koule : Sprite = null
 let myEnemy : Sprite = null
 let button_lvl_5 : Sprite = null
 let button_lvl_4 : Sprite = null
+let zasah = 0
 let button_lvl_3 : Sprite = null
 let button_lvl_2 : Sprite = null
 let button_lvl_1 : Sprite = null
@@ -386,7 +387,7 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function on_b_pressed() {
                                         . . . . . . . . . . . . e 1 .
                                         . . . . . . . . . . . . . e e
                 `)
-            } else if (pozice_zbrane[3] == true) {
+            } else {
                 BowImage.setImage(img`
                     e e . . . . . . . . . . . . .
                                         . 1 e . . . . . . . . . . . .
@@ -2655,7 +2656,6 @@ scene.onPathCompletion(SpriteKind.neznicitelny_enemy, function on_path_completio
     if (currentLevel == 5 && fightScene == true) {
         for (let value3 of enemy_position) {
             if (location.column == value3[0] && location.row == value3[1]) {
-                console.log(enemy_position.indexOf(value3))
                 pozice = enemy_position.indexOf(value3)
                 if ((pozice + 1) % 2 == 0) {
                     scene.followPath(sprite, scene.aStar(location, tiles.getTileLocation(enemy_position[pozice - 1][0], enemy_position[pozice - 1][1])), 60)
@@ -2671,6 +2671,8 @@ scene.onPathCompletion(SpriteKind.neznicitelny_enemy, function on_path_completio
 })
 statusbars.onZero(StatusBarKind.Health, function on_zero(status: StatusBarSprite) {
     //  zabije carodeje pri life bar = 0
+    
+    pohyb_carodeje = false
     carodej.destroy(effects.fire, 200)
 })
 scene.onOverlapTile(SpriteKind.Player, assets.tile`
@@ -2713,7 +2715,7 @@ scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.stairEast, function on_ov
     }
     
 })
-game.onUpdateInterval(5000, function on_update_interval_koule() {
+game.onUpdateInterval(6000, function on_update_interval_koule() {
     
     if (pohyb_carodeje == true) {
         ohniva_koule = sprites.create(img`
@@ -2735,17 +2737,67 @@ game.onUpdateInterval(5000, function on_update_interval_koule() {
                             . . . . . . . . . . . . . . . .
             `, SpriteKind.projectile_koule)
         ohniva_koule.setPosition(carodej.x, carodej.y)
-        ohniva_koule.follow(mySprite, 75)
+        ohniva_koule.follow(mySprite, 65)
     }
     
 })
 scene.onPathCompletion(SpriteKind.witcher, function on_path_completion_carodej(sprite: Sprite, location: tiles.Location) {
     
-    if (currentLevel == 5) {
-        pohyb_carodeje = true
+    game.showLongText("ČERNOKNĚŽNÍK: Konečně se potkáváme, snad ukážeš, co v tobě je!", DialogLayout.Bottom)
+    pohyb_carodeje = true
+})
+sprites.onOverlap(SpriteKind.Projectile, SpriteKind.projectile_koule, function on_overlap_projectile_koule(sprite: Sprite, otherSprite: Sprite) {
+    //  zniceni koule pomoci projectile
+    otherSprite.destroy(effects.warmRadial, 1)
+})
+sprites.onOverlap(SpriteKind.projectile_koule, SpriteKind.Player, function on_overlap_koule_mySprite(sprite: Sprite, otherSprite: Sprite) {
+    sprite.destroy()
+    info.changeLifeBy(-1)
+})
+sprites.onOverlap(SpriteKind.Projectile, SpriteKind.witcher, function on_overlap_projectile_carodej(sprite: Sprite, otherSprite: Sprite) {
+    //  zasazeni carodeje
+    statusbar.value -= 0.5
+})
+game.onUpdateInterval(3000, function on_update_interval_netopyri() {
+    let netopyr_boss: Sprite;
+    if (pohyb_carodeje) {
+        netopyr_boss = sprites.create(img`
+            . . f f f . . . . . . . . . . .
+            f f f c c . . . . . . . . f f f
+            f f c c c . c c . . . f c b b c
+            f f c 3 c c 3 c c f f b b b c .
+            f f c 3 b c 3 b c f b b c c c .
+            f c b b b b b b c f b c b c c .
+            c c 1 b b b 1 b c b b c b b c .
+            c b b b b b b b b b c c c b c .
+            c b 1 f f 1 c b b c c c c c . .
+            c f 1 f f 1 f b b b b f c . . .
+            f f f f f f f b b b b f c . . .
+            f f 2 2 2 2 f b b b b f c c . .
+            . f 2 2 2 2 2 b b b c f . . . .
+            . . f 2 2 2 b b b c f . . . . .
+            . . . f f f f f f f . . . . . .
+            . . . . . . . . . . . . . . . .
+        `, SpriteKind.Enemy)
+        tiles.placeOnRandomTile(netopyr_boss, img`
+            c c c c c c c c c c c c c c c c
+            c c c c c c c c c b c c c c b c
+            c c b c c c c c c c c c c c c c
+            c c c c c c c c c c c c c c c c
+            c c c c c c c c c c c c c c c c
+            c c c b c c b c c c c b c c c c
+            c c c c c c c c c c c c c c c c
+            c b c c c c c c c c c c c c c c
+            c c c c c c c c c c c c c c c c
+            c c c c c b c c c c c b c c c c
+            c c c c c c c c c c c c c c c c
+            c c c c c c c c c c c c c c c c
+            c c c c c c c c c c c c c c c c
+            c c b c c c c c c c c c c c c c
+            c c c c c c c b c c c c c c b b
+            c c c c c c c c c c c c c c b c
+        `)
+        netopyr_boss.follow(mySprite)
     }
     
-})
-sprites.onOverlap(SpriteKind.Projectile, SpriteKind.witcher, function on_overlap_carodej_hit(sprite: Sprite, otherSprite: Sprite) {
-    statusbar.value += -1
 })
