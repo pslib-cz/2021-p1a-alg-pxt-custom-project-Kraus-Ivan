@@ -16,6 +16,8 @@ namespace SpriteKind {
     export const Kostlivec = SpriteKind.create()
     export const button_small = SpriteKind.create()
     export const neznicitelny_enemy = SpriteKind.create()
+    export const witcher = SpriteKind.create()
+    export const projectile_koule = SpriteKind.create()
 }
 
 namespace StrProp {
@@ -23,6 +25,8 @@ namespace StrProp {
     export const Text = StrProp.create()
 }
 
+let pohyb_carodeje = false
+let ohniva_koule : Sprite = null
 let myEnemy : Sprite = null
 let button_lvl_5 : Sprite = null
 let button_lvl_4 : Sprite = null
@@ -34,7 +38,9 @@ let projectile2 : Sprite = null
 let projectile : Sprite = null
 let arrow : Sprite = null
 let cas_konec = 0
+let carodej : Sprite = null
 let duch : Sprite = null
+let statusbar : StatusBarSprite = null
 let afterFight = false
 let rocks : Sprite = null
 let Strom : Sprite = null
@@ -2296,7 +2302,7 @@ function level5() {
     
     dialogSkoncen = false
     dialogSkoncen2 = false
-    tiles.placeOnTile(mySprite, tiles.getTileLocation(0, 7))
+    tiles.placeOnTile(mySprite, tiles.getTileLocation(29, 13))
     fightScene = false
 }
 
@@ -2597,16 +2603,14 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`
         info.setLife(3)
         luk = true
         mec = true
-        tiles.setCurrentTilemap(tilemap`
-            level36
-        `)
-        tiles.placeOnTile(mySprite, tiles.getTileLocation(15, 31))
+        tiles.setCurrentTilemap(tilemap`level36`)
+        tiles.placeOnTile(mySprite, tiles.getTileLocation(27, 2))
         tiles.setTileAt(tiles.getTileLocation(5, 11), sprites.dungeon.chestClosed)
-        tiles.setTileAt(tiles.getTileLocation(28, 2), sprites.dungeon.chestClosed)
+        tiles.setTileAt(tiles.getTileLocation(17, 6), sprites.dungeon.chestClosed)
         tiles.setTileAt(tiles.getTileLocation(21, 30), sprites.dungeon.chestClosed)
         tiles.setTileAt(tiles.getTileLocation(18, 6), sprites.dungeon.chestClosed)
         tiles.setTileAt(tiles.getTileLocation(16, 20), sprites.dungeon.chestClosed)
-        enemy_position = [[7, 17], [6, 28], [19, 16], [18, 23], [8, 23], [18, 22], [24, 1], [25, 26], [29, 16], [30, 30], [1, 3], [0, 31], [9, 3], [8, 15], [13, 1], [14, 15], [15, 2], [23, 1], [31, 1], [30, 16], [20, 17], [27, 16], [11, 27], [2, 30], [16, 18], [18, 13], [11, 15], [8, 17]]
+        enemy_position = [[7, 17], [6, 28], [19, 16], [18, 23], [8, 23], [18, 22], [20, 2], [25, 26], [29, 16], [30, 30], [1, 3], [0, 31], [9, 3], [8, 15], [13, 1], [14, 15], [15, 2], [19, 1], [31, 1], [30, 16], [20, 17], [27, 16], [11, 27], [2, 30], [16, 18], [18, 13], [11, 15], [8, 17]]
         fightScene = true
         duch = sprites.create(img`
                 ........................
@@ -2665,6 +2669,83 @@ scene.onPathCompletion(SpriteKind.neznicitelny_enemy, function on_path_completio
     }
     
 })
-scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.stairWest, function on_overlap_schody(sprite: Sprite, location: tiles.Location) {
-    startNextLevel()
+statusbars.onZero(StatusBarKind.Health, function on_zero(status: StatusBarSprite) {
+    //  zabije carodeje pri life bar = 0
+    carodej.destroy(effects.fire, 200)
+})
+scene.onOverlapTile(SpriteKind.Player, assets.tile`
+        active_kamen
+    `, function on_overlap_kamen(sprite: Sprite, location: tiles.Location) {
+    //  carodej prijde
+    scene.followPath(carodej, scene.aStar(tiles.getTileLocation(13, 1), tiles.getTileLocation(13, 8)))
+})
+scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.stairEast, function on_overlap_schody(sprite: Sprite, location: tiles.Location) {
+    //  nastaveni Tilemap na boss fight
+    
+    tiles.setTileAt(tiles.getTileLocation(16, 20), sprites.dungeon.chestClosed)
+    if (fightScene == true) {
+        fightScene = false
+        sprites.destroyAllSpritesOfKind(SpriteKind.neznicitelny_enemy)
+        tiles.setCurrentTilemap(tilemap`level38`)
+        tiles.placeOnTile(mySprite, tiles.getTileLocation(0, 22))
+        carodej = sprites.create(img`
+            . . . . . . . c c c . . . . . .
+            . . . . . . c b 5 c . . . . . .
+            . . . . c c c 5 5 c c c . . . .
+            . . c c b c 5 5 5 5 c c c c . .
+            . c b b 5 b 5 5 5 5 b 5 b b c .
+            . c b 5 5 b b 5 5 b b 5 5 b c .
+            . . f 5 5 5 b b b b 5 5 5 c . .
+            . . f f 5 5 5 5 5 5 5 5 f f . .
+            . . f f f b f e e f b f f f . .
+            . . f f f 1 f b b f 1 f f f . .
+            . . . f f b b b b b b f f . . .
+            . . . e e f e e e e f e e . . .
+            . . e b c b 5 b b 5 b f b e . .
+            . . e e f 5 5 5 5 5 5 f e e . .
+            . . . . c b 5 5 5 5 b c . . . .
+            . . . . . f f f f f f . . . . .
+        `, SpriteKind.witcher)
+        statusbar = statusbars.create(20, 4, StatusBarKind.Health)
+        statusbar.attachToSprite(carodej)
+        tiles.placeOnTile(carodej, tiles.getTileLocation(13, 1))
+        carodej.setScale(1.5, ScaleAnchor.Middle)
+    }
+    
+})
+game.onUpdateInterval(5000, function on_update_interval_koule() {
+    
+    if (pohyb_carodeje == true) {
+        ohniva_koule = sprites.create(img`
+                . . . . . . . . . . . . . . . .
+                            . . . . . . . . . . . . . . . .
+                            . . . . . 4 4 4 4 4 . . . . . .
+                            . . . 4 4 4 5 5 5 d 4 4 4 4 . .
+                            . . 4 d 5 d 5 5 5 d d d 4 4 . .
+                            . . 4 5 5 1 1 1 d d 5 5 5 4 . .
+                            . 4 5 5 5 1 1 1 5 1 1 5 5 4 4 .
+                            . 4 d d 1 1 5 5 5 1 1 5 5 d 4 .
+                            . 4 5 5 1 1 5 1 1 5 5 d d d 4 .
+                            . 2 5 5 5 d 1 1 1 5 1 1 5 5 2 .
+                            . 2 d 5 5 d 1 1 1 5 1 1 5 5 2 .
+                            . . 2 4 d d 5 5 5 5 d d 5 4 . .
+                            . . . 2 2 4 d 5 5 d d 4 4 . . .
+                            . . . 2 2 2 2 4 4 4 2 2 2 . . .
+                            . . . . . 4 4 4 4 4 4 2 . . . .
+                            . . . . . . . . . . . . . . . .
+            `, SpriteKind.projectile_koule)
+        ohniva_koule.setPosition(carodej.x, carodej.y)
+        ohniva_koule.follow(mySprite, 75)
+    }
+    
+})
+scene.onPathCompletion(SpriteKind.witcher, function on_path_completion_carodej(sprite: Sprite, location: tiles.Location) {
+    
+    if (currentLevel == 5) {
+        pohyb_carodeje = true
+    }
+    
+})
+sprites.onOverlap(SpriteKind.Projectile, SpriteKind.witcher, function on_overlap_carodej_hit(sprite: Sprite, otherSprite: Sprite) {
+    statusbar.value += -1
 })

@@ -17,12 +17,16 @@ class SpriteKind:
     Kostlivec = SpriteKind.create()
     button_small = SpriteKind.create()
     neznicitelny_enemy = SpriteKind.create()
+    witcher = SpriteKind.create()
+    projectile_koule = SpriteKind.create()
 @namespace
 class StrProp:
     Name = StrProp.create()
     Text = StrProp.create()
 
 
+pohyb_carodeje = False
+ohniva_koule: Sprite = None
 myEnemy: Sprite = None
 button_lvl_5: Sprite = None
 button_lvl_4: Sprite = None
@@ -34,7 +38,9 @@ projectile2: Sprite = None
 projectile: Sprite = None
 arrow: Sprite = None
 cas_konec = 0
+carodej: Sprite = None
 duch: Sprite = None
+statusbar: StatusBarSprite = None
 afterFight = False
 rocks: Sprite = None
 Strom: Sprite = None
@@ -2271,7 +2277,7 @@ def level5():
     global dialogSkoncen, dialogSkoncen2, fightScene
     dialogSkoncen = False
     dialogSkoncen2 = False
-    tiles.place_on_tile(mySprite, tiles.get_tile_location(0, 7))
+    tiles.place_on_tile(mySprite, tiles.get_tile_location(29, 13))
     fightScene = False
 
 def on_overlap_brana(sprite, location): # zavrena brana
@@ -2568,13 +2574,11 @@ def on_overlap_dira(sprite, location):
         info.set_life(3)
         luk = True
         mec = True
-        tiles.set_current_tilemap(tilemap("""
-            level36
-        """))
+        tiles.set_current_tilemap(tilemap("""level36"""))
 
-        tiles.place_on_tile(mySprite, tiles.get_tile_location(15, 31))
+        tiles.place_on_tile(mySprite, tiles.get_tile_location(27, 2))
         tiles.set_tile_at(tiles.get_tile_location(5, 11), sprites.dungeon.chest_closed)
-        tiles.set_tile_at(tiles.get_tile_location(28, 2), sprites.dungeon.chest_closed)
+        tiles.set_tile_at(tiles.get_tile_location(17, 6), sprites.dungeon.chest_closed)
         tiles.set_tile_at(tiles.get_tile_location(21, 30), sprites.dungeon.chest_closed)
         tiles.set_tile_at(tiles.get_tile_location(18, 6), sprites.dungeon.chest_closed)
         tiles.set_tile_at(tiles.get_tile_location(16, 20), sprites.dungeon.chest_closed)
@@ -2585,7 +2589,7 @@ def on_overlap_dira(sprite, location):
             [18, 23],
             [8, 23],
             [18, 22],
-            [24, 1],
+            [20, 2],
             [25, 26],
             [29, 16],
             [30, 30],
@@ -2596,7 +2600,7 @@ def on_overlap_dira(sprite, location):
             [13, 1],
             [14, 15],
             [15, 2],
-            [23, 1],
+            [19, 1],
             [31, 1],
             [30, 16],
             [20, 17],
@@ -2663,7 +2667,88 @@ def on_path_completion(sprite, location): # pri dokonceni cesty enemy se otoci
                         60)
 scene.on_path_completion(SpriteKind.neznicitelny_enemy, on_path_completion)
 
-def on_overlap_schody(sprite, location):
-    startNextLevel()
-scene.on_overlap_tile(SpriteKind.player, sprites.dungeon.stair_west, on_overlap_schody)
+
+
+
+
+
+
+def on_zero(status): # zabije carodeje pri life bar = 0
+    carodej.destroy(effects.fire, 200)
+statusbars.on_zero(StatusBarKind.health, on_zero)
+
+def on_overlap_kamen(sprite, location): # carodej prijde
+    scene.follow_path(carodej, scene.a_star(tiles.get_tile_location(13, 1), tiles.get_tile_location(13, 8)))
+scene.on_overlap_tile(SpriteKind.player, assets.tile("""
+        active_kamen
+    """), on_overlap_kamen)
+
+def on_overlap_schody(sprite, location): # nastaveni Tilemap na boss fight
+    global fightScene, carodej, statusbar
+    tiles.set_tile_at(tiles.get_tile_location(16, 20), sprites.dungeon.chest_closed)
+    if fightScene == True:
+        fightScene = False
+        sprites.destroy_all_sprites_of_kind(SpriteKind.neznicitelny_enemy)
+        tiles.set_current_tilemap(tilemap("""level38"""))
+        tiles.place_on_tile(mySprite, tiles.get_tile_location(0, 22))
+        carodej = sprites.create(img("""
+            . . . . . . . c c c . . . . . .
+            . . . . . . c b 5 c . . . . . .
+            . . . . c c c 5 5 c c c . . . .
+            . . c c b c 5 5 5 5 c c c c . .
+            . c b b 5 b 5 5 5 5 b 5 b b c .
+            . c b 5 5 b b 5 5 b b 5 5 b c .
+            . . f 5 5 5 b b b b 5 5 5 c . .
+            . . f f 5 5 5 5 5 5 5 5 f f . .
+            . . f f f b f e e f b f f f . .
+            . . f f f 1 f b b f 1 f f f . .
+            . . . f f b b b b b b f f . . .
+            . . . e e f e e e e f e e . . .
+            . . e b c b 5 b b 5 b f b e . .
+            . . e e f 5 5 5 5 5 5 f e e . .
+            . . . . c b 5 5 5 5 b c . . . .
+            . . . . . f f f f f f . . . . .
+        """), SpriteKind.witcher)
+        statusbar = statusbars.create(20, 4, StatusBarKind.health)
+        statusbar.attach_to_sprite(carodej)
+        tiles.place_on_tile(carodej, tiles.get_tile_location(13, 1))
+        carodej.set_scale(1.5, ScaleAnchor.MIDDLE)
+scene.on_overlap_tile(SpriteKind.player, sprites.dungeon.stair_east, on_overlap_schody)
+
+def on_update_interval_koule():
+    global ohniva_koule
+    if pohyb_carodeje == True:
+        ohniva_koule = sprites.create(img("""
+                . . . . . . . . . . . . . . . .
+                            . . . . . . . . . . . . . . . .
+                            . . . . . 4 4 4 4 4 . . . . . .
+                            . . . 4 4 4 5 5 5 d 4 4 4 4 . .
+                            . . 4 d 5 d 5 5 5 d d d 4 4 . .
+                            . . 4 5 5 1 1 1 d d 5 5 5 4 . .
+                            . 4 5 5 5 1 1 1 5 1 1 5 5 4 4 .
+                            . 4 d d 1 1 5 5 5 1 1 5 5 d 4 .
+                            . 4 5 5 1 1 5 1 1 5 5 d d d 4 .
+                            . 2 5 5 5 d 1 1 1 5 1 1 5 5 2 .
+                            . 2 d 5 5 d 1 1 1 5 1 1 5 5 2 .
+                            . . 2 4 d d 5 5 5 5 d d 5 4 . .
+                            . . . 2 2 4 d 5 5 d d 4 4 . . .
+                            . . . 2 2 2 2 4 4 4 2 2 2 . . .
+                            . . . . . 4 4 4 4 4 4 2 . . . .
+                            . . . . . . . . . . . . . . . .
+            """), SpriteKind.projectile_koule)
+        ohniva_koule.set_position(carodej.x, carodej.y)
+        ohniva_koule.follow(mySprite, 75)
+game.on_update_interval(5000, on_update_interval_koule)
+
+def on_path_completion_carodej(sprite, location):
+    global pohyb_carodeje
+    if currentLevel == 5:
+        pohyb_carodeje = True
+scene.on_path_completion(SpriteKind.witcher, on_path_completion_carodej)
+
+
+def on_overlap_carodej_hit(sprite, otherSprite):
+    statusbar.value += -1
+sprites.on_overlap(SpriteKind.projectile, SpriteKind.witcher, on_overlap_carodej_hit)
+
 #level 5\
