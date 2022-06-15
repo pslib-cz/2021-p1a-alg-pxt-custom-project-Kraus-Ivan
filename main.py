@@ -356,72 +356,10 @@ def on_left_pressed():
                 """)], 100, False)
 controller.left.on_event(ControllerButtonEvent.PRESSED, on_left_pressed)
 
-
 def on_b_pressed(): #mereni casu natazeni luku
-    global cas_zacatek, swingingBow
+    global cas_zacatek
     if luk:
         cas_zacatek = game.runtime()
-        if swingingBow == False:
-            swingingBow = True
-            if pozice_zbrane[0] == True:
-                BowImage.set_image(assets.image("""
-                    bow
-                """))
-            elif pozice_zbrane[1] == True:
-                BowImage.set_image(img("""
-                    e . . . . . . . . . . . . . e
-                                        e 1 1 1 1 1 1 1 1 1 1 1 1 1 e
-                                        . e . . . . . . . . . . . e .
-                                        . . e . . . . . . . . . e . .
-                                        . . . e . . . . . . . e . . .
-                                        . . . . e . . . . . e . . . .
-                                        . . . . . e . . . e . . . . .
-                                        . . . . . . e e e . . . . . .
-                                        . . . . . . . . . . . . . . .
-                                        . . . . . . . . . . . . . . .
-                                        . . . . . . . . . . . . . . .
-                                        . . . . . . . . . . . . . . .
-                                        . . . . . . . . . . . . . . .
-                                        . . . . . . . . . . . . . . .
-                                        . . . . . . . . . . . . . . .
-                """))
-            elif pozice_zbrane[2] == True:
-                BowImage.set_image(img("""
-                    . . . . . . . . . . . . . e e
-                                        . . . . . . . . . . . . e 1 .
-                                        . . . . . . . . . . . e . 1 .
-                                        . . . . . . . . . . e . . 1 .
-                                        . . . . . . . . . e . . . 1 .
-                                        . . . . . . . . e . . . . 1 .
-                                        . . . . . . . e . . . . . 1 .
-                                        . . . . . . . e . . . . . 1 .
-                                        . . . . . . . e . . . . . 1 .
-                                        . . . . . . . . e . . . . 1 .
-                                        . . . . . . . . . e . . . 1 .
-                                        . . . . . . . . . . e . . 1 .
-                                        . . . . . . . . . . . e . 1 .
-                                        . . . . . . . . . . . . e 1 .
-                                        . . . . . . . . . . . . . e e
-                """))
-            else:
-                BowImage.set_image(img("""
-                    e e . . . . . . . . . . . . .
-                                        . 1 e . . . . . . . . . . . .
-                                        . 1 . e . . . . . . . . . . .
-                                        . 1 . . e . . . . . . . . . .
-                                        . 1 . . . e . . . . . . . . .
-                                        . 1 . . . . e . . . . . . . .
-                                        . 1 . . . . . e . . . . . . .
-                                        . 1 . . . . . e . . . . . . .
-                                        . 1 . . . . . e . . . . . . .
-                                        . 1 . . . . e . . . . . . . .
-                                        . 1 . . . e . . . . . . . . .
-                                        . 1 . . e . . . . . . . . . .
-                                        . 1 . e . . . . . . . . . . .
-                                        . 1 e . . . . . . . . . . . .
-                                        e e . . . . . . . . . . . . .
-                """))
-        swingingBow = False
 controller.B.on_event(ControllerButtonEvent.PRESSED, on_b_pressed)
 
 def on_a_pressed(): # seknuti mecem do ruznych smeru
@@ -644,7 +582,7 @@ def on_update_pozice_zbrani(): # pozice zbrani
         elif mySprite.vy < 0:
             SwordImage.bottom = mySprite.top
             SwordImage.x = mySprite.x
-    elif luk:
+    if luk:
         if mySprite.vx < 0:
             BowImage.right = mySprite.left
             BowImage.y = mySprite.y
@@ -2486,7 +2424,7 @@ def on_update_pozice_hrace(): # hlida, zda je hrac na bobrovi/molu nebo na vode
 game.on_update(on_update_pozice_hrace)
 
 def on_forever(): # spawn bobru
-    global bobr2
+    global bobr2, cas_zacatek, swingingBow, luk
     if currentLevel == 4 and spawn_bobri:
         zmena_bobra()
         bobr2 = sprites.create(assets.image("""bobr"""), SpriteKind.bobr)
@@ -2498,6 +2436,69 @@ def on_forever(): # spawn bobru
         if not (kursor.overlaps_with(button_2)):
             button_1.set_scale(1.75, ScaleAnchor.MIDDLE)
             button_2.set_scale(1.75, ScaleAnchor.MIDDLE)
+
+    if controller.B.is_pressed() and luk:
+        if swingingBow == False:
+            swingingBow = True
+            if pozice_zbrane[0] == True:
+                BowImage.set_image(assets.image("""
+                    bow
+                """))
+            elif pozice_zbrane[1] == True:
+                BowImage.set_image(img("""
+                    e . . . . . . . . . . . . . e
+                                        e 1 1 1 1 1 1 1 1 1 1 1 1 1 e
+                                        . e . . . . . . . . . . . e .
+                                        . . e . . . . . . . . . e . .
+                                        . . . e . . . . . . . e . . .
+                                        . . . . e . . . . . e . . . .
+                                        . . . . . e . . . e . . . . .
+                                        . . . . . . e e e . . . . . .
+                                        . . . . . . . . . . . . . . .
+                                        . . . . . . . . . . . . . . .
+                                        . . . . . . . . . . . . . . .
+                                        . . . . . . . . . . . . . . .
+                                        . . . . . . . . . . . . . . .
+                                        . . . . . . . . . . . . . . .
+                                        . . . . . . . . . . . . . . .
+                """))
+            elif pozice_zbrane[2] == True:
+                BowImage.set_image(img("""
+                    . . . . . . . . . . . . . e e
+                                        . . . . . . . . . . . . e 1 .
+                                        . . . . . . . . . . . e . 1 .
+                                        . . . . . . . . . . e . . 1 .
+                                        . . . . . . . . . e . . . 1 .
+                                        . . . . . . . . e . . . . 1 .
+                                        . . . . . . . e . . . . . 1 .
+                                        . . . . . . . e . . . . . 1 .
+                                        . . . . . . . e . . . . . 1 .
+                                        . . . . . . . . e . . . . 1 .
+                                        . . . . . . . . . e . . . 1 .
+                                        . . . . . . . . . . e . . 1 .
+                                        . . . . . . . . . . . e . 1 .
+                                        . . . . . . . . . . . . e 1 .
+                                        . . . . . . . . . . . . . e e
+                """))
+            else:
+                BowImage.set_image(img("""
+                    e e . . . . . . . . . . . . .
+                                        . 1 e . . . . . . . . . . . .
+                                        . 1 . e . . . . . . . . . . .
+                                        . 1 . . e . . . . . . . . . .
+                                        . 1 . . . e . . . . . . . . .
+                                        . 1 . . . . e . . . . . . . .
+                                        . 1 . . . . . e . . . . . . .
+                                        . 1 . . . . . e . . . . . . .
+                                        . 1 . . . . . e . . . . . . .
+                                        . 1 . . . . e . . . . . . . .
+                                        . 1 . . . e . . . . . . . . .
+                                        . 1 . . e . . . . . . . . . .
+                                        . 1 . e . . . . . . . . . . .
+                                        . 1 e . . . . . . . . . . . .
+                                        e e . . . . . . . . . . . . .
+                """))
+        swingingBow = False
 forever(on_forever)
 
 
@@ -2539,12 +2540,14 @@ sprites.on_overlap(SpriteKind.projectile, SpriteKind.bobr, on_overlap_zniceni_bo
 
 #level 5/
 def level5():
-    global dialogSkoncen, dialogSkoncen2, fightScene, pohyb_carodeje
+    global dialogSkoncen, dialogSkoncen2, fightScene, pohyb_carodeje, luk, mec
     pohyb_carodeje = False
     dialogSkoncen = False
     dialogSkoncen2 = False
     tiles.place_on_tile(mySprite, tiles.get_tile_location(29, 13))
     fightScene = False
+    luk = True
+    mec = True
 
 def on_overlap_brana(sprite, location): # zavrena brana
     if currentLevel == 5:

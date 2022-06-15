@@ -347,71 +347,6 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function on_b_pressed() {
     
     if (luk) {
         cas_zacatek = game.runtime()
-        if (swingingBow == false) {
-            swingingBow = true
-            if (pozice_zbrane[0] == true) {
-                BowImage.setImage(assets.image`
-                    bow
-                `)
-            } else if (pozice_zbrane[1] == true) {
-                BowImage.setImage(img`
-                    e . . . . . . . . . . . . . e
-                                        e 1 1 1 1 1 1 1 1 1 1 1 1 1 e
-                                        . e . . . . . . . . . . . e .
-                                        . . e . . . . . . . . . e . .
-                                        . . . e . . . . . . . e . . .
-                                        . . . . e . . . . . e . . . .
-                                        . . . . . e . . . e . . . . .
-                                        . . . . . . e e e . . . . . .
-                                        . . . . . . . . . . . . . . .
-                                        . . . . . . . . . . . . . . .
-                                        . . . . . . . . . . . . . . .
-                                        . . . . . . . . . . . . . . .
-                                        . . . . . . . . . . . . . . .
-                                        . . . . . . . . . . . . . . .
-                                        . . . . . . . . . . . . . . .
-                `)
-            } else if (pozice_zbrane[2] == true) {
-                BowImage.setImage(img`
-                    . . . . . . . . . . . . . e e
-                                        . . . . . . . . . . . . e 1 .
-                                        . . . . . . . . . . . e . 1 .
-                                        . . . . . . . . . . e . . 1 .
-                                        . . . . . . . . . e . . . 1 .
-                                        . . . . . . . . e . . . . 1 .
-                                        . . . . . . . e . . . . . 1 .
-                                        . . . . . . . e . . . . . 1 .
-                                        . . . . . . . e . . . . . 1 .
-                                        . . . . . . . . e . . . . 1 .
-                                        . . . . . . . . . e . . . 1 .
-                                        . . . . . . . . . . e . . 1 .
-                                        . . . . . . . . . . . e . 1 .
-                                        . . . . . . . . . . . . e 1 .
-                                        . . . . . . . . . . . . . e e
-                `)
-            } else {
-                BowImage.setImage(img`
-                    e e . . . . . . . . . . . . .
-                                        . 1 e . . . . . . . . . . . .
-                                        . 1 . e . . . . . . . . . . .
-                                        . 1 . . e . . . . . . . . . .
-                                        . 1 . . . e . . . . . . . . .
-                                        . 1 . . . . e . . . . . . . .
-                                        . 1 . . . . . e . . . . . . .
-                                        . 1 . . . . . e . . . . . . .
-                                        . 1 . . . . . e . . . . . . .
-                                        . 1 . . . . e . . . . . . . .
-                                        . 1 . . . e . . . . . . . . .
-                                        . 1 . . e . . . . . . . . . .
-                                        . 1 . e . . . . . . . . . . .
-                                        . 1 e . . . . . . . . . . . .
-                                        e e . . . . . . . . . . . . .
-                `)
-            }
-            
-        }
-        
-        swingingBow = false
     }
     
 })
@@ -644,7 +579,9 @@ game.onUpdate(function on_update_pozice_zbrani() {
             SwordImage.x = mySprite.x
         }
         
-    } else if (luk) {
+    }
+    
+    if (luk) {
         if (mySprite.vx < 0) {
             BowImage.right = mySprite.left
             BowImage.y = mySprite.y
@@ -2518,6 +2455,74 @@ forever(function on_forever() {
         
     }
     
+    if (controller.B.isPressed() && luk) {
+        if (swingingBow == false) {
+            swingingBow = true
+            if (pozice_zbrane[0] == true) {
+                BowImage.setImage(assets.image`
+                    bow
+                `)
+            } else if (pozice_zbrane[1] == true) {
+                BowImage.setImage(img`
+                    e . . . . . . . . . . . . . e
+                                        e 1 1 1 1 1 1 1 1 1 1 1 1 1 e
+                                        . e . . . . . . . . . . . e .
+                                        . . e . . . . . . . . . e . .
+                                        . . . e . . . . . . . e . . .
+                                        . . . . e . . . . . e . . . .
+                                        . . . . . e . . . e . . . . .
+                                        . . . . . . e e e . . . . . .
+                                        . . . . . . . . . . . . . . .
+                                        . . . . . . . . . . . . . . .
+                                        . . . . . . . . . . . . . . .
+                                        . . . . . . . . . . . . . . .
+                                        . . . . . . . . . . . . . . .
+                                        . . . . . . . . . . . . . . .
+                                        . . . . . . . . . . . . . . .
+                `)
+            } else if (pozice_zbrane[2] == true) {
+                BowImage.setImage(img`
+                    . . . . . . . . . . . . . e e
+                                        . . . . . . . . . . . . e 1 .
+                                        . . . . . . . . . . . e . 1 .
+                                        . . . . . . . . . . e . . 1 .
+                                        . . . . . . . . . e . . . 1 .
+                                        . . . . . . . . e . . . . 1 .
+                                        . . . . . . . e . . . . . 1 .
+                                        . . . . . . . e . . . . . 1 .
+                                        . . . . . . . e . . . . . 1 .
+                                        . . . . . . . . e . . . . 1 .
+                                        . . . . . . . . . e . . . 1 .
+                                        . . . . . . . . . . e . . 1 .
+                                        . . . . . . . . . . . e . 1 .
+                                        . . . . . . . . . . . . e 1 .
+                                        . . . . . . . . . . . . . e e
+                `)
+            } else {
+                BowImage.setImage(img`
+                    e e . . . . . . . . . . . . .
+                                        . 1 e . . . . . . . . . . . .
+                                        . 1 . e . . . . . . . . . . .
+                                        . 1 . . e . . . . . . . . . .
+                                        . 1 . . . e . . . . . . . . .
+                                        . 1 . . . . e . . . . . . . .
+                                        . 1 . . . . . e . . . . . . .
+                                        . 1 . . . . . e . . . . . . .
+                                        . 1 . . . . . e . . . . . . .
+                                        . 1 . . . . e . . . . . . . .
+                                        . 1 . . . e . . . . . . . . .
+                                        . 1 . . e . . . . . . . . . .
+                                        . 1 . e . . . . . . . . . . .
+                                        . 1 e . . . . . . . . . . . .
+                                        e e . . . . . . . . . . . . .
+                `)
+            }
+            
+        }
+        
+        swingingBow = false
+    }
+    
 })
 function zmena_bobra() {
     //  meni rychlost a smer bobra
@@ -2571,6 +2576,8 @@ function level5() {
     dialogSkoncen2 = false
     tiles.placeOnTile(mySprite, tiles.getTileLocation(29, 13))
     fightScene = false
+    luk = true
+    mec = true
 }
 
 scene.onOverlapTile(SpriteKind.Player, assets.tile`
