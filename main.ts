@@ -2050,7 +2050,7 @@ sprites.onDestroyed(SpriteKind.enemy, function on_destroyed_netopyr(sprite: Spri
     
     pocet_netopyru -= 1
 })
-sprites.onOverlap(SpriteKind.NPC, SpriteKind.Player, function on_overlap_lucistnik(sprite9: Sprite, otherSprite4: Sprite) {
+sprites.onOverlap(SpriteKind.NPC, SpriteKind.Player, function on_overlap_lucistnik(sprite: Sprite, otherSprite: Sprite) {
     //  rozhovor s lucistnikem
     
     luk = false
@@ -2060,7 +2060,6 @@ sprites.onOverlap(SpriteKind.NPC, SpriteKind.Player, function on_overlap_lucistn
             game.showLongText("LUČIŠTNÍK:  Zachránil si mě", DialogLayout.Bottom)
             game.showLongText("LUČIŠTNÍK:  Za to ti věnuji můj luk", DialogLayout.Bottom)
             game.splash("Získal jsi luk")
-            game.splash("Podržením B vystřelíš šíp")
             luk = true
             dialogSkoncen2 = true
         } else if (dialogSkoncen == false) {
@@ -2403,6 +2402,7 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`
     `))) {
         if (dialogSkoncen2 == false) {
             game.showLongText("Proč tu sviští bobři?!", DialogLayout.Bottom)
+            game.splash("Podržením natáhneš luk, puštěním s ním vystřelíš.")
             dialogSkoncen2 = true
         }
         
@@ -2440,6 +2440,71 @@ game.onUpdate(function on_update_pozice_hrace() {
 forever(function on_forever() {
     //  spawn bobru
     
+    if (controller.B.isPressed() && luk && swingingBow == false) {
+        swingingBow = true
+        if (pozice_zbrane[0] == true) {
+            BowImage.setImage(assets.image`
+                bow
+            `)
+        } else if (pozice_zbrane[1] == true) {
+            BowImage.setImage(img`
+                e . . . . . . . . . . . . . e
+                                    e 1 1 1 1 1 1 1 1 1 1 1 1 1 e
+                                    . e . . . . . . . . . . . e .
+                                    . . e . . . . . . . . . e . .
+                                    . . . e . . . . . . . e . . .
+                                    . . . . e . . . . . e . . . .
+                                    . . . . . e . . . e . . . . .
+                                    . . . . . . e e e . . . . . .
+                                    . . . . . . . . . . . . . . .
+                                    . . . . . . . . . . . . . . .
+                                    . . . . . . . . . . . . . . .
+                                    . . . . . . . . . . . . . . .
+                                    . . . . . . . . . . . . . . .
+                                    . . . . . . . . . . . . . . .
+                                    . . . . . . . . . . . . . . .
+            `)
+        } else if (pozice_zbrane[2] == true) {
+            BowImage.setImage(img`
+                . . . . . . . . . . . . . e e
+                                    . . . . . . . . . . . . e 1 .
+                                    . . . . . . . . . . . e . 1 .
+                                    . . . . . . . . . . e . . 1 .
+                                    . . . . . . . . . e . . . 1 .
+                                    . . . . . . . . e . . . . 1 .
+                                    . . . . . . . e . . . . . 1 .
+                                    . . . . . . . e . . . . . 1 .
+                                    . . . . . . . e . . . . . 1 .
+                                    . . . . . . . . e . . . . 1 .
+                                    . . . . . . . . . e . . . 1 .
+                                    . . . . . . . . . . e . . 1 .
+                                    . . . . . . . . . . . e . 1 .
+                                    . . . . . . . . . . . . e 1 .
+                                    . . . . . . . . . . . . . e e
+            `)
+        } else {
+            BowImage.setImage(img`
+                e e . . . . . . . . . . . . .
+                                    . 1 e . . . . . . . . . . . .
+                                    . 1 . e . . . . . . . . . . .
+                                    . 1 . . e . . . . . . . . . .
+                                    . 1 . . . e . . . . . . . . .
+                                    . 1 . . . . e . . . . . . . .
+                                    . 1 . . . . . e . . . . . . .
+                                    . 1 . . . . . e . . . . . . .
+                                    . 1 . . . . . e . . . . . . .
+                                    . 1 . . . . e . . . . . . . .
+                                    . 1 . . . e . . . . . . . . .
+                                    . 1 . . e . . . . . . . . . .
+                                    . 1 . e . . . . . . . . . . .
+                                    . 1 e . . . . . . . . . . . .
+                                    e e . . . . . . . . . . . . .
+            `)
+        }
+        
+    }
+    
+    swingingBow = false
     if (currentLevel == 4 && spawn_bobri) {
         zmena_bobra()
         bobr2 = sprites.create(assets.image`bobr`, SpriteKind.bobr)
@@ -2454,74 +2519,6 @@ forever(function on_forever() {
             button_2.setScale(1.75, ScaleAnchor.Middle)
         }
         
-    }
-    
-    if (controller.B.isPressed() && luk) {
-        if (swingingBow == false) {
-            swingingBow = true
-            if (pozice_zbrane[0] == true) {
-                BowImage.setImage(assets.image`
-                    bow
-                `)
-            } else if (pozice_zbrane[1] == true) {
-                BowImage.setImage(img`
-                    e . . . . . . . . . . . . . e
-                                        e 1 1 1 1 1 1 1 1 1 1 1 1 1 e
-                                        . e . . . . . . . . . . . e .
-                                        . . e . . . . . . . . . e . .
-                                        . . . e . . . . . . . e . . .
-                                        . . . . e . . . . . e . . . .
-                                        . . . . . e . . . e . . . . .
-                                        . . . . . . e e e . . . . . .
-                                        . . . . . . . . . . . . . . .
-                                        . . . . . . . . . . . . . . .
-                                        . . . . . . . . . . . . . . .
-                                        . . . . . . . . . . . . . . .
-                                        . . . . . . . . . . . . . . .
-                                        . . . . . . . . . . . . . . .
-                                        . . . . . . . . . . . . . . .
-                `)
-            } else if (pozice_zbrane[2] == true) {
-                BowImage.setImage(img`
-                    . . . . . . . . . . . . . e e
-                                        . . . . . . . . . . . . e 1 .
-                                        . . . . . . . . . . . e . 1 .
-                                        . . . . . . . . . . e . . 1 .
-                                        . . . . . . . . . e . . . 1 .
-                                        . . . . . . . . e . . . . 1 .
-                                        . . . . . . . e . . . . . 1 .
-                                        . . . . . . . e . . . . . 1 .
-                                        . . . . . . . e . . . . . 1 .
-                                        . . . . . . . . e . . . . 1 .
-                                        . . . . . . . . . e . . . 1 .
-                                        . . . . . . . . . . e . . 1 .
-                                        . . . . . . . . . . . e . 1 .
-                                        . . . . . . . . . . . . e 1 .
-                                        . . . . . . . . . . . . . e e
-                `)
-            } else {
-                BowImage.setImage(img`
-                    e e . . . . . . . . . . . . .
-                                        . 1 e . . . . . . . . . . . .
-                                        . 1 . e . . . . . . . . . . .
-                                        . 1 . . e . . . . . . . . . .
-                                        . 1 . . . e . . . . . . . . .
-                                        . 1 . . . . e . . . . . . . .
-                                        . 1 . . . . . e . . . . . . .
-                                        . 1 . . . . . e . . . . . . .
-                                        . 1 . . . . . e . . . . . . .
-                                        . 1 . . . . e . . . . . . . .
-                                        . 1 . . . e . . . . . . . . .
-                                        . 1 . . e . . . . . . . . . .
-                                        . 1 . e . . . . . . . . . . .
-                                        . 1 e . . . . . . . . . . . .
-                                        e e . . . . . . . . . . . . .
-                `)
-            }
-            
-        }
-        
-        swingingBow = false
     }
     
 })
@@ -2576,14 +2573,14 @@ function level5() {
     pocet_obran = 0
     dialogSkoncen = false
     dialogSkoncen2 = false
-    tiles.placeOnTile(mySprite, tiles.getTileLocation(29, 13))
+    tiles.placeOnTile(mySprite, tiles.getTileLocation(0, 8))
     fightScene = false
     luk = true
     mec = true
 }
 
 scene.onOverlapTile(SpriteKind.Player, assets.tile`
-        active
+        active2
     `, function on_overlap_brana(sprite: Sprite, location: tiles.Location) {
     //  zavrena brana
     if (currentLevel == 5) {
@@ -2884,13 +2881,13 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`
         luk = true
         mec = true
         tiles.setCurrentTilemap(tilemap`level36`)
-        tiles.placeOnTile(mySprite, tiles.getTileLocation(27, 2))
+        tiles.placeOnTile(mySprite, tiles.getTileLocation(15, 31))
         tiles.setTileAt(tiles.getTileLocation(5, 11), sprites.dungeon.chestClosed)
         tiles.setTileAt(tiles.getTileLocation(17, 6), sprites.dungeon.chestClosed)
         tiles.setTileAt(tiles.getTileLocation(21, 30), sprites.dungeon.chestClosed)
         tiles.setTileAt(tiles.getTileLocation(18, 6), sprites.dungeon.chestClosed)
         tiles.setTileAt(tiles.getTileLocation(16, 20), sprites.dungeon.chestClosed)
-        enemy_position = [[7, 17], [6, 28], [19, 16], [18, 23], [8, 23], [18, 22], [20, 2], [25, 26], [29, 16], [30, 30], [1, 3], [0, 31]]
+        enemy_position = [[16, 18], [11, 27], [24, 6], [25, 26], [28, 1], [31, 17], [0, 3], [1, 31], [4, 9], [14, 14], [27, 16], [8, 23]]
         fightScene = true
         duch = sprites.create(img`
                 ........................

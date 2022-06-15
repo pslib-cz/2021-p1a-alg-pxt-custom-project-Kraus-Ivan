@@ -2046,7 +2046,7 @@ def on_destroyed_netopyr(sprite):
     pocet_netopyru -= 1
 sprites.on_destroyed(SpriteKind.enemy, on_destroyed_netopyr)
 
-def on_overlap_lucistnik(sprite9, otherSprite4): # rozhovor s lucistnikem
+def on_overlap_lucistnik(sprite, otherSprite): # rozhovor s lucistnikem
     global dialogSkoncen2, dialogSkoncen, fightScene, mec, luk
     luk = False
     if currentLevel == 3:
@@ -2055,7 +2055,6 @@ def on_overlap_lucistnik(sprite9, otherSprite4): # rozhovor s lucistnikem
             game.show_long_text("LUČIŠTNÍK:  Zachránil si mě", DialogLayout.BOTTOM)
             game.show_long_text("LUČIŠTNÍK:  Za to ti věnuji můj luk", DialogLayout.BOTTOM)
             game.splash("Získal jsi luk")
-            game.splash("Podržením B vystřelíš šíp")
             luk = True
             dialogSkoncen2 = True
 
@@ -2380,7 +2379,7 @@ def level4():
     """), SpriteKind.bobr)
 
 def on_overlap_molo(sprite2, location2): # slapnuti na molo
-    global dialogSkoncen, spawn_bobri, dialogSkoncen2
+    global dialogSkoncen, spawn_bobri, dialogSkoncen2, luk
     if currentLevel == 2:
         dialogSkoncen = False
 
@@ -2397,6 +2396,7 @@ def on_overlap_molo(sprite2, location2): # slapnuti na molo
     """))):
         if dialogSkoncen2 == False:
             game.show_long_text("Proč tu sviští bobři?!", DialogLayout.BOTTOM)
+            game.splash("Podržením natáhneš luk, puštěním s ním vystřelíš.")
             dialogSkoncen2 = True
 scene.on_overlap_tile(SpriteKind.player, assets.tile("""
         wood
@@ -2426,6 +2426,68 @@ game.on_update(on_update_pozice_hrace)
 
 def on_forever(): # spawn bobru
     global bobr2, cas_zacatek, swingingBow, luk
+    if controller.B.is_pressed() and luk and swingingBow == False:
+        swingingBow = True
+        if pozice_zbrane[0] == True:
+            BowImage.set_image(assets.image("""
+                bow
+            """))
+        elif pozice_zbrane[1] == True:
+            BowImage.set_image(img("""
+                e . . . . . . . . . . . . . e
+                                    e 1 1 1 1 1 1 1 1 1 1 1 1 1 e
+                                    . e . . . . . . . . . . . e .
+                                    . . e . . . . . . . . . e . .
+                                    . . . e . . . . . . . e . . .
+                                    . . . . e . . . . . e . . . .
+                                    . . . . . e . . . e . . . . .
+                                    . . . . . . e e e . . . . . .
+                                    . . . . . . . . . . . . . . .
+                                    . . . . . . . . . . . . . . .
+                                    . . . . . . . . . . . . . . .
+                                    . . . . . . . . . . . . . . .
+                                    . . . . . . . . . . . . . . .
+                                    . . . . . . . . . . . . . . .
+                                    . . . . . . . . . . . . . . .
+            """))
+        elif pozice_zbrane[2] == True:
+            BowImage.set_image(img("""
+                . . . . . . . . . . . . . e e
+                                    . . . . . . . . . . . . e 1 .
+                                    . . . . . . . . . . . e . 1 .
+                                    . . . . . . . . . . e . . 1 .
+                                    . . . . . . . . . e . . . 1 .
+                                    . . . . . . . . e . . . . 1 .
+                                    . . . . . . . e . . . . . 1 .
+                                    . . . . . . . e . . . . . 1 .
+                                    . . . . . . . e . . . . . 1 .
+                                    . . . . . . . . e . . . . 1 .
+                                    . . . . . . . . . e . . . 1 .
+                                    . . . . . . . . . . e . . 1 .
+                                    . . . . . . . . . . . e . 1 .
+                                    . . . . . . . . . . . . e 1 .
+                                    . . . . . . . . . . . . . e e
+            """))
+        else:
+            BowImage.set_image(img("""
+                e e . . . . . . . . . . . . .
+                                    . 1 e . . . . . . . . . . . .
+                                    . 1 . e . . . . . . . . . . .
+                                    . 1 . . e . . . . . . . . . .
+                                    . 1 . . . e . . . . . . . . .
+                                    . 1 . . . . e . . . . . . . .
+                                    . 1 . . . . . e . . . . . . .
+                                    . 1 . . . . . e . . . . . . .
+                                    . 1 . . . . . e . . . . . . .
+                                    . 1 . . . . e . . . . . . . .
+                                    . 1 . . . e . . . . . . . . .
+                                    . 1 . . e . . . . . . . . . .
+                                    . 1 . e . . . . . . . . . . .
+                                    . 1 e . . . . . . . . . . . .
+                                    e e . . . . . . . . . . . . .
+            """))
+    swingingBow = False
+
     if currentLevel == 4 and spawn_bobri:
         zmena_bobra()
         bobr2 = sprites.create(assets.image("""bobr"""), SpriteKind.bobr)
@@ -2437,69 +2499,6 @@ def on_forever(): # spawn bobru
         if not (kursor.overlaps_with(button_2)):
             button_1.set_scale(1.75, ScaleAnchor.MIDDLE)
             button_2.set_scale(1.75, ScaleAnchor.MIDDLE)
-
-    if controller.B.is_pressed() and luk:
-        if swingingBow == False:
-            swingingBow = True
-            if pozice_zbrane[0] == True:
-                BowImage.set_image(assets.image("""
-                    bow
-                """))
-            elif pozice_zbrane[1] == True:
-                BowImage.set_image(img("""
-                    e . . . . . . . . . . . . . e
-                                        e 1 1 1 1 1 1 1 1 1 1 1 1 1 e
-                                        . e . . . . . . . . . . . e .
-                                        . . e . . . . . . . . . e . .
-                                        . . . e . . . . . . . e . . .
-                                        . . . . e . . . . . e . . . .
-                                        . . . . . e . . . e . . . . .
-                                        . . . . . . e e e . . . . . .
-                                        . . . . . . . . . . . . . . .
-                                        . . . . . . . . . . . . . . .
-                                        . . . . . . . . . . . . . . .
-                                        . . . . . . . . . . . . . . .
-                                        . . . . . . . . . . . . . . .
-                                        . . . . . . . . . . . . . . .
-                                        . . . . . . . . . . . . . . .
-                """))
-            elif pozice_zbrane[2] == True:
-                BowImage.set_image(img("""
-                    . . . . . . . . . . . . . e e
-                                        . . . . . . . . . . . . e 1 .
-                                        . . . . . . . . . . . e . 1 .
-                                        . . . . . . . . . . e . . 1 .
-                                        . . . . . . . . . e . . . 1 .
-                                        . . . . . . . . e . . . . 1 .
-                                        . . . . . . . e . . . . . 1 .
-                                        . . . . . . . e . . . . . 1 .
-                                        . . . . . . . e . . . . . 1 .
-                                        . . . . . . . . e . . . . 1 .
-                                        . . . . . . . . . e . . . 1 .
-                                        . . . . . . . . . . e . . 1 .
-                                        . . . . . . . . . . . e . 1 .
-                                        . . . . . . . . . . . . e 1 .
-                                        . . . . . . . . . . . . . e e
-                """))
-            else:
-                BowImage.set_image(img("""
-                    e e . . . . . . . . . . . . .
-                                        . 1 e . . . . . . . . . . . .
-                                        . 1 . e . . . . . . . . . . .
-                                        . 1 . . e . . . . . . . . . .
-                                        . 1 . . . e . . . . . . . . .
-                                        . 1 . . . . e . . . . . . . .
-                                        . 1 . . . . . e . . . . . . .
-                                        . 1 . . . . . e . . . . . . .
-                                        . 1 . . . . . e . . . . . . .
-                                        . 1 . . . . e . . . . . . . .
-                                        . 1 . . . e . . . . . . . . .
-                                        . 1 . . e . . . . . . . . . .
-                                        . 1 . e . . . . . . . . . . .
-                                        . 1 e . . . . . . . . . . . .
-                                        e e . . . . . . . . . . . . .
-                """))
-        swingingBow = False
 forever(on_forever)
 
 
@@ -2546,7 +2545,7 @@ def level5():
     pocet_obran = 0
     dialogSkoncen = False
     dialogSkoncen2 = False
-    tiles.place_on_tile(mySprite, tiles.get_tile_location(29, 13))
+    tiles.place_on_tile(mySprite, tiles.get_tile_location(0, 8))
     fightScene = False
     luk = True
     mec = True
@@ -2556,7 +2555,7 @@ def on_overlap_brana(sprite, location): # zavrena brana
         game.splash("Brána je zařená, musím najít jiný vchod")
         tiles.place_on_tile(mySprite, tiles.get_tile_location(19, 8))
 scene.on_overlap_tile(SpriteKind.player, assets.tile("""
-        active
+        active2
     """), on_overlap_brana)
 
 def on_overlap_strop(sprite, location): # spadnuti stropu
@@ -2849,25 +2848,26 @@ def on_overlap_dira(sprite, location):
         mec = True
         tiles.set_current_tilemap(tilemap("""level36"""))
 
-        tiles.place_on_tile(mySprite, tiles.get_tile_location(27, 2))
+        tiles.place_on_tile(mySprite, tiles.get_tile_location(15, 31))
         tiles.set_tile_at(tiles.get_tile_location(5, 11), sprites.dungeon.chest_closed)
         tiles.set_tile_at(tiles.get_tile_location(17, 6), sprites.dungeon.chest_closed)
         tiles.set_tile_at(tiles.get_tile_location(21, 30), sprites.dungeon.chest_closed)
         tiles.set_tile_at(tiles.get_tile_location(18, 6), sprites.dungeon.chest_closed)
         tiles.set_tile_at(tiles.get_tile_location(16, 20), sprites.dungeon.chest_closed)
 
-        enemy_position = [[7, 17],
-            [6, 28],
-            [19, 16],
-            [18, 23],
-            [8, 23],
-            [18, 22],
-            [20, 2],
-            [25, 26],
-            [29, 16],
-            [30, 30],
-            [1, 3],
-            [0, 31]]
+        enemy_position = [
+            [16,18],
+            [11,27],
+            [24,6],
+            [25,26],
+            [28,1],
+            [31,17],
+            [0,3],
+            [1,31],
+            [4,9],
+            [14,14],
+            [27,16],
+            [8,23]]
         fightScene = True
         duch = sprites.create(img("""
                 ........................
