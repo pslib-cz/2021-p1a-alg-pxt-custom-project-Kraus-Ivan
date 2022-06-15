@@ -546,25 +546,25 @@ controller.B.onEvent(ControllerButtonEvent.Released, function on_b_released() {
         if (cas_konec - cas_zacatek > 1000) {
             if (pozice_zbrane[0] == true) {
                 arrow = sprites.createProjectileFromSprite(img`
-                        . . . . . . . . . . . . . . . .
-                                            . . . . . . . f . . . . . . . .
-                                            . . . . . . f e f . . . . . . .
-                                            . . . . . f . e . f . . . . . .
-                                            . . . . . . . e . . . . . . . .
-                                            . . . . . . . e . . . . . . . .
-                                            . . . . . . . e . . . . . . . .
-                                            . . . . . . . e . . . . . . . .
-                                            . . . . . . . e . . . . . . . .
-                                            . . . . . . . e . . . . . . . .
-                                            . . . . . . . e . . . . . . . .
-                                            . . . . . . . e . . . . . . . .
-                                            . . . . . . . e . . . . . . . .
-                                            . . . . . . . e . . . . . . . .
-                                            . . . . . . 1 1 1 . . . . . . .
-                                            . . . . . 1 . 1 . 1 . . . . . .
-                    `, mySprite, 0, -100)
+                    . . . . . . . . . . . . . . . .
+                    . . . . . . . f . . . . . . . .
+                    . . . . . . f e f . . . . . . .
+                    . . . . . f . e . f . . . . . .
+                    . . . . . . . e . . . . . . . .
+                    . . . . . . . e . . . . . . . .
+                    . . . . . . . e . . . . . . . .
+                    . . . . . . . e . . . . . . . .
+                    . . . . . . . e . . . . . . . .
+                    . . . . . . . e . . . . . . . .
+                    . . . . . . . e . . . . . . . .
+                    . . . . . . . e . . . . . . . .
+                    . . . . . . . e . . . . . . . .
+                    . . . . . . . e . . . . . . . .
+                    . . . . . . 1 1 1 . . . . . . .
+                    . . . . . 1 . 1 . 1 . . . . . .
+                `, mySprite, 0, -100)
             } else if (pozice_zbrane[1] == true) {
-                projectile = sprites.createProjectileFromSprite(img`
+                arrow = sprites.createProjectileFromSprite(img`
                         . . . . . 1 . 1 . 1 . . . . . .
                                             . . . . . . 1 1 1 . . . . . . .
                                             . . . . . . . e . . . . . . . .
@@ -583,7 +583,7 @@ controller.B.onEvent(ControllerButtonEvent.Released, function on_b_released() {
                                             . . . . . . . . . . . . . . . .
                     `, mySprite, 0, 100)
             } else if (pozice_zbrane[2] == true) {
-                projectile2 = sprites.createProjectileFromSprite(img`
+                arrow = sprites.createProjectileFromSprite(img`
                         . . . . . . . . . . . . . . . .
                                             . . . . . . . . . . . . . . . .
                                             . . . . . . . . . . . . . . . .
@@ -602,7 +602,7 @@ controller.B.onEvent(ControllerButtonEvent.Released, function on_b_released() {
                                             . . . . . . . . . . . . . . . .
                     `, mySprite, -100, 0)
             } else {
-                projectile3 = sprites.createProjectileFromSprite(img`
+                arrow = sprites.createProjectileFromSprite(img`
                         . . . . . . . . . . . . . . . .
                                             . . . . . . . . . . . . . . . .
                                             . . . . . . . . . . . . . . . .
@@ -2565,7 +2565,7 @@ function level5() {
     pohyb_carodeje = false
     dialogSkoncen = false
     dialogSkoncen2 = false
-    tiles.placeOnTile(mySprite, tiles.getTileLocation(0, 8))
+    tiles.placeOnTile(mySprite, tiles.getTileLocation(29, 13))
     fightScene = false
 }
 
@@ -2871,7 +2871,7 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`
         luk = true
         mec = true
         tiles.setCurrentTilemap(tilemap`level36`)
-        tiles.placeOnTile(mySprite, tiles.getTileLocation(15, 31))
+        tiles.placeOnTile(mySprite, tiles.getTileLocation(27, 2))
         tiles.setTileAt(tiles.getTileLocation(5, 11), sprites.dungeon.chestClosed)
         tiles.setTileAt(tiles.getTileLocation(17, 6), sprites.dungeon.chestClosed)
         tiles.setTileAt(tiles.getTileLocation(21, 30), sprites.dungeon.chestClosed)
@@ -2982,7 +2982,7 @@ scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.stairEast, function on_ov
     }
     
 })
-game.onUpdateInterval(6000, function on_update_interval_koule() {
+game.onUpdateInterval(2000, function on_update_interval_koule() {
     
     if (pohyb_carodeje == true && obrana == false) {
         ohniva_koule = sprites.create(img`
@@ -3004,19 +3004,31 @@ game.onUpdateInterval(6000, function on_update_interval_koule() {
                             . . . . . . . . . . . . . . . .
             `, SpriteKind.projectile_koule)
         ohniva_koule.setPosition(carodej.x, carodej.y)
-        ohniva_koule.follow(mySprite, 50)
+        ohniva_koule.setBounceOnWall(true)
+        scene.followPath(ohniva_koule, scene.aStar(carodej.tilemapLocation(), mySprite.tilemapLocation()))
     }
     
+})
+scene.onPathCompletion(SpriteKind.projectile_koule, function on_path_completion_ohniva_koule(sprite: Sprite, location: tiles.Location) {
+    sprite.destroy(effects.warmRadial, 1)
+})
+sprites.onOverlap(SpriteKind.Player, SpriteKind.Player, function on_overlap_sword_carodej(sprite: Sprite, otherSprite: Sprite) {
+    info.changeScoreBy(-1)
 })
 scene.onPathCompletion(SpriteKind.witcher, function on_path_completion_carodej(sprite: Sprite, location: tiles.Location) {
     
     game.showLongText("ČERNOKNĚŽNÍK: Konečně se potkáváme, snad ukážeš, co v tobě je!", DialogLayout.Bottom)
     pohyb_carodeje = true
-    let obrana = false
+    obrana = false
 })
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.projectile_koule, function on_overlap_projectile_koule(sprite: Sprite, otherSprite: Sprite) {
     //  zniceni koule pomoci projectile
+    
     otherSprite.destroy(effects.warmRadial, 1)
+    if (sprite == arrow) {
+        sprite.destroy(effects.disintegrate, 1)
+    }
+    
 })
 sprites.onOverlap(SpriteKind.projectile_koule, SpriteKind.Player, function on_overlap_koule_mySprite(sprite: Sprite, otherSprite: Sprite) {
     sprite.destroy()
@@ -3024,14 +3036,16 @@ sprites.onOverlap(SpriteKind.projectile_koule, SpriteKind.Player, function on_ov
 })
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.witcher, function on_overlap_projectile_carodej(sprite: Sprite, otherSprite: Sprite) {
     //  zasazeni carodeje
+    
     if (obrana == false) {
         statusbar.value -= 0.5
     }
     
 })
-game.onUpdateInterval(5000, function on_update_interval_netopyri() {
+game.onUpdateInterval(2000, function on_update_interval_netopyri() {
     let netopyr_boss: Sprite;
-    if (pohyb_carodeje) {
+    
+    if (pohyb_carodeje && obrana == true) {
         netopyr_boss = sprites.create(img`
             . . f f f . . . . . . . . . . .
             f f f c c . . . . . . . . f f f
@@ -3075,6 +3089,51 @@ game.onUpdateInterval(5000, function on_update_interval_netopyri() {
 statusbars.onStatusReached(StatusBarKind.Health, statusbars.StatusComparison.LTE, statusbars.ComparisonType.Percentage, 25, function on_status_reached_lte_percentage(status: StatusBarSprite) {
     
     obrana = true
+    carodej.setImage(img`
+        ....................
+        .........ccc........
+        ........cb5c........
+        ......ccc55ccc......
+        ....ccbc5555cccc....
+        ...cbb5b5555b5bbc...
+        ...cb55bb55bb55bc...
+        ....f555bbbb555c....
+        ....ff55555555ff....
+        ....fffb7ee7bfff....
+        ....fff93bb39fff....
+        .....ffbbbbbbff.....
+        ....beefeeeefee7....
+        ...77bcb5bb5bfb37...
+        ...3eef555555fee7...
+        ...77.cb5555bc.7b...
+        ....b7.ffffff.777...
+        .....73776777773....
+        ........777977......
+        ....................
+    `)
+    for (let zivot = 0; zivot < 5; zivot++) {
+        statusbar.value += 5
+        pause(3000)
+    }
+    obrana = false
+    carodej.setImage(img`
+        . . . . . . . c c c . . . . . .
+        . . . . . . c b 5 c . . . . . .
+        . . . . c c c 5 5 c c c . . . .
+        . . c c b c 5 5 5 5 c c c c . .
+        . c b b 5 b 5 5 5 5 b 5 b b c .
+        . c b 5 5 b b 5 5 b b 5 5 b c .
+        . . f 5 5 5 b b b b 5 5 5 c . .
+        . . f f 5 5 5 5 5 5 5 5 f f . .
+        . . f f f b f e e f b f f f . .
+        . . f f f 1 f b b f 1 f f f . .
+        . . . f f b b b b b b f f . . .
+        . . . e e f e e e e f e e . . .
+        . . e b c b 5 b b 5 b f b e . .
+        . . e e f 5 5 5 5 5 5 f e e . .
+        . . . . c b 5 5 5 5 b c . . . .
+        . . . . . f f f f f f . . . . .
+    `)
 })
 scene.onOverlapTile(SpriteKind.Player, img`
     d d c c c c c c c c c c c c d d
