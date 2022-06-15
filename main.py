@@ -108,7 +108,7 @@ SwordImage = sprites.create(assets.image("""
 
 BowImage = sprites.create(assets.image("""
     swordUP
-"""), SpriteKind.item)
+"""), SpriteKind.projectile)
 
 currentLevel = -1 # level (0 = MENU)
 startNextLevel()
@@ -1616,10 +1616,13 @@ def pronasledovani(boolean: bool, Pronasledovatel: Sprite, Obet: Sprite): # pron
 
 def on_life_zero(): # umrti hlavni postavy
     global fightScene, currentLevel
-    game.splash("Zemřel jsi.")
     if currentLevel == 3:
         fightScene = False
         Lucistnik.destroy()
+    if currentLevel == 4:
+        game.splash("Utopil jsi se.")
+    else:
+        game.splash("Zemřel jsi.")
     currentLevel = currentLevel - 1
     sprites.destroy_all_sprites_of_kind(SpriteKind.enemy)
     startNextLevel()
@@ -2462,7 +2465,6 @@ scene.on_overlap_tile(SpriteKind.player, assets.tile("""
 
 def on_overlap_voda(sprite3, location3): # pri najeti na vodu hrac zemre
     if naBobrovi == False:
-        game.splash("Utopil jsi se.")
         info.set_life(0)
 scene.on_overlap_tile(SpriteKind.player, assets.tile("""
         myTile12

@@ -105,7 +105,7 @@ SwordImage = sprites.create(assets.image`
 `, SpriteKind.Projectile)
 BowImage = sprites.create(assets.image`
     swordUP
-`, SpriteKind.item)
+`, SpriteKind.Projectile)
 currentLevel = -1
 //  level (0 = MENU)
 startNextLevel()
@@ -1623,10 +1623,15 @@ function pronasledovani(boolean: boolean, Pronasledovatel: Sprite, Obet: Sprite)
 info.onLifeZero(function on_life_zero() {
     //  umrti hlavni postavy
     
-    game.splash("Zemřel jsi.")
     if (currentLevel == 3) {
         fightScene = false
         Lucistnik.destroy()
+    }
+    
+    if (currentLevel == 4) {
+        game.splash("Utopil jsi se.")
+    } else {
+        game.splash("Zemřel jsi.")
     }
     
     currentLevel = currentLevel - 1
@@ -2471,7 +2476,6 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`
     `, function on_overlap_voda(sprite3: Sprite, location3: tiles.Location) {
     //  pri najeti na vodu hrac zemre
     if (naBobrovi == false) {
-        game.splash("Utopil jsi se.")
         info.setLife(0)
     }
     
