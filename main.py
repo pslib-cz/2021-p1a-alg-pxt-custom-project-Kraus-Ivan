@@ -358,9 +358,70 @@ def on_left_pressed():
 controller.left.on_event(ControllerButtonEvent.PRESSED, on_left_pressed)
 
 def on_b_pressed(): #mereni casu natazeni luku
-    global cas_zacatek
+    global cas_zacatek, bobr2, cas_zacatek, swingingBow, luk
     if luk:
         cas_zacatek = game.runtime()
+    if currentLevel == 4 and luk:
+        swingingBow = True
+        if pozice_zbrane[0] == True:
+            BowImage.set_image(assets.image("""
+                bow
+            """))
+        elif pozice_zbrane[1] == True:
+            BowImage.set_image(img("""
+                e . . . . . . . . . . . . . e
+                                    e 1 1 1 1 1 1 1 1 1 1 1 1 1 e
+                                    . e . . . . . . . . . . . e .
+                                    . . e . . . . . . . . . e . .
+                                    . . . e . . . . . . . e . . .
+                                    . . . . e . . . . . e . . . .
+                                    . . . . . e . . . e . . . . .
+                                    . . . . . . e e e . . . . . .
+                                    . . . . . . . . . . . . . . .
+                                    . . . . . . . . . . . . . . .
+                                    . . . . . . . . . . . . . . .
+                                    . . . . . . . . . . . . . . .
+                                    . . . . . . . . . . . . . . .
+                                    . . . . . . . . . . . . . . .
+                                    . . . . . . . . . . . . . . .
+            """))
+        elif pozice_zbrane[2] == True:
+            BowImage.set_image(img("""
+                . . . . . . . . . . . . . e e
+                                    . . . . . . . . . . . . e 1 .
+                                    . . . . . . . . . . . e . 1 .
+                                    . . . . . . . . . . e . . 1 .
+                                    . . . . . . . . . e . . . 1 .
+                                    . . . . . . . . e . . . . 1 .
+                                    . . . . . . . e . . . . . 1 .
+                                    . . . . . . . e . . . . . 1 .
+                                    . . . . . . . e . . . . . 1 .
+                                    . . . . . . . . e . . . . 1 .
+                                    . . . . . . . . . e . . . 1 .
+                                    . . . . . . . . . . e . . 1 .
+                                    . . . . . . . . . . . e . 1 .
+                                    . . . . . . . . . . . . e 1 .
+                                    . . . . . . . . . . . . . e e
+            """))
+        else:
+            BowImage.set_image(img("""
+                e e . . . . . . . . . . . . .
+                                    . 1 e . . . . . . . . . . . .
+                                    . 1 . e . . . . . . . . . . .
+                                    . 1 . . e . . . . . . . . . .
+                                    . 1 . . . e . . . . . . . . .
+                                    . 1 . . . . e . . . . . . . .
+                                    . 1 . . . . . e . . . . . . .
+                                    . 1 . . . . . e . . . . . . .
+                                    . 1 . . . . . e . . . . . . .
+                                    . 1 . . . . e . . . . . . . .
+                                    . 1 . . . e . . . . . . . . .
+                                    . 1 . . e . . . . . . . . . .
+                                    . 1 . e . . . . . . . . . . .
+                                    . 1 e . . . . . . . . . . . .
+                                    e e . . . . . . . . . . . . .
+            """))
+    swingingBow = False
 controller.B.on_event(ControllerButtonEvent.PRESSED, on_b_pressed)
 
 def on_a_pressed(): # seknuti mecem do ruznych smeru
@@ -2253,7 +2314,7 @@ sprites.on_overlap(SpriteKind.projectile, SpriteKind.enemyTree, on_overlap_strom
 
 def on_update_interval(): # spawn netopyru
     global myEnemy, fightScene, afterFight, pocet_netopyru
-    if currentLevel == 3 and fightScene and pocet_netopyru < 6:
+    if currentLevel == 3 and fightScene and pocet_netopyru < 5:
         if len(tiles.get_tiles_by_type(assets.tile("""
             myTile9
         """))) > 0:
@@ -2357,7 +2418,7 @@ def on_update_interval(): # spawn netopyru
             fightScene = False
             pronasledovani(True, Lucistnik, mySprite)
             afterFight = True
-game.on_update_interval(2000, on_update_interval)
+game.on_update_interval(3000, on_update_interval)
 #level 3\
 
 
@@ -2369,7 +2430,7 @@ def level4():
     dialogSkoncen = False
     dialogSkoncen2 = False
     tiles.place_on_tile(mySprite, tiles.get_tile_location(0, 7))
-    luk = True
+    luk = False
     mec = False
     cislo_sloupce = -1
     spawn_bobri = False
@@ -2397,6 +2458,7 @@ def on_overlap_molo(sprite2, location2): # slapnuti na molo
         if dialogSkoncen2 == False:
             game.show_long_text("Proč tu sviští bobři?!", DialogLayout.BOTTOM)
             game.splash("Podržením natáhneš luk, puštěním s ním vystřelíš.")
+            luk = True
             dialogSkoncen2 = True
 scene.on_overlap_tile(SpriteKind.player, assets.tile("""
         wood
@@ -2426,7 +2488,7 @@ game.on_update(on_update_pozice_hrace)
 
 def on_forever(): # spawn bobru
     global bobr2, cas_zacatek, swingingBow, luk
-    if controller.B.is_pressed() and luk and swingingBow == False:
+    if controller.B.is_pressed() and luk and swingingBow == False and not currentLevel == 4:
         swingingBow = True
         if pozice_zbrane[0] == True:
             BowImage.set_image(assets.image("""
@@ -2715,7 +2777,7 @@ def set_duchove(num: number, num2: number): # funkce nastavujici duchy
 def spawn_duchove(num: number, num2: number): # funkce spawnujici duchy
     scene.follow_path(duch,
         scene.a_star(duch.tilemap_location(),
-            tiles.get_tile_location(num, num2)), 70)
+            tiles.get_tile_location(num, num2)), 60)
 
 def on_overlap_dira(sprite, location):
     global luk, mec, enemy_position, fightScene, duch

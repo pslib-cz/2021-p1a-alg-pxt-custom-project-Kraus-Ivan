@@ -350,6 +350,71 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function on_b_pressed() {
         cas_zacatek = game.runtime()
     }
     
+    if (currentLevel == 4 && luk) {
+        swingingBow = true
+        if (pozice_zbrane[0] == true) {
+            BowImage.setImage(assets.image`
+                bow
+            `)
+        } else if (pozice_zbrane[1] == true) {
+            BowImage.setImage(img`
+                e . . . . . . . . . . . . . e
+                                    e 1 1 1 1 1 1 1 1 1 1 1 1 1 e
+                                    . e . . . . . . . . . . . e .
+                                    . . e . . . . . . . . . e . .
+                                    . . . e . . . . . . . e . . .
+                                    . . . . e . . . . . e . . . .
+                                    . . . . . e . . . e . . . . .
+                                    . . . . . . e e e . . . . . .
+                                    . . . . . . . . . . . . . . .
+                                    . . . . . . . . . . . . . . .
+                                    . . . . . . . . . . . . . . .
+                                    . . . . . . . . . . . . . . .
+                                    . . . . . . . . . . . . . . .
+                                    . . . . . . . . . . . . . . .
+                                    . . . . . . . . . . . . . . .
+            `)
+        } else if (pozice_zbrane[2] == true) {
+            BowImage.setImage(img`
+                . . . . . . . . . . . . . e e
+                                    . . . . . . . . . . . . e 1 .
+                                    . . . . . . . . . . . e . 1 .
+                                    . . . . . . . . . . e . . 1 .
+                                    . . . . . . . . . e . . . 1 .
+                                    . . . . . . . . e . . . . 1 .
+                                    . . . . . . . e . . . . . 1 .
+                                    . . . . . . . e . . . . . 1 .
+                                    . . . . . . . e . . . . . 1 .
+                                    . . . . . . . . e . . . . 1 .
+                                    . . . . . . . . . e . . . 1 .
+                                    . . . . . . . . . . e . . 1 .
+                                    . . . . . . . . . . . e . 1 .
+                                    . . . . . . . . . . . . e 1 .
+                                    . . . . . . . . . . . . . e e
+            `)
+        } else {
+            BowImage.setImage(img`
+                e e . . . . . . . . . . . . .
+                                    . 1 e . . . . . . . . . . . .
+                                    . 1 . e . . . . . . . . . . .
+                                    . 1 . . e . . . . . . . . . .
+                                    . 1 . . . e . . . . . . . . .
+                                    . 1 . . . . e . . . . . . . .
+                                    . 1 . . . . . e . . . . . . .
+                                    . 1 . . . . . e . . . . . . .
+                                    . 1 . . . . . e . . . . . . .
+                                    . 1 . . . . e . . . . . . . .
+                                    . 1 . . . e . . . . . . . . .
+                                    . 1 . . e . . . . . . . . . .
+                                    . 1 . e . . . . . . . . . . .
+                                    . 1 e . . . . . . . . . . . .
+                                    e e . . . . . . . . . . . . .
+            `)
+        }
+        
+    }
+    
+    swingingBow = false
 })
 controller.A.onEvent(ControllerButtonEvent.Pressed, function on_a_pressed() {
     //  seknuti mecem do ruznych smeru
@@ -2254,10 +2319,10 @@ sprites.onOverlap(SpriteKind.Projectile, SpriteKind.enemyTree, function on_overl
             spawner
         `)
 })
-game.onUpdateInterval(2000, function on_update_interval() {
+game.onUpdateInterval(3000, function on_update_interval() {
     //  spawn netopyru
     
-    if (currentLevel == 3 && fightScene && pocet_netopyru < 6) {
+    if (currentLevel == 3 && fightScene && pocet_netopyru < 5) {
         if (tiles.getTilesByType(assets.tile`
             myTile9
         `).length > 0) {
@@ -2369,7 +2434,7 @@ function level4() {
     dialogSkoncen = false
     dialogSkoncen2 = false
     tiles.placeOnTile(mySprite, tiles.getTileLocation(0, 7))
-    luk = true
+    luk = false
     mec = false
     cislo_sloupce = -1
     spawn_bobri = false
@@ -2403,6 +2468,7 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`
         if (dialogSkoncen2 == false) {
             game.showLongText("Proč tu sviští bobři?!", DialogLayout.Bottom)
             game.splash("Podržením natáhneš luk, puštěním s ním vystřelíš.")
+            luk = true
             dialogSkoncen2 = true
         }
         
@@ -2440,7 +2506,7 @@ game.onUpdate(function on_update_pozice_hrace() {
 forever(function on_forever() {
     //  spawn bobru
     
-    if (controller.B.isPressed() && luk && swingingBow == false) {
+    if (controller.B.isPressed() && luk && swingingBow == false && !(currentLevel == 4)) {
         swingingBow = true
         if (pozice_zbrane[0] == true) {
             BowImage.setImage(assets.image`
@@ -2746,7 +2812,7 @@ function set_duchove(num: number, num2: number) {
 
 function spawn_duchove(num: number, num2: number) {
     //  funkce spawnujici duchy
-    scene.followPath(duch, scene.aStar(duch.tilemapLocation(), tiles.getTileLocation(num, num2)), 70)
+    scene.followPath(duch, scene.aStar(duch.tilemapLocation(), tiles.getTileLocation(num, num2)), 60)
 }
 
 scene.onOverlapTile(SpriteKind.Player, assets.tile`
