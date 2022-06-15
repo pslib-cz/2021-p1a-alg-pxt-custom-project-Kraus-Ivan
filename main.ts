@@ -29,6 +29,7 @@ namespace StrProp {
 let pohyb_carodeje = false
 let ohniva_koule : Sprite = null
 let pocet_netopyru = 0
+let obrana = false
 let myEnemy : Sprite = null
 let button_lvl_5 : Sprite = null
 let button_lvl_4 : Sprite = null
@@ -2983,7 +2984,7 @@ scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.stairEast, function on_ov
 })
 game.onUpdateInterval(6000, function on_update_interval_koule() {
     
-    if (pohyb_carodeje == true) {
+    if (pohyb_carodeje == true && obrana == false) {
         ohniva_koule = sprites.create(img`
                 . . . . . . . . . . . . . . . .
                             . . . . . . . . . . . . . . . .
@@ -3011,6 +3012,7 @@ scene.onPathCompletion(SpriteKind.witcher, function on_path_completion_carodej(s
     
     game.showLongText("ČERNOKNĚŽNÍK: Konečně se potkáváme, snad ukážeš, co v tobě je!", DialogLayout.Bottom)
     pohyb_carodeje = true
+    let obrana = false
 })
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.projectile_koule, function on_overlap_projectile_koule(sprite: Sprite, otherSprite: Sprite) {
     //  zniceni koule pomoci projectile
@@ -3022,7 +3024,10 @@ sprites.onOverlap(SpriteKind.projectile_koule, SpriteKind.Player, function on_ov
 })
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.witcher, function on_overlap_projectile_carodej(sprite: Sprite, otherSprite: Sprite) {
     //  zasazeni carodeje
-    statusbar.value -= 0.5
+    if (obrana == false) {
+        statusbar.value -= 0.5
+    }
+    
 })
 game.onUpdateInterval(5000, function on_update_interval_netopyri() {
     let netopyr_boss: Sprite;
@@ -3066,6 +3071,10 @@ game.onUpdateInterval(5000, function on_update_interval_netopyri() {
         netopyr_boss.follow(mySprite, 50)
     }
     
+})
+statusbars.onStatusReached(StatusBarKind.Health, statusbars.StatusComparison.LTE, statusbars.ComparisonType.Percentage, 25, function on_status_reached_lte_percentage(status: StatusBarSprite) {
+    
+    obrana = true
 })
 scene.onOverlapTile(SpriteKind.Player, img`
     d d c c c c c c c c c c c c d d

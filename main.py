@@ -29,6 +29,7 @@ class StrProp:
 pohyb_carodeje = False
 ohniva_koule: Sprite = None
 pocet_netopyru = 0
+obrana = False
 myEnemy: Sprite = None
 button_lvl_5: Sprite = None
 button_lvl_4: Sprite = None
@@ -2964,8 +2965,8 @@ def on_overlap_schody(sprite, location): # nastaveni Tilemap na boss fight
 scene.on_overlap_tile(SpriteKind.player, sprites.dungeon.stair_east, on_overlap_schody)
 
 def on_update_interval_koule():
-    global ohniva_koule
-    if pohyb_carodeje == True:
+    global ohniva_koule, obrana
+    if pohyb_carodeje == True and obrana == False:
         ohniva_koule = sprites.create(img("""
                 . . . . . . . . . . . . . . . .
                             . . . . . . . . . . . . . . . .
@@ -2992,6 +2993,7 @@ def on_path_completion_carodej(sprite, location):
     global pohyb_carodeje
     game.show_long_text("ČERNOKNĚŽNÍK: Konečně se potkáváme, snad ukážeš, co v tobě je!", DialogLayout.BOTTOM)
     pohyb_carodeje = True
+    obrana = False
 scene.on_path_completion(SpriteKind.witcher, on_path_completion_carodej)
 
 def on_overlap_projectile_koule(sprite, otherSprite): # zniceni koule pomoci projectile
@@ -3004,6 +3006,7 @@ def on_overlap_koule_mySprite(sprite, otherSprite):
 sprites.on_overlap(SpriteKind.projectile_koule, SpriteKind.player, on_overlap_koule_mySprite)
 
 def on_overlap_projectile_carodej(sprite, otherSprite): # zasazeni carodeje
+    if obrana == False:
         statusbar.value -= 0.5
 sprites.on_overlap(SpriteKind.projectile, SpriteKind.witcher, on_overlap_projectile_carodej)
 
@@ -3047,6 +3050,14 @@ def on_update_interval_netopyri():
         """))
         netopyr_boss.follow(mySprite, 50)
 game.on_update_interval(5000, on_update_interval_netopyri)
+
+def on_status_reached_lte_percentage(status):
+    global obrana
+    obrana = True
+statusbars.on_status_reached(StatusBarKind.health, statusbars.StatusComparison.LTE, statusbars.ComparisonType.PERCENTAGE, 25, on_status_reached_lte_percentage)
+
+
+
 
 def on_overlap_schody_princezna(sprite, location):
     if pohyb_carodeje == False:
