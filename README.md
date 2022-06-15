@@ -10,9 +10,9 @@ This repository can be added as an **extension** in MakeCode.
 * open [https://arcade.makecode.com/](https://arcade.makecode.com/)
 * click on **New Project**
 * click on **Extensions** under the gearwheel menu
-* search for **https://github.com/kraus-ivan/hra-makecode-arcade** and import
+* search for **[https://github.com/kraus-ivan/hra-makecode-arcade](https://github.com/pslib-cz/2021-p1a-alg-pxt-custom-project-Kraus-Ivan)** and import
 
-## Edit this project ![Build status badge](https://github.com/kraus-ivan/hra-makecode-arcade/workflows/MakeCode/badge.svg)
+## Edit this project ![Build status badge]([https://github.com/kraus-ivan/hra-makecode-arcade/workflows/MakeCode/badge.svg](https://github.com/pslib-cz/2021-p1a-alg-pxt-custom-project-Kraus-Ivan))
 
 To edit this repository in MakeCode.
 
