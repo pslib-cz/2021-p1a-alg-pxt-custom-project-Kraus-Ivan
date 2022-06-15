@@ -30,6 +30,7 @@ pohyb_carodeje = False
 ohniva_koule: Sprite = None
 pocet_netopyru = 0
 obrana = False
+pocet_obran = 0
 myEnemy: Sprite = None
 button_lvl_5: Sprite = None
 button_lvl_4: Sprite = None
@@ -2540,8 +2541,9 @@ sprites.on_overlap(SpriteKind.projectile, SpriteKind.bobr, on_overlap_zniceni_bo
 
 #level 5/
 def level5():
-    global dialogSkoncen, dialogSkoncen2, fightScene, pohyb_carodeje, luk, mec
+    global dialogSkoncen, dialogSkoncen2, fightScene, pohyb_carodeje, luk, mec, pocet_obran
     pohyb_carodeje = False
+    pocet_obran = 0
     dialogSkoncen = False
     dialogSkoncen2 = False
     tiles.place_on_tile(mySprite, tiles.get_tile_location(29, 13))
@@ -2922,12 +2924,10 @@ def on_path_completion(sprite, location): # pri dokonceni cesty enemy se otoci
 scene.on_path_completion(SpriteKind.neznicitelny_enemy, on_path_completion)
 
 
-
-
 def on_zero(status): # zabije carodeje pri life bar = 0
     global pohyb_carodeje
     pohyb_carodeje = False
-    carodej.destroy(effects.fire, 200)
+    carodej.destroy(effects.fire, 2000)
 statusbars.on_zero(StatusBarKind.health, on_zero)
 
 def on_overlap_kamen(sprite, location): # carodej prijde
@@ -2966,10 +2966,10 @@ def on_overlap_schody(sprite, location): # nastaveni Tilemap na boss fight
         statusbar = statusbars.create(20, 4, StatusBarKind.health)
         statusbar.attach_to_sprite(carodej)
         tiles.place_on_tile(carodej, tiles.get_tile_location(13, 1))
-        carodej.set_scale(1.5, ScaleAnchor.MIDDLE)
+        carodej.set_scale(1.7, ScaleAnchor.MIDDLE)
 scene.on_overlap_tile(SpriteKind.player, sprites.dungeon.stair_east, on_overlap_schody)
 
-def on_update_interval_koule():
+def on_update_interval_koule(): # strili koule
     global ohniva_koule, obrana, pohyb_carodeje
     if pohyb_carodeje == True and obrana == False:
         ohniva_koule = sprites.create(img("""
@@ -2993,7 +2993,7 @@ def on_update_interval_koule():
         ohniva_koule.set_position(carodej.x, carodej.y)
         ohniva_koule.set_bounce_on_wall(True)
         scene.follow_path(ohniva_koule, scene.a_star(carodej.tilemap_location(), mySprite.tilemap_location()))
-game.on_update_interval(2000, on_update_interval_koule)
+game.on_update_interval(3000, on_update_interval_koule)
 
 def on_path_completion_ohniva_koule(sprite, location):
     sprite.destroy(effects.warm_radial, 1)
@@ -3024,8 +3024,11 @@ sprites.on_overlap(SpriteKind.projectile_koule, SpriteKind.player, on_overlap_ko
 
 def on_overlap_projectile_carodej(sprite, otherSprite): # zasazeni carodeje
     global obrana
-    if obrana == False:
+    if obrana == False and sprite == arrow:
         statusbar.value -= 0.5
+    elif obrana == False and sprite == SwordImage:
+        info.change_life_by(-1)
+        game.splash("Meč na něj nepůsobí!")
 sprites.on_overlap(SpriteKind.projectile, SpriteKind.witcher, on_overlap_projectile_carodej)
 
 def on_update_interval_netopyri():
@@ -3071,56 +3074,149 @@ def on_update_interval_netopyri():
 game.on_update_interval(2000, on_update_interval_netopyri)
 
 def on_status_reached_lte_percentage(status):
-    global obrana
-    obrana = True
-    carodej.set_image(img("""
-        ....................
-        .........ccc........
-        ........cb5c........
-        ......ccc55ccc......
-        ....ccbc5555cccc....
-        ...cbb5b5555b5bbc...
-        ...cb55bb55bb55bc...
-        ....f555bbbb555c....
-        ....ff55555555ff....
-        ....fffb7ee7bfff....
-        ....fff93bb39fff....
-        .....ffbbbbbbff.....
-        ....beefeeeefee7....
-        ...77bcb5bb5bfb37...
-        ...3eef555555fee7...
-        ...77.cb5555bc.7b...
-        ....b7.ffffff.777...
-        .....73776777773....
-        ........777977......
-        ....................
-    """))
-    for zivot in range(5):
-        statusbar.value += 5
-        pause(3000)
-    obrana = False
-    carodej.set_image(img("""
-        . . . . . . . c c c . . . . . .
-        . . . . . . c b 5 c . . . . . .
-        . . . . c c c 5 5 c c c . . . .
-        . . c c b c 5 5 5 5 c c c c . .
-        . c b b 5 b 5 5 5 5 b 5 b b c .
-        . c b 5 5 b b 5 5 b b 5 5 b c .
-        . . f 5 5 5 b b b b 5 5 5 c . .
-        . . f f 5 5 5 5 5 5 5 5 f f . .
-        . . f f f b f e e f b f f f . .
-        . . f f f 1 f b b f 1 f f f . .
-        . . . f f b b b b b b f f . . .
-        . . . e e f e e e e f e e . . .
-        . . e b c b 5 b b 5 b f b e . .
-        . . e e f 5 5 5 5 5 5 f e e . .
-        . . . . c b 5 5 5 5 b c . . . .
-        . . . . . f f f f f f . . . . .
-    """))
+    global obrana, pocet_obran
+    pocet_obran += 1
+    if pocet_obran == 1:
+        obrana = True
+        carodej.set_image(img("""
+            ....................
+            .........ccc........
+            ........cb5c........
+            ......ccc55ccc......
+            ....ccbc5555cccc....
+            ...cbb5b5555b5bbc...
+            ...cb55bb55bb55bc...
+            ....f555bbbb555c....
+            ....ff55555555ff....
+            ....fffb7ee7bfff....
+            ....fff93bb39fff....
+            .....ffbbbbbbff.....
+            ....beefeeeefee7....
+            ...77bcb5bb5bfb37...
+            ...3eef555555fee7...
+            ...77.cb5555bc.7b...
+            ....b7.ffffff.777...
+            .....73776777773....
+            ........777977......
+            ....................
+        """))
+        for zivot in range(6):
+            statusbar.value += 5
+            pause(3000)
+        obrana = False
+        carodej.set_image(img("""
+            . . . . . . . c c c . . . . . .
+            . . . . . . c b 5 c . . . . . .
+            . . . . c c c 5 5 c c c . . . .
+            . . c c b c 5 5 5 5 c c c c . .
+            . c b b 5 b 5 5 5 5 b 5 b b c .
+            . c b 5 5 b b 5 5 b b 5 5 b c .
+            . . f 5 5 5 b b b b 5 5 5 c . .
+            . . f f 5 5 5 5 5 5 5 5 f f . .
+            . . f f f b f e e f b f f f . .
+            . . f f f 1 f b b f 1 f f f . .
+            . . . f f b b b b b b f f . . .
+            . . . e e f e e e e f e e . . .
+            . . e b c b 5 b b 5 b f b e . .
+            . . e e f 5 5 5 5 5 5 f e e . .
+            . . . . c b 5 5 5 5 b c . . . .
+            . . . . . f f f f f f . . . . .
+        """))
+
+    elif pocet_obran == 2:
+        obrana = True
+        carodej.set_image(img("""
+            ....................
+            .........ccc........
+            ........cb5c........
+            ......ccc55ccc......
+            ....ccbc5555cccc....
+            ...cbb5b5555b5bbc...
+            ...cb55bb55bb55bc...
+            ....f555bbbb555c....
+            ....ff55555555ff....
+            ....fffb7ee7bfff....
+            ....fff93bb39fff....
+            .....ffbbbbbbff.....
+            ....beefeeeefee7....
+            ...77bcb5bb5bfb37...
+            ...3eef555555fee7...
+            ...77.cb5555bc.7b...
+            ....b7.ffffff.777...
+            .....73776777773....
+            ........777977......
+            ....................
+        """))
+        for zivot in range(4):
+            statusbar.value += 5
+            pause(5000)
+        obrana = False
+        carodej.set_image(img("""
+            . . . . . . . c c c . . . . . .
+            . . . . . . c b 5 c . . . . . .
+            . . . . c c c 5 5 c c c . . . .
+            . . c c b c 5 5 5 5 c c c c . .
+            . c b b 5 b 5 5 5 5 b 5 b b c .
+            . c b 5 5 b b 5 5 b b 5 5 b c .
+            . . f 5 5 5 b b b b 5 5 5 c . .
+            . . f f 5 5 5 5 5 5 5 5 f f . .
+            . . f f f b f e e f b f f f . .
+            . . f f f 1 f b b f 1 f f f . .
+            . . . f f b b b b b b f f . . .
+            . . . e e f e e e e f e e . . .
+            . . e b c b 5 b b 5 b f b e . .
+            . . e e f 5 5 5 5 5 5 f e e . .
+            . . . . c b 5 5 5 5 b c . . . .
+            . . . . . f f f f f f . . . . .
+        """))
+
+    elif pocet_obran == 3:
+        obrana = True
+        carodej.set_image(img("""
+            ....................
+            .........ccc........
+            ........cb5c........
+            ......ccc55ccc......
+            ....ccbc5555cccc....
+            ...cbb5b5555b5bbc...
+            ...cb55bb55bb55bc...
+            ....f555bbbb555c....
+            ....ff55555555ff....
+            ....fffb7ee7bfff....
+            ....fff93bb39fff....
+            .....ffbbbbbbff.....
+            ....beefeeeefee7....
+            ...77bcb5bb5bfb37...
+            ...3eef555555fee7...
+            ...77.cb5555bc.7b...
+            ....b7.ffffff.777...
+            .....73776777773....
+            ........777977......
+            ....................
+        """))
+        for zivot in range(2):
+            statusbar.value += 5
+            pause(10000)
+        obrana = False
+        carodej.set_image(img("""
+            . . . . . . . c c c . . . . . .
+            . . . . . . c b 5 c . . . . . .
+            . . . . c c c 5 5 c c c . . . .
+            . . c c b c 5 5 5 5 c c c c . .
+            . c b b 5 b 5 5 5 5 b 5 b b c .
+            . c b 5 5 b b 5 5 b b 5 5 b c .
+            . . f 5 5 5 b b b b 5 5 5 c . .
+            . . f f 5 5 5 5 5 5 5 5 f f . .
+            . . f f f b f e e f b f f f . .
+            . . f f f 1 f b b f 1 f f f . .
+            . . . f f b b b b b b f f . . .
+            . . . e e f e e e e f e e . . .
+            . . e b c b 5 b b 5 b f b e . .
+            . . e e f 5 5 5 5 5 5 f e e . .
+            . . . . c b 5 5 5 5 b c . . . .
+            . . . . . f f f f f f . . . . .
+        """))
 statusbars.on_status_reached(StatusBarKind.health, statusbars.StatusComparison.LTE, statusbars.ComparisonType.PERCENTAGE, 25, on_status_reached_lte_percentage)
-
-
-
 
 def on_overlap_schody_princezna(sprite, location):
     if pohyb_carodeje == False:
@@ -3166,8 +3262,9 @@ scene.on_overlap_tile(SpriteKind.player, img("""
 """), on_overlap_schody_princezna)
 
 def on_overlap_koberec_princezna(sprite, location):
-    game.show_long_text("PRINCEZNA: Dokázal jsi to, zachránil si mě!", DialogLayout.BOTTOM)
-    startNextLevel()
+    if sprite == mySprite:
+        game.show_long_text("PRINCEZNA: Dokázal jsi to, zachránil si mě!", DialogLayout.BOTTOM)
+        startNextLevel()
 scene.on_overlap_tile(SpriteKind.player, img("""
     a a a a a a a a a a a a a a a a
     a a a a a a a a a a a a a a a a
