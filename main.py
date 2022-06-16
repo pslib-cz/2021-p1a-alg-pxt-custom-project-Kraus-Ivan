@@ -2577,8 +2577,9 @@ def zmena_bobra(): # meni rychlost a smer bobra
 
 def zmena_sloupce(): # meni aktualni sloupec bobru
     global cislo_sloupce
-    if cislo_sloupce == 10:
+    if cislo_sloupce == 9:
         sprites.destroy_all_sprites_of_kind(SpriteKind.bobr)
+        spawn_bobri = False
     else:
         cislo_sloupce = cislo_sloupce + 1
 

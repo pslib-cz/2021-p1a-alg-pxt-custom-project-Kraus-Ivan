@@ -2604,10 +2604,12 @@ function zmena_bobra() {
 }
 
 function zmena_sloupce() {
+    let spawn_bobri: boolean;
     //  meni aktualni sloupec bobru
     
-    if (cislo_sloupce == 10) {
+    if (cislo_sloupce == 9) {
         sprites.destroyAllSpritesOfKind(SpriteKind.bobr)
+        spawn_bobri = false
     } else {
         cislo_sloupce = cislo_sloupce + 1
     }
