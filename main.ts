@@ -2506,7 +2506,7 @@ game.onUpdate(function on_update_pozice_hrace() {
 forever(function on_forever() {
     //  spawn bobru
     
-    if (controller.B.isPressed() && luk && swingingBow == false && !(currentLevel == 4)) {
+    if (controller.B.isPressed() && luk == true && swingingBow == false && !(currentLevel == 4)) {
         swingingBow = true
         if (pozice_zbrane[0] == true) {
             BowImage.setImage(assets.image`
@@ -2568,9 +2568,9 @@ forever(function on_forever() {
             `)
         }
         
+        swingingBow = false
     }
     
-    swingingBow = false
     if (currentLevel == 4 && spawn_bobri) {
         zmena_bobra()
         bobr2 = sprites.create(assets.image`bobr`, SpriteKind.bobr)
@@ -3029,7 +3029,7 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`
 scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.stairEast, function on_overlap_schody(sprite: Sprite, location: tiles.Location) {
     //  nastaveni Tilemap na boss fight
     
-    tiles.setTileAt(tiles.getTileLocation(16, 20), sprites.dungeon.chestClosed)
+    tiles.setTileAt(tiles.getTileLocation(17, 3), sprites.dungeon.chestClosed)
     if (fightScene == true) {
         fightScene = false
         sprites.destroyAllSpritesOfKind(SpriteKind.neznicitelny_enemy)

@@ -2488,7 +2488,7 @@ game.on_update(on_update_pozice_hrace)
 
 def on_forever(): # spawn bobru
     global bobr2, cas_zacatek, swingingBow, luk
-    if controller.B.is_pressed() and luk and swingingBow == False and not currentLevel == 4:
+    if controller.B.is_pressed() and luk== True and swingingBow == False and not currentLevel == 4:
         swingingBow = True
         if pozice_zbrane[0] == True:
             BowImage.set_image(assets.image("""
@@ -2548,7 +2548,7 @@ def on_forever(): # spawn bobru
                                     . 1 e . . . . . . . . . . . .
                                     e e . . . . . . . . . . . . .
             """))
-    swingingBow = False
+        swingingBow = False
 
     if currentLevel == 4 and spawn_bobri:
         zmena_bobra()
@@ -3002,7 +3002,7 @@ scene.on_overlap_tile(SpriteKind.player, assets.tile("""
 
 def on_overlap_schody(sprite, location): # nastaveni Tilemap na boss fight
     global fightScene, carodej, statusbar, obrana
-    tiles.set_tile_at(tiles.get_tile_location(16, 20), sprites.dungeon.chest_closed)
+    tiles.set_tile_at(tiles.get_tile_location(17, 3), sprites.dungeon.chest_closed)
     if fightScene == True:
         fightScene = False
         sprites.destroy_all_sprites_of_kind(SpriteKind.neznicitelny_enemy)
