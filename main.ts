@@ -32,6 +32,7 @@ let pocet_netopyru = 0
 let obrana = false
 let pocet_obran = 0
 let myEnemy : Sprite = null
+let button_lvl_6 : Sprite = null
 let button_lvl_5 : Sprite = null
 let button_lvl_4 : Sprite = null
 let button_lvl_3 : Sprite = null
@@ -1285,6 +1286,9 @@ function startNextLevel() {
         `)
         tiles.setCurrentTilemap(tilemap`level34`)
         level5()
+    } else if (currentLevel == 6) {
+        tiles.setCurrentTilemap(tilemap`level38`)
+        level6()
     } else {
         game.over(true)
     }
@@ -1539,7 +1543,26 @@ sprites.onOverlap(SpriteKind.cursor, SpriteKind.button, function on_overlap_leve
                             .cddbbbbbbbbbbbbbbbbbbbbbbddc...
                             .cccccccccccccccccccccccccccc...
             `, SpriteKind.button_small)
-        button_lvl_5.setPosition(80, 95)
+        button_lvl_5.setPosition(55, 95)
+        button_lvl_6 = sprites.create(img`
+            .cccccccccccccccccccccccccccc...
+            .cddbbbbbbbbbbbbbbbbbbbbbbddc...
+            .cdbbbbbbbbbbbbbbbbbbbbbbbbdc...
+            .cbbbbbbbbbbbbbbbbbbbbbbbbbbc...
+            .cb1bbb1bbb1b1bbbbbbbbbb1bbbc...
+            .cb1bbb1bbb1b1bbbbbbbbb1bbbbc...
+            .cb1bbbb1b1bb1bbbbbbbb1bbbbbc...
+            .cb1bbbb1b1bb1bbbbbbb1bbbbbbc...
+            .cb1bbbb1b1bb1bbbbbb1bbb11bbc...
+            .cb1bbbbb1bbb1bbbbbb1b11bb1bc...
+            .cb1bbbbb1bbb1bbbbbbb1bbb1bbc...
+            .cb1111bb1bbb1111bbbbb1111bbc...
+            .cbbbbbbbbbbbbbbbbbbbbbbbbbbc...
+            .cdbbbbbbbbbbbbbbbbbbbbbbbbdc...
+            .cddbbbbbbbbbbbbbbbbbbbbbbddc...
+            .cccccccccccccccccccccccccccc...
+        `, SpriteKind.button_small)
+        button_lvl_6.setPosition(105, 95)
         kursor = sprites.create(img`
             . . . . . . . . . . . . . . . .
             . . . . . . . . . . . . . . . .
@@ -1579,6 +1602,9 @@ sprites.onOverlap(SpriteKind.cursor, SpriteKind.button_small, function on_overla
         startNextLevel()
     } else if (otherSprite == button_lvl_5 && controller.A.isPressed()) {
         currentLevel = 4
+        startNextLevel()
+    } else if (otherSprite == button_lvl_6 && controller.A.isPressed()) {
+        currentLevel = 5
         startNextLevel()
     }
     
@@ -3013,6 +3039,44 @@ scene.onPathCompletion(SpriteKind.neznicitelny_enemy, function on_path_completio
     }
     
 })
+scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.stairEast, function on_overlap_schody(sprite: Sprite, location: tiles.Location) {
+    
+    startNextLevel()
+})
+//  Level 6 #
+function level6() {
+    
+    tiles.setTileAt(tiles.getTileLocation(17, 3), sprites.dungeon.chestClosed)
+    fightScene = false
+    tiles.placeOnTile(mySprite, tiles.getTileLocation(0, 22))
+    carodej = sprites.create(img`
+        . . . . . . . c c c . . . . . .
+        . . . . . . c b 5 c . . . . . .
+        . . . . c c c 5 5 c c c . . . .
+        . . c c b c 5 5 5 5 c c c c . .
+        . c b b 5 b 5 5 5 5 b 5 b b c .
+        . c b 5 5 b b 5 5 b b 5 5 b c .
+        . . f 5 5 5 b b b b 5 5 5 c . .
+        . . f f 5 5 5 5 5 5 5 5 f f . .
+        . . f f f b f e e f b f f f . .
+        . . f f f 1 f b b f 1 f f f . .
+        . . . f f b b b b b b f f . . .
+        . . . e e f e e e e f e e . . .
+        . . e b c b 5 b b 5 b f b e . .
+        . . e e f 5 5 5 5 5 5 f e e . .
+        . . . . c b 5 5 5 5 b c . . . .
+        . . . . . f f f f f f . . . . .
+    `, SpriteKind.witcher)
+    tiles.setTileAt(tiles.getTileLocation(16, 20), assets.tile`
+            transparency16
+        `)
+    statusbar = statusbars.create(20, 4, StatusBarKind.Health)
+    statusbar.attachToSprite(carodej)
+    tiles.placeOnTile(carodej, tiles.getTileLocation(13, 1))
+    carodej.setScale(1.7, ScaleAnchor.Middle)
+    console.log(currentLevel)
+}
+
 statusbars.onZero(StatusBarKind.Health, function on_zero(status: StatusBarSprite) {
     //  zabije carodeje pri life bar = 0
     
@@ -3024,41 +3088,7 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`
     `, function on_overlap_kamen(sprite: Sprite, location: tiles.Location) {
     //  carodej prijde
     info.setLife(3)
-    scene.followPath(carodej, scene.aStar(tiles.getTileLocation(13, 1), tiles.getTileLocation(13, 7)))
-})
-scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.stairEast, function on_overlap_schody(sprite: Sprite, location: tiles.Location) {
-    //  nastaveni Tilemap na boss fight
-    
-    tiles.setTileAt(tiles.getTileLocation(17, 3), sprites.dungeon.chestClosed)
-    if (fightScene == true) {
-        fightScene = false
-        sprites.destroyAllSpritesOfKind(SpriteKind.neznicitelny_enemy)
-        tiles.setCurrentTilemap(tilemap`level38`)
-        tiles.placeOnTile(mySprite, tiles.getTileLocation(0, 22))
-        carodej = sprites.create(img`
-            . . . . . . . c c c . . . . . .
-            . . . . . . c b 5 c . . . . . .
-            . . . . c c c 5 5 c c c . . . .
-            . . c c b c 5 5 5 5 c c c c . .
-            . c b b 5 b 5 5 5 5 b 5 b b c .
-            . c b 5 5 b b 5 5 b b 5 5 b c .
-            . . f 5 5 5 b b b b 5 5 5 c . .
-            . . f f 5 5 5 5 5 5 5 5 f f . .
-            . . f f f b f e e f b f f f . .
-            . . f f f 1 f b b f 1 f f f . .
-            . . . f f b b b b b b f f . . .
-            . . . e e f e e e e f e e . . .
-            . . e b c b 5 b b 5 b f b e . .
-            . . e e f 5 5 5 5 5 5 f e e . .
-            . . . . c b 5 5 5 5 b c . . . .
-            . . . . . f f f f f f . . . . .
-        `, SpriteKind.witcher)
-        statusbar = statusbars.create(20, 4, StatusBarKind.Health)
-        statusbar.attachToSprite(carodej)
-        tiles.placeOnTile(carodej, tiles.getTileLocation(13, 1))
-        carodej.setScale(1.7, ScaleAnchor.Middle)
-    }
-    
+    scene.followPath(carodej, scene.aStar(tiles.getTileLocation(13, 1), tiles.getTileLocation(13, 8)))
 })
 game.onUpdateInterval(3000, function on_update_interval_koule() {
     //  strili koule
@@ -3124,10 +3154,10 @@ sprites.onOverlap(SpriteKind.Projectile, SpriteKind.witcher, function on_overlap
     }
     
 })
-game.onUpdateInterval(2000, function on_update_interval_netopyri() {
+game.onUpdateInterval(3000, function on_update_interval_netopyri() {
     let netopyr_boss: Sprite;
     
-    if (pohyb_carodeje && obrana == true) {
+    if (pohyb_carodeje && obrana == true && pocet_obran == 1) {
         netopyr_boss = sprites.create(img`
             . . f f f . . . . . . . . . . .
             f f f c c . . . . . . . . f f f
@@ -3164,7 +3194,83 @@ game.onUpdateInterval(2000, function on_update_interval_netopyri() {
             c c c c c c c b c c c c c c b b
             c c c c c c c c c c c c c c b c
         `)
+        netopyr_boss.follow(mySprite, 35)
+    } else if (pohyb_carodeje && obrana == true && pocet_obran == 2) {
+        netopyr_boss = sprites.create(img`
+                . . f f f . . . . . . . . . . .
+                f f f c c . . . . . . . . f f f
+                f f c c c . c c . . . f c b b c
+                f f c 3 c c 3 c c f f b b b c .
+                f f c 3 b c 3 b c f b b c c c .
+                f c b b b b b b c f b c b c c .
+                c c 1 b b b 1 b c b b c b b c .
+                c b b b b b b b b b c c c b c .
+                c b 1 f f 1 c b b c c c c c . .
+                c f 1 f f 1 f b b b b f c . . .
+                f f f f f f f b b b b f c . . .
+                f f 2 2 2 2 f b b b b f c c . .
+                . f 2 2 2 2 2 b b b c f . . . .
+                . . f 2 2 2 b b b c f . . . . .
+                . . . f f f f f f f . . . . . .
+                . . . . . . . . . . . . . . . .
+            `, SpriteKind.enemy)
+        tiles.placeOnRandomTile(netopyr_boss, img`
+                c c c c c c c c c c c c c c c c
+                c c c c c c c c c b c c c c b c
+                c c b c c c c c c c c c c c c c
+                c c c c c c c c c c c c c c c c
+                c c c c c c c c c c c c c c c c
+                c c c b c c b c c c c b c c c c
+                c c c c c c c c c c c c c c c c
+                c b c c c c c c c c c c c c c c
+                c c c c c c c c c c c c c c c c
+                c c c c c b c c c c c b c c c c
+                c c c c c c c c c c c c c c c c
+                c c c c c c c c c c c c c c c c
+                c c c c c c c c c c c c c c c c
+                c c b c c c c c c c c c c c c c
+                c c c c c c c b c c c c c c b b
+                c c c c c c c c c c c c c c b c
+            `)
         netopyr_boss.follow(mySprite, 50)
+    } else if (pohyb_carodeje && obrana == true && pocet_obran == 3) {
+        netopyr_boss = sprites.create(img`
+                    . . f f f . . . . . . . . . . .
+                    f f f c c . . . . . . . . f f f
+                    f f c c c . c c . . . f c b b c
+                    f f c 3 c c 3 c c f f b b b c .
+                    f f c 3 b c 3 b c f b b c c c .
+                    f c b b b b b b c f b c b c c .
+                    c c 1 b b b 1 b c b b c b b c .
+                    c b b b b b b b b b c c c b c .
+                    c b 1 f f 1 c b b c c c c c . .
+                    c f 1 f f 1 f b b b b f c . . .
+                    f f f f f f f b b b b f c . . .
+                    f f 2 2 2 2 f b b b b f c c . .
+                    . f 2 2 2 2 2 b b b c f . . . .
+                    . . f 2 2 2 b b b c f . . . . .
+                    . . . f f f f f f f . . . . . .
+                    . . . . . . . . . . . . . . . .
+                `, SpriteKind.enemy)
+        tiles.placeOnRandomTile(netopyr_boss, img`
+                    c c c c c c c c c c c c c c c c
+                    c c c c c c c c c b c c c c b c
+                    c c b c c c c c c c c c c c c c
+                    c c c c c c c c c c c c c c c c
+                    c c c c c c c c c c c c c c c c
+                    c c c b c c b c c c c b c c c c
+                    c c c c c c c c c c c c c c c c
+                    c b c c c c c c c c c c c c c c
+                    c c c c c c c c c c c c c c c c
+                    c c c c c b c c c c c b c c c c
+                    c c c c c c c c c c c c c c c c
+                    c c c c c c c c c c c c c c c c
+                    c c c c c c c c c c c c c c c c
+                    c c b c c c c c c c c c c c c c
+                    c c c c c c c b c c c c c c b b
+                    c c c c c c c c c c c c c c b c
+                `)
+        netopyr_boss.follow(mySprite, 70)
     }
     
 })

@@ -32,6 +32,7 @@ pocet_netopyru = 0
 obrana = False
 pocet_obran = 0
 myEnemy: Sprite = None
+button_lvl_6: Sprite = None
 button_lvl_5: Sprite = None
 button_lvl_4: Sprite = None
 button_lvl_3: Sprite = None
@@ -1287,6 +1288,11 @@ def startNextLevel(): # funkce menici levely
         """))
         tiles.set_current_tilemap(tilemap("""level34"""))
         level5()
+
+    elif currentLevel == 6:
+        tiles.set_current_tilemap(tilemap("""level38"""))
+        level6()
+        
     else:
         game.over(True)
 
@@ -1313,7 +1319,7 @@ sprites.on_overlap(SpriteKind.neznicitelny_enemy, SpriteKind.player, on_overlap_
 
 
 def on_overlap_levely(sprite, otherSprite): # MENU
-    global button_lvl_1, button_lvl_2, button_lvl_3, button_lvl_4, button_lvl_5, kursor
+    global button_lvl_1, button_lvl_2, button_lvl_3, button_lvl_4, button_lvl_5, kursor, button_lvl_6
 
     if otherSprite == button_1 and controller.A.is_pressed():
         startNextLevel()
@@ -1541,7 +1547,27 @@ def on_overlap_levely(sprite, otherSprite): # MENU
                             .cccccccccccccccccccccccccccc...
             """),
             SpriteKind.button_small)
-        button_lvl_5.set_position(80, 95)
+        button_lvl_5.set_position(55, 95)
+        button_lvl_6 = sprites.create(img("""
+            .cccccccccccccccccccccccccccc...
+            .cddbbbbbbbbbbbbbbbbbbbbbbddc...
+            .cdbbbbbbbbbbbbbbbbbbbbbbbbdc...
+            .cbbbbbbbbbbbbbbbbbbbbbbbbbbc...
+            .cb1bbb1bbb1b1bbbbbbbbbb1bbbc...
+            .cb1bbb1bbb1b1bbbbbbbbb1bbbbc...
+            .cb1bbbb1b1bb1bbbbbbbb1bbbbbc...
+            .cb1bbbb1b1bb1bbbbbbb1bbbbbbc...
+            .cb1bbbb1b1bb1bbbbbb1bbb11bbc...
+            .cb1bbbbb1bbb1bbbbbb1b11bb1bc...
+            .cb1bbbbb1bbb1bbbbbbb1bbb1bbc...
+            .cb1111bb1bbb1111bbbbb1111bbc...
+            .cbbbbbbbbbbbbbbbbbbbbbbbbbbc...
+            .cdbbbbbbbbbbbbbbbbbbbbbbbbdc...
+            .cddbbbbbbbbbbbbbbbbbbbbbbddc...
+            .cccccccccccccccccccccccccccc...
+        """),
+            SpriteKind.button_small)
+        button_lvl_6.set_position(105, 95)
         kursor = sprites.create(img("""
             . . . . . . . . . . . . . . . .
             . . . . . . . . . . . . . . . .
@@ -1581,6 +1607,9 @@ def on_overlap_levels(sprite, otherSprite):
         startNextLevel()
     elif otherSprite == button_lvl_5 and controller.A.is_pressed():
         currentLevel = 4
+        startNextLevel()
+    elif otherSprite == button_lvl_6 and controller.A.is_pressed():
+        currentLevel = 5
         startNextLevel()
 sprites.on_overlap(SpriteKind.cursor, SpriteKind.button_small, on_overlap_levels)
 
@@ -2986,6 +3015,45 @@ def on_path_completion(sprite, location): # pri dokonceni cesty enemy se otoci
                         40)
 scene.on_path_completion(SpriteKind.neznicitelny_enemy, on_path_completion)
 
+def on_overlap_schody(sprite, location):
+    global currentLevel
+    startNextLevel()
+scene.on_overlap_tile(SpriteKind.player, sprites.dungeon.stair_east, on_overlap_schody)
+
+
+
+# Level 6 #
+def level6():
+    global fightScene, carodej, statusbar, obrana
+    tiles.set_tile_at(tiles.get_tile_location(17, 3), sprites.dungeon.chest_closed)
+    fightScene = False
+    tiles.place_on_tile(mySprite, tiles.get_tile_location(0, 22))
+    carodej = sprites.create(img("""
+        . . . . . . . c c c . . . . . .
+        . . . . . . c b 5 c . . . . . .
+        . . . . c c c 5 5 c c c . . . .
+        . . c c b c 5 5 5 5 c c c c . .
+        . c b b 5 b 5 5 5 5 b 5 b b c .
+        . c b 5 5 b b 5 5 b b 5 5 b c .
+        . . f 5 5 5 b b b b 5 5 5 c . .
+        . . f f 5 5 5 5 5 5 5 5 f f . .
+        . . f f f b f e e f b f f f . .
+        . . f f f 1 f b b f 1 f f f . .
+        . . . f f b b b b b b f f . . .
+        . . . e e f e e e e f e e . . .
+        . . e b c b 5 b b 5 b f b e . .
+        . . e e f 5 5 5 5 5 5 f e e . .
+        . . . . c b 5 5 5 5 b c . . . .
+        . . . . . f f f f f f . . . . .
+    """), SpriteKind.witcher)
+    tiles.set_tile_at(tiles.get_tile_location(16, 20), assets.tile("""
+            transparency16
+        """))
+    statusbar = statusbars.create(20, 4, StatusBarKind.health)
+    statusbar.attach_to_sprite(carodej)
+    tiles.place_on_tile(carodej, tiles.get_tile_location(13, 1))
+    carodej.set_scale(1.7, ScaleAnchor.MIDDLE)
+    print(currentLevel)
 
 def on_zero(status): # zabije carodeje pri life bar = 0
     global pohyb_carodeje
@@ -2995,42 +3063,10 @@ statusbars.on_zero(StatusBarKind.health, on_zero)
 
 def on_overlap_kamen(sprite, location): # carodej prijde
     info.set_life(3)
-    scene.follow_path(carodej, scene.a_star(tiles.get_tile_location(13, 1), tiles.get_tile_location(13, 7)))
+    scene.follow_path(carodej, scene.a_star(tiles.get_tile_location(13, 1), tiles.get_tile_location(13, 8)))
 scene.on_overlap_tile(SpriteKind.player, assets.tile("""
         active_kamen
     """), on_overlap_kamen)
-
-def on_overlap_schody(sprite, location): # nastaveni Tilemap na boss fight
-    global fightScene, carodej, statusbar, obrana
-    tiles.set_tile_at(tiles.get_tile_location(17, 3), sprites.dungeon.chest_closed)
-    if fightScene == True:
-        fightScene = False
-        sprites.destroy_all_sprites_of_kind(SpriteKind.neznicitelny_enemy)
-        tiles.set_current_tilemap(tilemap("""level38"""))
-        tiles.place_on_tile(mySprite, tiles.get_tile_location(0, 22))
-        carodej = sprites.create(img("""
-            . . . . . . . c c c . . . . . .
-            . . . . . . c b 5 c . . . . . .
-            . . . . c c c 5 5 c c c . . . .
-            . . c c b c 5 5 5 5 c c c c . .
-            . c b b 5 b 5 5 5 5 b 5 b b c .
-            . c b 5 5 b b 5 5 b b 5 5 b c .
-            . . f 5 5 5 b b b b 5 5 5 c . .
-            . . f f 5 5 5 5 5 5 5 5 f f . .
-            . . f f f b f e e f b f f f . .
-            . . f f f 1 f b b f 1 f f f . .
-            . . . f f b b b b b b f f . . .
-            . . . e e f e e e e f e e . . .
-            . . e b c b 5 b b 5 b f b e . .
-            . . e e f 5 5 5 5 5 5 f e e . .
-            . . . . c b 5 5 5 5 b c . . . .
-            . . . . . f f f f f f . . . . .
-        """), SpriteKind.witcher)
-        statusbar = statusbars.create(20, 4, StatusBarKind.health)
-        statusbar.attach_to_sprite(carodej)
-        tiles.place_on_tile(carodej, tiles.get_tile_location(13, 1))
-        carodej.set_scale(1.7, ScaleAnchor.MIDDLE)
-scene.on_overlap_tile(SpriteKind.player, sprites.dungeon.stair_east, on_overlap_schody)
 
 def on_update_interval_koule(): # strili koule
     global ohniva_koule, obrana, pohyb_carodeje
@@ -3096,7 +3132,7 @@ sprites.on_overlap(SpriteKind.projectile, SpriteKind.witcher, on_overlap_project
 
 def on_update_interval_netopyri():
     global obrana, pohyb_carodeje
-    if pohyb_carodeje and obrana == True:
+    if pohyb_carodeje and obrana == True and pocet_obran == 1:
         netopyr_boss = sprites.create(img("""
             . . f f f . . . . . . . . . . .
             f f f c c . . . . . . . . f f f
@@ -3133,8 +3169,86 @@ def on_update_interval_netopyri():
             c c c c c c c b c c c c c c b b
             c c c c c c c c c c c c c c b c
         """))
-        netopyr_boss.follow(mySprite, 50)
-game.on_update_interval(2000, on_update_interval_netopyri)
+        netopyr_boss.follow(mySprite, 35)
+
+    elif pohyb_carodeje and obrana == True and pocet_obran == 2:
+            netopyr_boss = sprites.create(img("""
+                . . f f f . . . . . . . . . . .
+                f f f c c . . . . . . . . f f f
+                f f c c c . c c . . . f c b b c
+                f f c 3 c c 3 c c f f b b b c .
+                f f c 3 b c 3 b c f b b c c c .
+                f c b b b b b b c f b c b c c .
+                c c 1 b b b 1 b c b b c b b c .
+                c b b b b b b b b b c c c b c .
+                c b 1 f f 1 c b b c c c c c . .
+                c f 1 f f 1 f b b b b f c . . .
+                f f f f f f f b b b b f c . . .
+                f f 2 2 2 2 f b b b b f c c . .
+                . f 2 2 2 2 2 b b b c f . . . .
+                . . f 2 2 2 b b b c f . . . . .
+                . . . f f f f f f f . . . . . .
+                . . . . . . . . . . . . . . . .
+            """), SpriteKind.enemy)
+            tiles.place_on_random_tile(netopyr_boss, img("""
+                c c c c c c c c c c c c c c c c
+                c c c c c c c c c b c c c c b c
+                c c b c c c c c c c c c c c c c
+                c c c c c c c c c c c c c c c c
+                c c c c c c c c c c c c c c c c
+                c c c b c c b c c c c b c c c c
+                c c c c c c c c c c c c c c c c
+                c b c c c c c c c c c c c c c c
+                c c c c c c c c c c c c c c c c
+                c c c c c b c c c c c b c c c c
+                c c c c c c c c c c c c c c c c
+                c c c c c c c c c c c c c c c c
+                c c c c c c c c c c c c c c c c
+                c c b c c c c c c c c c c c c c
+                c c c c c c c b c c c c c c b b
+                c c c c c c c c c c c c c c b c
+            """))
+            netopyr_boss.follow(mySprite, 50)
+
+    elif pohyb_carodeje and obrana == True and pocet_obran == 3:
+                netopyr_boss = sprites.create(img("""
+                    . . f f f . . . . . . . . . . .
+                    f f f c c . . . . . . . . f f f
+                    f f c c c . c c . . . f c b b c
+                    f f c 3 c c 3 c c f f b b b c .
+                    f f c 3 b c 3 b c f b b c c c .
+                    f c b b b b b b c f b c b c c .
+                    c c 1 b b b 1 b c b b c b b c .
+                    c b b b b b b b b b c c c b c .
+                    c b 1 f f 1 c b b c c c c c . .
+                    c f 1 f f 1 f b b b b f c . . .
+                    f f f f f f f b b b b f c . . .
+                    f f 2 2 2 2 f b b b b f c c . .
+                    . f 2 2 2 2 2 b b b c f . . . .
+                    . . f 2 2 2 b b b c f . . . . .
+                    . . . f f f f f f f . . . . . .
+                    . . . . . . . . . . . . . . . .
+                """), SpriteKind.enemy)
+                tiles.place_on_random_tile(netopyr_boss, img("""
+                    c c c c c c c c c c c c c c c c
+                    c c c c c c c c c b c c c c b c
+                    c c b c c c c c c c c c c c c c
+                    c c c c c c c c c c c c c c c c
+                    c c c c c c c c c c c c c c c c
+                    c c c b c c b c c c c b c c c c
+                    c c c c c c c c c c c c c c c c
+                    c b c c c c c c c c c c c c c c
+                    c c c c c c c c c c c c c c c c
+                    c c c c c b c c c c c b c c c c
+                    c c c c c c c c c c c c c c c c
+                    c c c c c c c c c c c c c c c c
+                    c c c c c c c c c c c c c c c c
+                    c c b c c c c c c c c c c c c c
+                    c c c c c c c b c c c c c c b b
+                    c c c c c c c c c c c c c c b c
+                """))
+                netopyr_boss.follow(mySprite, 70)
+game.on_update_interval(3000, on_update_interval_netopyri)
 
 def on_status_reached_lte_percentage(status):
     global obrana, pocet_obran
