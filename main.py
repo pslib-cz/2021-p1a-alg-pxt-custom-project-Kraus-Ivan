@@ -2661,7 +2661,7 @@ scene.on_overlap_tile(SpriteKind.player, assets.tile("""
 
 def on_overlap_treasure(sprite, location): # ziskani zivota navic z truhly
     global currentLevel
-    if currentLevel == 5:
+    if currentLevel == 5 or currentLevel == 6:
         tiles.set_tile_at(location, sprites.dungeon.chest_open)
         effects.hearts.start_screen_effect(500)
         game.splash("Získal jsi život navíc")
@@ -2968,9 +2968,11 @@ scene.on_path_completion(SpriteKind.witcher, on_path_completion_carodej)
 
 def on_overlap_projectile_koule(sprite, otherSprite): # zniceni koule pomoci projectile
     global swingingBow
-    otherSprite.destroy(effects.warm_radial, 1)
     if sprite == arrow:
         sprite.destroy(effects.disintegrate, 1)
+        otherSprite.destroy(effects.warm_radial, 1)
+    if not sprite == BowImage:
+        otherSprite.destroy(effects.warm_radial, 1)
 sprites.on_overlap(SpriteKind.projectile, SpriteKind.projectile_koule, on_overlap_projectile_koule)
 
 def on_overlap_koule_mySprite(sprite, otherSprite):
@@ -2979,9 +2981,10 @@ def on_overlap_koule_mySprite(sprite, otherSprite):
 sprites.on_overlap(SpriteKind.projectile_koule, SpriteKind.player, on_overlap_koule_mySprite)
 
 def on_overlap_projectile_carodej(sprite, otherSprite): # zasazeni carodeje
-    global obrana
+    global obrana, arrow
     if obrana == False and sprite == arrow:
-        statusbar.value -= 0.5
+        sprite.destroy(effects.disintegrate, 1)
+        statusbar.value -= 1
     elif obrana == False and sprite == SwordImage:
         info.change_life_by(-1)
         game.splash("Meč na něj nepůsobí!")
@@ -3105,7 +3108,7 @@ def on_update_interval_netopyri():
                     c c c c c c c c c c c c c c b c
                 """))
                 netopyr_boss.follow(mySprite, 70)
-game.on_update_interval(3000, on_update_interval_netopyri)
+game.on_update_interval(2500, on_update_interval_netopyri)
 
 def on_status_reached_lte_percentage(status):
     global obrana, pocet_obran

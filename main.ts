@@ -2697,7 +2697,7 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`
 scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.chestClosed, function on_overlap_treasure(sprite: Sprite, location: tiles.Location) {
     //  ziskani zivota navic z truhly
     
-    if (currentLevel == 5) {
+    if (currentLevel == 5 || currentLevel == 6) {
         tiles.setTileAt(location, sprites.dungeon.chestOpen)
         effects.hearts.startScreenEffect(500)
         game.splash("Získal jsi život navíc")
@@ -2987,9 +2987,13 @@ scene.onPathCompletion(SpriteKind.witcher, function on_path_completion_carodej(s
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.projectile_koule, function on_overlap_projectile_koule(sprite: Sprite, otherSprite: Sprite) {
     //  zniceni koule pomoci projectile
     
-    otherSprite.destroy(effects.warmRadial, 1)
     if (sprite == arrow) {
         sprite.destroy(effects.disintegrate, 1)
+        otherSprite.destroy(effects.warmRadial, 1)
+    }
+    
+    if (!(sprite == BowImage)) {
+        otherSprite.destroy(effects.warmRadial, 1)
     }
     
 })
@@ -3001,14 +3005,15 @@ sprites.onOverlap(SpriteKind.Projectile, SpriteKind.witcher, function on_overlap
     //  zasazeni carodeje
     
     if (obrana == false && sprite == arrow) {
-        statusbar.value -= 0.5
+        sprite.destroy(effects.disintegrate, 1)
+        statusbar.value -= 1
     } else if (obrana == false && sprite == SwordImage) {
         info.changeLifeBy(-1)
         game.splash("Meč na něj nepůsobí!")
     }
     
 })
-game.onUpdateInterval(3000, function on_update_interval_netopyri() {
+game.onUpdateInterval(2500, function on_update_interval_netopyri() {
     let netopyr_boss: Sprite;
     
     if (pohyb_carodeje && obrana == true && pocet_obran == 1) {
