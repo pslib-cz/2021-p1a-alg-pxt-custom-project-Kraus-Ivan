@@ -2345,10 +2345,10 @@ sprites.onOverlap(SpriteKind.Projectile, SpriteKind.enemyTree, function on_overl
             spawner
         `)
 })
-game.onUpdateInterval(3000, function on_update_interval() {
+game.onUpdateInterval(2000, function on_update_interval() {
     //  spawn netopyru
     
-    if (currentLevel == 3 && fightScene && pocet_netopyru < 5) {
+    if (currentLevel == 3 && fightScene && pocet_netopyru < 4) {
         if (tiles.getTilesByType(assets.tile`
             myTile9
         `).length > 0) {

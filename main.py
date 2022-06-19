@@ -2343,7 +2343,7 @@ sprites.on_overlap(SpriteKind.projectile, SpriteKind.enemyTree, on_overlap_strom
 
 def on_update_interval(): # spawn netopyru
     global myEnemy, fightScene, afterFight, pocet_netopyru
-    if currentLevel == 3 and fightScene and pocet_netopyru < 5:
+    if currentLevel == 3 and fightScene and pocet_netopyru < 4:
         if len(tiles.get_tiles_by_type(assets.tile("""
             myTile9
         """))) > 0:
@@ -2447,7 +2447,7 @@ def on_update_interval(): # spawn netopyru
             fightScene = False
             pronasledovani(True, Lucistnik, mySprite)
             afterFight = True
-game.on_update_interval(3000, on_update_interval)
+game.on_update_interval(2000, on_update_interval)
 #level 3\
 
 
