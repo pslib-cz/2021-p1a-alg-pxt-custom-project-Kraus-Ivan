@@ -2843,7 +2843,7 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`
         tiles.setTileAt(tiles.getTileLocation(21, 30), sprites.dungeon.chestClosed)
         tiles.setTileAt(tiles.getTileLocation(18, 6), sprites.dungeon.chestClosed)
         tiles.setTileAt(tiles.getTileLocation(16, 20), sprites.dungeon.chestClosed)
-        enemy_position = [[[7, 17], [0, 60]], [[19, 16], [0, 60]], [[17, 26], [60, 0]]]
+        enemy_position = [[[7, 17], [0, 60]], [[19, 16], [0, 60]], [[17, 26], [60, 0]], [[1, 3], [0, 60]], [[13, 9], [60, 0]], [[30, 0], [0, 60]], [[8, 3], [0, 60]], [[25, 6], [0, 60]], [[13, 2], [60, 0]], [[30, 14], [0, 60]], [[13, 1], [0, 60]], [[6, 23], [60, 0]], [[18, 16], [60, 0]], [[0, 30], [60, 0]]]
         fightScene = true
         for (let pos of enemy_position) {
             duch = sprites.create(img`
