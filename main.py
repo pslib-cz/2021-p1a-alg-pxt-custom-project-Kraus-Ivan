@@ -27,6 +27,7 @@ class StrProp:
 
 
 pohyb_carodeje = False
+strop = False
 ohniva_koule: Sprite = None
 pocet_netopyru = 0
 obrana = False
@@ -1585,14 +1586,15 @@ def pronasledovani(boolean: bool, Pronasledovatel: Sprite, Obet: Sprite): # pron
         Pronasledovatel.follow(Obet, 0)
 
 def on_life_zero(): # umrti hlavni postavy
-    global fightScene, currentLevel
+    global fightScene, currentLevel, strop
     if currentLevel == 3:
         fightScene = False
         Lucistnik.destroy()
     if currentLevel == 4:
         game.splash("Utopil jsi se.")
     if currentLevel == 5:
-        game.splash("Bohužel, spadl na tebe strop")
+        if strop:
+            game.splash("Bohužel, spadl na tebe strop")
         game.splash("Zemřel jsi.")
     else:
         game.splash("Zemřel jsi.")
@@ -2581,7 +2583,7 @@ sprites.on_overlap(SpriteKind.projectile, SpriteKind.bobr, on_overlap_zniceni_bo
 
 #level 5/
 def level5():
-    global dialogSkoncen, dialogSkoncen2, fightScene, pohyb_carodeje, luk, mec, pocet_obran
+    global dialogSkoncen, dialogSkoncen2, fightScene, pohyb_carodeje, luk, mec, pocet_obran, strop
     pohyb_carodeje = False
     pocet_obran = 0
     dialogSkoncen = False
@@ -2590,6 +2592,7 @@ def level5():
     fightScene = False
     luk = True
     mec = True
+    strop = False
 
 def on_overlap_brana(sprite, location): # zavrena brana
     if currentLevel == 5:
@@ -2600,7 +2603,9 @@ scene.on_overlap_tile(SpriteKind.player, assets.tile("""
     """), on_overlap_brana)
 
 def on_overlap_strop(sprite, location): # spadnuti stropu
+    global strop
     if currentLevel == 5:
+        strop = True
         info.set_life(0)
 scene.on_overlap_tile(SpriteKind.player, assets.tile("""
         active_black

@@ -27,6 +27,7 @@ namespace StrProp {
 }
 
 let pohyb_carodeje = false
+let strop = false
 let ohniva_koule : Sprite = null
 let pocet_netopyru = 0
 let obrana = false
@@ -1599,7 +1600,10 @@ info.onLifeZero(function on_life_zero() {
     }
     
     if (currentLevel == 5) {
-        game.splash("Bohužel, spadl na tebe strop")
+        if (strop) {
+            game.splash("Bohužel, spadl na tebe strop")
+        }
+        
         game.splash("Zemřel jsi.")
     } else {
         game.splash("Zemřel jsi.")
@@ -2616,6 +2620,7 @@ function level5() {
     fightScene = false
     luk = true
     mec = true
+    strop = false
 }
 
 scene.onOverlapTile(SpriteKind.Player, assets.tile`
@@ -2632,7 +2637,9 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`
         active_black
     `, function on_overlap_strop(sprite: Sprite, location: tiles.Location) {
     //  spadnuti stropu
+    
     if (currentLevel == 5) {
+        strop = true
         info.setLife(0)
     }
     
