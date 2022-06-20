@@ -2928,10 +2928,11 @@ def on_overlap_projectile_carodej(sprite, otherSprite): # zasazeni carodeje
     if obrana == False and sprite == arrow:
         statusbar.value -= 1
         def onRun_in_parallel():
-            sprite.destroy(effects.disintegrate, 1)
+            pause(50)
+            sprite.destroy(effects.disintegrate, 100)
         control.run_in_parallel(onRun_in_parallel)
     elif obrana == False and sprite == SwordImage:
-        info.change_life_by(-1)
+        info.change_life_by(-2)
         game.splash("Meč na něj nepůsobí!")
 sprites.on_overlap(SpriteKind.projectile, SpriteKind.witcher, on_overlap_projectile_carodej)
 

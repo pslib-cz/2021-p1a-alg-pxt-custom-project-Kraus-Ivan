@@ -2944,10 +2944,11 @@ sprites.onOverlap(SpriteKind.Projectile, SpriteKind.witcher, function on_overlap
     if (obrana == false && sprite == arrow) {
         statusbar.value -= 1
         control.runInParallel(function onRun_in_parallel() {
-            sprite.destroy(effects.disintegrate, 1)
+            pause(50)
+            sprite.destroy(effects.disintegrate, 100)
         })
     } else if (obrana == false && sprite == SwordImage) {
-        info.changeLifeBy(-1)
+        info.changeLifeBy(-2)
         game.splash("Meč na něj nepůsobí!")
     }
     
