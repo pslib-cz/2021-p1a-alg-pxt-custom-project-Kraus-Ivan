@@ -2926,12 +2926,15 @@ sprites.on_overlap(SpriteKind.projectile_koule, SpriteKind.player, on_overlap_ko
 def on_overlap_projectile_carodej(sprite, otherSprite): # zasazeni carodeje
     global obrana, arrow
     if obrana == False and sprite == arrow:
-        sprite.destroy(effects.disintegrate, 1)
         statusbar.value -= 1
+        def onRun_in_parallel():
+            sprite.destroy(effects.disintegrate, 1)
+        control.run_in_parallel(onRun_in_parallel)
     elif obrana == False and sprite == SwordImage:
         info.change_life_by(-1)
         game.splash("Meč na něj nepůsobí!")
 sprites.on_overlap(SpriteKind.projectile, SpriteKind.witcher, on_overlap_projectile_carodej)
+
 
 def on_update_interval_netopyri():
     global obrana, pohyb_carodeje

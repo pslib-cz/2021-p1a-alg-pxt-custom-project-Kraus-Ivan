@@ -2942,8 +2942,10 @@ sprites.onOverlap(SpriteKind.Projectile, SpriteKind.witcher, function on_overlap
     //  zasazeni carodeje
     
     if (obrana == false && sprite == arrow) {
-        sprite.destroy(effects.disintegrate, 1)
         statusbar.value -= 1
+        control.runInParallel(function onRun_in_parallel() {
+            sprite.destroy(effects.disintegrate, 1)
+        })
     } else if (obrana == false && sprite == SwordImage) {
         info.changeLifeBy(-1)
         game.splash("Meč na něj nepůsobí!")
