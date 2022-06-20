@@ -351,71 +351,6 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function on_b_pressed() {
         cas_zacatek = game.runtime()
     }
     
-    if (currentLevel == 4 && luk) {
-        swingingBow = true
-        if (pozice_zbrane[0] == true) {
-            BowImage.setImage(assets.image`
-                bow
-            `)
-        } else if (pozice_zbrane[1] == true) {
-            BowImage.setImage(img`
-                e . . . . . . . . . . . . . e
-                                    e 1 1 1 1 1 1 1 1 1 1 1 1 1 e
-                                    . e . . . . . . . . . . . e .
-                                    . . e . . . . . . . . . e . .
-                                    . . . e . . . . . . . e . . .
-                                    . . . . e . . . . . e . . . .
-                                    . . . . . e . . . e . . . . .
-                                    . . . . . . e e e . . . . . .
-                                    . . . . . . . . . . . . . . .
-                                    . . . . . . . . . . . . . . .
-                                    . . . . . . . . . . . . . . .
-                                    . . . . . . . . . . . . . . .
-                                    . . . . . . . . . . . . . . .
-                                    . . . . . . . . . . . . . . .
-                                    . . . . . . . . . . . . . . .
-            `)
-        } else if (pozice_zbrane[2] == true) {
-            BowImage.setImage(img`
-                . . . . . . . . . . . . . e e
-                                    . . . . . . . . . . . . e 1 .
-                                    . . . . . . . . . . . e . 1 .
-                                    . . . . . . . . . . e . . 1 .
-                                    . . . . . . . . . e . . . 1 .
-                                    . . . . . . . . e . . . . 1 .
-                                    . . . . . . . e . . . . . 1 .
-                                    . . . . . . . e . . . . . 1 .
-                                    . . . . . . . e . . . . . 1 .
-                                    . . . . . . . . e . . . . 1 .
-                                    . . . . . . . . . e . . . 1 .
-                                    . . . . . . . . . . e . . 1 .
-                                    . . . . . . . . . . . e . 1 .
-                                    . . . . . . . . . . . . e 1 .
-                                    . . . . . . . . . . . . . e e
-            `)
-        } else {
-            BowImage.setImage(img`
-                e e . . . . . . . . . . . . .
-                                    . 1 e . . . . . . . . . . . .
-                                    . 1 . e . . . . . . . . . . .
-                                    . 1 . . e . . . . . . . . . .
-                                    . 1 . . . e . . . . . . . . .
-                                    . 1 . . . . e . . . . . . . .
-                                    . 1 . . . . . e . . . . . . .
-                                    . 1 . . . . . e . . . . . . .
-                                    . 1 . . . . . e . . . . . . .
-                                    . 1 . . . . e . . . . . . . .
-                                    . 1 . . . e . . . . . . . . .
-                                    . 1 . . e . . . . . . . . . .
-                                    . 1 . e . . . . . . . . . . .
-                                    . 1 e . . . . . . . . . . . .
-                                    e e . . . . . . . . . . . . .
-            `)
-        }
-        
-    }
-    
-    swingingBow = false
 })
 controller.A.onEvent(ControllerButtonEvent.Pressed, function on_a_pressed() {
     //  seknuti mecem do ruznych smeru
@@ -2472,7 +2407,7 @@ function level4() {
 
 scene.onOverlapTile(SpriteKind.Player, assets.tile`
         wood
-    `, function on_overlap_molo(sprite2: Sprite, location2: tiles.Location) {
+    `, function on_overlap_molo(sprite: Sprite, location: tiles.Location) {
     //  slapnuti na molo
     
     if (currentLevel == 2) {
@@ -2532,7 +2467,26 @@ game.onUpdate(function on_update_pozice_hrace() {
 forever(function on_forever() {
     //  spawn bobru
     
-    if (controller.B.isPressed() && luk == true && swingingBow == false && !(currentLevel == 4)) {
+    if (currentLevel == 4 && spawn_bobri) {
+        zmena_bobra()
+        bobr2 = sprites.create(assets.image`bobr`, SpriteKind.bobr)
+        tiles.placeOnTile(bobr2, tiles.getTileLocation(cislo_sloupce + 10, row))
+        bobr2.ay = speed
+        bobr2.setFlag(SpriteFlag.DestroyOnWall, true)
+        pause(time)
+    } else if (currentLevel == 0 && !kursor.overlapsWith(button_1)) {
+        //  zmenseni tlacitek v menu
+        if (!kursor.overlapsWith(button_2)) {
+            button_1.setScale(1.75, ScaleAnchor.Middle)
+            button_2.setScale(1.75, ScaleAnchor.Middle)
+        }
+        
+    }
+    
+})
+game.onUpdate(function on_update() {
+    
+    if (controller.B.isPressed() && luk == true && swingingBow == false) {
         swingingBow = true
         if (pozice_zbrane[0] == true) {
             BowImage.setImage(assets.image`
@@ -2595,22 +2549,6 @@ forever(function on_forever() {
         }
         
         swingingBow = false
-    }
-    
-    if (currentLevel == 4 && spawn_bobri) {
-        zmena_bobra()
-        bobr2 = sprites.create(assets.image`bobr`, SpriteKind.bobr)
-        tiles.placeOnTile(bobr2, tiles.getTileLocation(cislo_sloupce + 10, row))
-        bobr2.ay = speed
-        bobr2.setFlag(SpriteFlag.DestroyOnWall, true)
-        pause(time)
-    } else if (currentLevel == 0 && !kursor.overlapsWith(button_1)) {
-        //  zmenseni tlacitek v menu
-        if (!kursor.overlapsWith(button_2)) {
-            button_1.setScale(1.75, ScaleAnchor.Middle)
-            button_2.setScale(1.75, ScaleAnchor.Middle)
-        }
-        
     }
     
 })
@@ -2928,7 +2866,6 @@ function level6() {
     statusbar.attachToSprite(carodej)
     tiles.placeOnTile(carodej, tiles.getTileLocation(13, 1))
     carodej.setScale(1.7, ScaleAnchor.Middle)
-    console.log(currentLevel)
 }
 
 statusbars.onZero(StatusBarKind.Health, function on_zero(status: StatusBarSprite) {

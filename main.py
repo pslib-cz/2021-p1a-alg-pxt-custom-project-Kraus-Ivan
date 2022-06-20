@@ -362,67 +362,6 @@ def on_b_pressed(): #mereni casu natazeni luku
     global cas_zacatek, bobr2, cas_zacatek, swingingBow, luk
     if luk:
         cas_zacatek = game.runtime()
-    if currentLevel == 4 and luk:
-        swingingBow = True
-        if pozice_zbrane[0] == True:
-            BowImage.set_image(assets.image("""
-                bow
-            """))
-        elif pozice_zbrane[1] == True:
-            BowImage.set_image(img("""
-                e . . . . . . . . . . . . . e
-                                    e 1 1 1 1 1 1 1 1 1 1 1 1 1 e
-                                    . e . . . . . . . . . . . e .
-                                    . . e . . . . . . . . . e . .
-                                    . . . e . . . . . . . e . . .
-                                    . . . . e . . . . . e . . . .
-                                    . . . . . e . . . e . . . . .
-                                    . . . . . . e e e . . . . . .
-                                    . . . . . . . . . . . . . . .
-                                    . . . . . . . . . . . . . . .
-                                    . . . . . . . . . . . . . . .
-                                    . . . . . . . . . . . . . . .
-                                    . . . . . . . . . . . . . . .
-                                    . . . . . . . . . . . . . . .
-                                    . . . . . . . . . . . . . . .
-            """))
-        elif pozice_zbrane[2] == True:
-            BowImage.set_image(img("""
-                . . . . . . . . . . . . . e e
-                                    . . . . . . . . . . . . e 1 .
-                                    . . . . . . . . . . . e . 1 .
-                                    . . . . . . . . . . e . . 1 .
-                                    . . . . . . . . . e . . . 1 .
-                                    . . . . . . . . e . . . . 1 .
-                                    . . . . . . . e . . . . . 1 .
-                                    . . . . . . . e . . . . . 1 .
-                                    . . . . . . . e . . . . . 1 .
-                                    . . . . . . . . e . . . . 1 .
-                                    . . . . . . . . . e . . . 1 .
-                                    . . . . . . . . . . e . . 1 .
-                                    . . . . . . . . . . . e . 1 .
-                                    . . . . . . . . . . . . e 1 .
-                                    . . . . . . . . . . . . . e e
-            """))
-        else:
-            BowImage.set_image(img("""
-                e e . . . . . . . . . . . . .
-                                    . 1 e . . . . . . . . . . . .
-                                    . 1 . e . . . . . . . . . . .
-                                    . 1 . . e . . . . . . . . . .
-                                    . 1 . . . e . . . . . . . . .
-                                    . 1 . . . . e . . . . . . . .
-                                    . 1 . . . . . e . . . . . . .
-                                    . 1 . . . . . e . . . . . . .
-                                    . 1 . . . . . e . . . . . . .
-                                    . 1 . . . . e . . . . . . . .
-                                    . 1 . . . e . . . . . . . . .
-                                    . 1 . . e . . . . . . . . . .
-                                    . 1 . e . . . . . . . . . . .
-                                    . 1 e . . . . . . . . . . . .
-                                    e e . . . . . . . . . . . . .
-            """))
-    swingingBow = False
 controller.B.on_event(ControllerButtonEvent.PRESSED, on_b_pressed)
 
 def on_a_pressed(): # seknuti mecem do ruznych smeru
@@ -2468,7 +2407,7 @@ def level4():
         bobr
     """), SpriteKind.bobr)
 
-def on_overlap_molo(sprite2, location2): # slapnuti na molo
+def on_overlap_molo(sprite, location): # slapnuti na molo
     global dialogSkoncen, spawn_bobri, dialogSkoncen2, luk
     if currentLevel == 2:
         dialogSkoncen = False
@@ -2516,8 +2455,24 @@ def on_update_pozice_hrace(): # hlida, zda je hrac na bobrovi/molu nebo na vode
 game.on_update(on_update_pozice_hrace)
 
 def on_forever(): # spawn bobru
-    global bobr2, cas_zacatek, swingingBow, luk
-    if controller.B.is_pressed() and luk== True and swingingBow == False and not currentLevel == 4:
+    global bobr2
+
+    if currentLevel == 4 and spawn_bobri:
+        zmena_bobra()
+        bobr2 = sprites.create(assets.image("""bobr"""), SpriteKind.bobr)
+        tiles.place_on_tile(bobr2, tiles.get_tile_location(cislo_sloupce + 10, row))
+        bobr2.ay = speed
+        bobr2.set_flag(SpriteFlag.DESTROY_ON_WALL, True)
+        pause(time)
+    elif currentLevel == 0 and not (kursor.overlaps_with(button_1)): # zmenseni tlacitek v menu
+        if not (kursor.overlaps_with(button_2)):
+            button_1.set_scale(1.75, ScaleAnchor.MIDDLE)
+            button_2.set_scale(1.75, ScaleAnchor.MIDDLE)
+forever(on_forever)
+
+def on_update():
+    global swingingBow, luk
+    if controller.B.is_pressed() and luk== True and swingingBow == False:
         swingingBow = True
         if pozice_zbrane[0] == True:
             BowImage.set_image(assets.image("""
@@ -2578,19 +2533,8 @@ def on_forever(): # spawn bobru
                                     e e . . . . . . . . . . . . .
             """))
         swingingBow = False
+game.on_update(on_update)
 
-    if currentLevel == 4 and spawn_bobri:
-        zmena_bobra()
-        bobr2 = sprites.create(assets.image("""bobr"""), SpriteKind.bobr)
-        tiles.place_on_tile(bobr2, tiles.get_tile_location(cislo_sloupce + 10, row))
-        bobr2.ay = speed
-        bobr2.set_flag(SpriteFlag.DESTROY_ON_WALL, True)
-        pause(time)
-    elif currentLevel == 0 and not (kursor.overlaps_with(button_1)): # zmenseni tlacitek v menu
-        if not (kursor.overlaps_with(button_2)):
-            button_1.set_scale(1.75, ScaleAnchor.MIDDLE)
-            button_2.set_scale(1.75, ScaleAnchor.MIDDLE)
-forever(on_forever)
 
 
 def zmena_bobra(): # meni rychlost a smer bobra
@@ -2910,7 +2854,6 @@ def level6():
     statusbar.attach_to_sprite(carodej)
     tiles.place_on_tile(carodej, tiles.get_tile_location(13, 1))
     carodej.set_scale(1.7, ScaleAnchor.MIDDLE)
-    print(currentLevel)
 
 def on_zero(status): # zabije carodeje pri life bar = 0
     global pohyb_carodeje
