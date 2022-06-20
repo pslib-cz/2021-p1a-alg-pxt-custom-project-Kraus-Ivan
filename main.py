@@ -1249,11 +1249,13 @@ def move_lock(boolean: bool): # zamek pohybu postav
 def on_overlap_enemy(sprite, otherSprite): # odecteni zivota pri najeti na enemy
     sprite.destroy(effects.disintegrate, 200)
     info.change_life_by(-1)
+    scene.camera_shake(4, 500)
 sprites.on_overlap(SpriteKind.enemy, SpriteKind.player, on_overlap_enemy)
 
 def on_overlap_neznicitelny_enemy(sprite, otherSprite): # odecteni zivota pri najeti na neznicitelny enemy
     sprite.destroy(effects.disintegrate, 200)
     info.change_life_by(-1)
+    scene.camera_shake(4, 500)
 sprites.on_overlap(SpriteKind.neznicitelny_enemy, SpriteKind.player, on_overlap_neznicitelny_enemy)
 
 
@@ -1589,6 +1591,9 @@ def on_life_zero(): # umrti hlavni postavy
         Lucistnik.destroy()
     if currentLevel == 4:
         game.splash("Utopil jsi se.")
+    if currentLevel == 5:
+        game.splash("Bohužel, spadl na tebe strop")
+        game.splash("Zemřel jsi.")
     else:
         game.splash("Zemřel jsi.")
     currentLevel = currentLevel - 1
@@ -2596,8 +2601,6 @@ scene.on_overlap_tile(SpriteKind.player, assets.tile("""
 
 def on_overlap_strop(sprite, location): # spadnuti stropu
     if currentLevel == 5:
-        game.splash("Bohužel, spadl na tebe strop")
-        game.splash("Zemřel jsi.")
         info.set_life(0)
 scene.on_overlap_tile(SpriteKind.player, assets.tile("""
         active_black
@@ -2921,18 +2924,20 @@ sprites.on_overlap(SpriteKind.projectile, SpriteKind.projectile_koule, on_overla
 def on_overlap_koule_mySprite(sprite, otherSprite):
     sprite.destroy()
     info.change_life_by(-1)
+    scene.camera_shake(4, 500)
 sprites.on_overlap(SpriteKind.projectile_koule, SpriteKind.player, on_overlap_koule_mySprite)
 
 def on_overlap_projectile_carodej(sprite, otherSprite): # zasazeni carodeje
     global obrana, arrow
     if obrana == False and sprite == arrow:
-        statusbar.value -= 1
+        statusbar.value -= 2
         def onRun_in_parallel():
             pause(50)
             sprite.destroy(effects.disintegrate, 100)
         control.run_in_parallel(onRun_in_parallel)
     elif obrana == False and sprite == SwordImage:
-        info.change_life_by(-2)
+        info.change_life_by(-1)
+        scene.camera_shake(4, 500)
         game.splash("Meč na něj nepůsobí!")
 sprites.on_overlap(SpriteKind.projectile, SpriteKind.witcher, on_overlap_projectile_carodej)
 

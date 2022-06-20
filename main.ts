@@ -1248,11 +1248,13 @@ sprites.onOverlap(SpriteKind.enemy, SpriteKind.Player, function on_overlap_enemy
     //  odecteni zivota pri najeti na enemy
     sprite.destroy(effects.disintegrate, 200)
     info.changeLifeBy(-1)
+    scene.cameraShake(4, 500)
 })
 sprites.onOverlap(SpriteKind.neznicitelny_enemy, SpriteKind.Player, function on_overlap_neznicitelny_enemy(sprite: Sprite, otherSprite: Sprite) {
     //  odecteni zivota pri najeti na neznicitelny enemy
     sprite.destroy(effects.disintegrate, 200)
     info.changeLifeBy(-1)
+    scene.cameraShake(4, 500)
 })
 sprites.onOverlap(SpriteKind.cursor, SpriteKind.button, function on_overlap_levely(sprite: Sprite, otherSprite: Sprite) {
     //  MENU
@@ -1594,6 +1596,11 @@ info.onLifeZero(function on_life_zero() {
     
     if (currentLevel == 4) {
         game.splash("Utopil jsi se.")
+    }
+    
+    if (currentLevel == 5) {
+        game.splash("Bohužel, spadl na tebe strop")
+        game.splash("Zemřel jsi.")
     } else {
         game.splash("Zemřel jsi.")
     }
@@ -2626,8 +2633,6 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`
     `, function on_overlap_strop(sprite: Sprite, location: tiles.Location) {
     //  spadnuti stropu
     if (currentLevel == 5) {
-        game.splash("Bohužel, spadl na tebe strop")
-        game.splash("Zemřel jsi.")
         info.setLife(0)
     }
     
@@ -2937,18 +2942,20 @@ sprites.onOverlap(SpriteKind.Projectile, SpriteKind.projectile_koule, function o
 sprites.onOverlap(SpriteKind.projectile_koule, SpriteKind.Player, function on_overlap_koule_mySprite(sprite: Sprite, otherSprite: Sprite) {
     sprite.destroy()
     info.changeLifeBy(-1)
+    scene.cameraShake(4, 500)
 })
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.witcher, function on_overlap_projectile_carodej(sprite: Sprite, otherSprite: Sprite) {
     //  zasazeni carodeje
     
     if (obrana == false && sprite == arrow) {
-        statusbar.value -= 1
+        statusbar.value -= 2
         control.runInParallel(function onRun_in_parallel() {
             pause(50)
             sprite.destroy(effects.disintegrate, 100)
         })
     } else if (obrana == false && sprite == SwordImage) {
-        info.changeLifeBy(-2)
+        info.changeLifeBy(-1)
+        scene.cameraShake(4, 500)
         game.splash("Meč na něj nepůsobí!")
     }
     
