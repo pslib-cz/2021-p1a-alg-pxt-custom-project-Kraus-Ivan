@@ -1,4 +1,4 @@
-// meta={"simUrl":"https://trg-arcade.userpxt.io/v1.8.26/---simulator","cdnUrl":"https://pxt.azureedge.net","version":"0.0.1","target":"arcade","targetVersion":"1.8.26","repo":"pslib-cz/2021-p1a-alg-pxt-custom-project-kraus-ivan"}
+// meta={"simUrl":"https://trg-arcade.userpxt.io/v1.8.26/---simulator","cdnUrl":"https://pxt.azureedge.net","version":"0.1.0","target":"arcade","targetVersion":"1.8.26","repo":"pslib-cz/2021-p1a-alg-pxt-custom-project-kraus-ivan"}
 // total=2683345 new=25.37% cached=70.34% other=4.29%
 (function (ectx) {
 'use strict';
