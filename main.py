@@ -25,7 +25,7 @@ class StrProp:
     Name = StrProp.create()
     Text = StrProp.create()
 
-
+#zmena
 pohyb_carodeje = False
 strop = False
 ohniva_koule: Sprite = None

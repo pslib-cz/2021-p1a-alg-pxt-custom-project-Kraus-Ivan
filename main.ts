@@ -26,6 +26,7 @@ namespace StrProp {
     export const Text = StrProp.create()
 }
 
+// zmena
 let pohyb_carodeje = false
 let strop = false
 let ohniva_koule : Sprite = null
